@@ -1,0 +1,3 @@
+[workspace]
+members = ["newtype-tools", "newtype-tools-derive"]
+resolver = "2"

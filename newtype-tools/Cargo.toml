@@ -1,0 +1,13 @@
+[package]
+edition = "2024"
+name = "newtype-tools"
+version = "0.1.0"
+
+[lib]
+
+[dependencies]
+newtype-tools-derive = { path = "../newtype-tools-derive", optional = true }
+
+[features]
+default = ["derive"]
+derive = ["dep:newtype-tools-derive"]
