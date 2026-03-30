@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Groups multiple updates into one PR to save CI credits.
+    groups:
+      dependencies:
+        patterns:
+          - "*"
