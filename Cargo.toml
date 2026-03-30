@@ -14,23 +14,14 @@ categories = [
 description = "A lightweight library designed to make the newtype idiom more ergonomic to use."
 edition = "2024"
 homepage = "https://github.com/berestovskyy/newtype-tools"
-keywords = [
-    "boilerplate",
-    "conversion",
-    "derive",
-    "idiom",
-    "idiomatic",
-    "iterator",
-    "new type",
-    "newtype",
-    "range",
-]
+keywords = ["conversion", "derive", "idiom", "iterator", "newtype"]
 license = "MIT OR Apache-2.0"
-readme = "README.md"
+readme = "newtype-tools/README.md"
 repository = "https://github.com/berestovskyy/newtype-tools"
 version = "0.1.0-beta"
 
 [workspace.dependencies]
+newtype-tools-derive = { version = "0.1.0-beta", path = "newtype-tools-derive" }
 proc-macro2 = "1.0.106"
 quote = "1.0.45"
 syn = { version = "2.0.117", features = ["extra-traits", "full"] }

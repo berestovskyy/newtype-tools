@@ -14,7 +14,10 @@ version.workspace = true
 [lib]
 
 [dependencies]
-newtype-tools-derive = { path = "../newtype-tools-derive", optional = true }
+newtype-tools-derive = { workspace = true, optional = true }
+
+[dev-dependencies]
+newtype-tools-derive = { workspace = true }
 
 [features]
 default = ["derive"]

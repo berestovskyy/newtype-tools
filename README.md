@@ -31,6 +31,8 @@ Examples
 Conversion between types:
 
 ```rust
+# #[cfg(feature = "derive")]
+# {
 use newtype_tools::Newtype;
 
 #[derive(Newtype)]
@@ -46,11 +48,14 @@ assert_eq!(apples.0, 42);
 
 let oranges = Oranges::from(apples);
 assert_eq!(oranges.0, 21);
+# }
 ```
 
 Operations on `newtypes`:
 
 ```rust
+# #[cfg(feature = "derive")]
+# {
 use newtype_tools::Newtype;
 
 #[derive(Debug, Newtype)]
@@ -64,20 +69,24 @@ struct Oranges(u32);
 let apples = Apples(42);
 let oranges = Oranges(21);
 assert_eq!(apples, oranges);
+# }
 ```
 
 Iterations over `newtype` ranges:
 
 ```rust
+# #[cfg(feature = "derive")]
+# {
 use newtype_tools::Newtype;
 
 #[derive(Debug, Newtype)]
 #[newtype(iter(u64))]
 struct Apples(u64);
 
-for apple in Apples::iter((Apples(0)..Apples(42))) {
+for apple in Apples::iter(Apples(0)..Apples(42)) {
     println!("{apple:?}");
 }
+# }
 ```
 
 This will become even more ergonomic once the [Step][step] trait is stabilized.
