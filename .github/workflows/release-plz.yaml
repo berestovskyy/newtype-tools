@@ -10,6 +10,7 @@ jobs:
   release-plz-release:
     name: Release-plz release
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     if: ${{ github.repository_owner == 'berestovskyy' }}
     permissions:
       contents: write
@@ -37,6 +38,7 @@ jobs:
   release-plz-pr:
     name: Release-plz PR
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     if: ${{ github.repository_owner == 'berestovskyy' }}
     permissions:
       contents: write
