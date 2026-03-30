@@ -1,0 +1,95 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+name: CI
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  config:
+    name: Configuring Rust Versions
+    runs-on: ubuntu-latest
+    outputs:
+      msrv: "1.86.0" # Also update `rust-version` in root `Cargo.toml`
+      stable: "1.94.1" # Stable release as of 2026-03-30
+      nightly: nightly
+    steps:
+      - run: echo "Configuring Rust versions..."
+
+  ci:
+    needs: config
+    name: Rust ${{ matrix.rust }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rust:
+          - ${{ needs.config.outputs.msrv }}
+          - ${{ needs.config.outputs.stable }}
+          - ${{ needs.config.outputs.nightly }}
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Clippy (Default Features)
+        if: matrix.rust == needs.config.outputs.stable
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Build (Default Features)
+        run: cargo build
+      - name: Test (Default Features)
+        run: cargo test
+
+      - name: Build (Minimal Features)
+        run: cargo build --no-default-features
+      - name: Test (Minimal Features)
+        run: cargo test --no-default-features
+
+      - name: Build (Unstable Features)
+        if: matrix.rust == needs.config.outputs.nightly
+        run: cargo build --all-features
+      - name: Test (Unstable Features)
+        if: matrix.rust == needs.config.outputs.nightly
+        run: cargo test --all-features
+
+      - name: Formatting
+        if: matrix.rust == needs.config.outputs.stable
+        run: cargo fmt --all -- --check
+
+  # If this fails, consider changing your text or adding something to `.typos.toml`.
+  typos:
+    name: Check typos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: crate-ci/typos@v1.43.1
+
+  # Make sure the library builds with all dependencies downgraded to their
+  # oldest versions allowed by the semver spec. This ensures we have not
+  # under-specified any dependency.
+  minimal-versions:
+    needs: config
+    name: Check Minimal Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install needed Rust toolchain versions
+        run: |
+          rustup toolchain install "${{ needs.config.outputs.msrv }}" --profile minimal
+          rustup toolchain install "${{ needs.config.outputs.nightly }}" --profile minimal
+
+      - name: Downgrade dependencies to minimal versions
+        run: cargo "+${{ needs.config.outputs.nightly }}" update -Z minimal-versions
+
+      - name: Compile with minimal versions
+        run: cargo "+${{ needs.config.outputs.msrv }}" build --all-targets --locked
