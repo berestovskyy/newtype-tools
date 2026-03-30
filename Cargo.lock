@@ -4,14 +4,14 @@ version = 4
 
 [[package]]
 name = "newtype-tools"
-version = "0.1.0-beta"
+version = "0.1.0-beta.1"
 dependencies = [
  "newtype-tools-derive",
 ]
 
 [[package]]
 name = "newtype-tools-derive"
-version = "0.1.0-beta"
+version = "0.1.0-beta.1"
 dependencies = [
  "proc-macro2",
  "quote",
