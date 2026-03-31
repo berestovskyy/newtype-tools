@@ -157,14 +157,14 @@ fn parse_partial_eq(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<
     Ok(())
 }
 
-/// Parses newtype `iter` attribute from a list:
-/// `#[newtype(iter)]`
+/// Parses newtype `range_iter` attribute from a list:
+/// `#[newtype(range_iter(type))]`
 fn parse_iter(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
     let inner_ty = list.parse_args_with(|input: syn::parse::ParseStream| {
         let inner_ty: syn::Type = input.parse()?;
         Ok(inner_ty)
     })?;
-    res.iter = Some(inner_ty);
+    res.range_iter = Some(inner_ty);
     Ok(())
 }
 
@@ -183,7 +183,7 @@ impl std::fmt::Display for AttrType {
             Self::From => f.write_str("from"),
             Self::Into => f.write_str("into"),
             Self::PartialEq => f.write_str("partial_eq"),
-            Self::RangeIter => f.write_str("iter"),
+            Self::RangeIter => f.write_str("range_iter"),
         }
     }
 }
@@ -196,11 +196,11 @@ impl TryFrom<Option<&syn::Ident>> for AttrType {
             Some(i) if i == "from" => Ok(Self::From),
             Some(i) if i == "into" => Ok(Self::Into),
             Some(i) if i == "partial_eq" => Ok(Self::PartialEq),
-            Some(i) if i == "iter" => Ok(Self::RangeIter),
+            Some(i) if i == "range_iter" => Ok(Self::RangeIter),
             _ => Err(syn::Error::new_spanned(
                 value,
                 "Error matching attribute: expected one of \
-                    `newtype`, `from`, `into`, `partial_eq`, `iter`",
+                    `newtype`, `from`, `into`, `partial_eq`, `range_iter`",
             )),
         }
     }

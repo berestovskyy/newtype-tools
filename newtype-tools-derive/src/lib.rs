@@ -14,8 +14,8 @@ struct ParseResult {
     pub into: Vec<(syn::Type, syn::Expr)>,
     /// Tuples of `(other type, comparison expression)`.
     pub partial_eq: Vec<(syn::Type, syn::Expr)>,
-    /// Iterator trait.
-    pub iter: Option<syn::Type>,
+    /// Range iterator trait.
+    pub range_iter: Option<syn::Type>,
 }
 
 impl ParseResult {
@@ -25,7 +25,7 @@ impl ParseResult {
             from: Vec::default(),
             into: Vec::default(),
             partial_eq: Vec::default(),
-            iter: None,
+            range_iter: None,
         }
     }
 }
