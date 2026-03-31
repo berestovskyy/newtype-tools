@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.2](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-derive-v0.1.0-beta.1...newtype-tools-derive-v0.1.0-beta.2) - 2026-03-31
+
+### Fixed
+
+- `range_iter` and add `len()` ([#5](https://github.com/berestovskyy/newtype-tools/pull/5))
+
 ## [0.1.0-beta.1](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-derive-v0.1.0-beta...newtype-tools-derive-v0.1.0-beta.1) - 2026-03-30
 
 ### Other
