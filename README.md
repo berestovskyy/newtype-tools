@@ -80,10 +80,11 @@ Iterations over `newtype` ranges:
 use newtype_tools::Newtype;
 
 #[derive(Debug, Newtype)]
-#[newtype(iter(u64))]
+#[newtype(from(usize, with = |u| Apples(u as u64)))]
+#[newtype(range_iter(usize))]
 struct Apples(u64);
 
-for apple in Apples::iter(Apples(0)..Apples(42)) {
+for apple in Apples::range_iter(Apples(0)..Apples(42)) {
     println!("{apple:?}");
 }
 # }
