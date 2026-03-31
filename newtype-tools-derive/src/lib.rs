@@ -10,8 +10,12 @@ struct ParseResult {
     pub ident: syn::Ident,
     /// Tuples of `(input type, conversion expression)`.
     pub from: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(input type, error type, conversion expression)`.
+    pub try_from: Vec<(syn::Type, syn::Type, syn::Expr)>,
     /// Tuples of `(output type, conversion expression)`.
     pub into: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(input type, error type, conversion expression)`.
+    pub try_into: Vec<(syn::Type, syn::Type, syn::Expr)>,
     /// Tuples of `(other type, comparison expression)`.
     pub partial_eq: Vec<(syn::Type, syn::Expr)>,
     /// Range iterator trait.
@@ -23,7 +27,9 @@ impl ParseResult {
         Self {
             ident,
             from: Vec::default(),
+            try_from: Vec::default(),
             into: Vec::default(),
+            try_into: Vec::default(),
             partial_eq: Vec::default(),
             range_iter: None,
         }

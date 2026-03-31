@@ -4,7 +4,9 @@ use crate::ParseResult;
 pub(crate) fn expand_derive(res: &ParseResult) -> syn::Result<proc_macro::TokenStream> {
     let mut tokens = proc_macro2::TokenStream::new();
     tokens.extend(expand_from(res)?);
+    tokens.extend(expand_try_from(res)?);
     tokens.extend(expand_into(res)?);
+    tokens.extend(expand_try_into(res)?);
     tokens.extend(expand_partial_eq(res)?);
     tokens.extend(expand_iter(res)?);
     Ok(tokens.into())
@@ -31,6 +33,28 @@ fn expand_from(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
         .collect()
 }
 
+/// Expands all `try_from` derives into a token stream.
+fn expand_try_from(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
+    let ident = &res.ident;
+    res.try_from
+        .iter()
+        .map(|(input_ty, error_ty, expr)| {
+            Ok(quote::quote! {
+                #[automatically_derived]
+                impl TryFrom<#input_ty> for #ident {
+                    type Error = #error_ty;
+                    fn try_from(value: #input_ty) -> Result<Self, Self::Error> {
+                        fn call_inner<I, O, F: FnOnce(I) -> O>(f: F, i: I) -> O {
+                            f(i)
+                        }
+                        call_inner(#expr, value)
+                    }
+                }
+            })
+        })
+        .collect()
+}
+
 /// Expands all `into` derives into a token stream.
 /// Note, that it still produces the `from` derives, but with reversed types.
 fn expand_into(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
@@ -42,6 +66,29 @@ fn expand_into(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
                 #[automatically_derived]
                 impl From<#ident> for #output_ty {
                     fn from(value: #ident) -> Self {
+                        fn call_inner<I, O, F: FnOnce(I) -> O>(f: F, i: I) -> O {
+                            f(i)
+                        }
+                        call_inner(#expr, value)
+                    }
+                }
+            })
+        })
+        .collect()
+}
+
+/// Expands all `try_into` derives into a token stream.
+/// Note, that it still produces the `try_from` derives, but with reversed types.
+fn expand_try_into(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
+    let ident = &res.ident;
+    res.try_into
+        .iter()
+        .map(|(output_ty, error_ty, expr)| {
+            Ok(quote::quote! {
+                #[automatically_derived]
+                impl TryFrom<#ident> for #output_ty {
+                    type Error = #error_ty;
+                    fn try_from(value: #ident) -> Result<Self, Self::Error> {
                         fn call_inner<I, O, F: FnOnce(I) -> O>(f: F, i: I) -> O {
                             f(i)
                         }
