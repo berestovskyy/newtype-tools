@@ -7,17 +7,6 @@ Newtype Tools
 [![Docs.rs]][Docs.rs Link]
 [![Crates.io]][Crates.io Link]
 
-[Discussions]: https://img.shields.io/github/discussions/berestovskyy/newtype-tools?color=blueviolet
-[Discussions Link]: https://github.com/berestovskyy/newtype-tools/discussions
-[CI Status]: https://github.com/berestovskyy/newtype-tools/actions/workflows/ci.yaml/badge.svg?branch=main
-[CI Link]: https://github.com/berestovskyy/newtype-tools/actions/workflows/ci.yaml?query=branch%3Amain
-[CD Status]: https://github.com/berestovskyy/newtype-tools/actions/workflows/cd.yaml/badge.svg?branch=main
-[CD Link]: https://github.com/berestovskyy/newtype-tools/actions/workflows/cd.yaml?query=branch%3Amain
-[Docs.rs]: https://docs.rs/newtype-tools/badge.svg
-[Docs.rs Link]: https://docs.rs/newtype-tools
-[Crates.io]: https://img.shields.io/crates/v/newtype-tools.svg
-[Crates.io Link]: https://crates.io/crates/newtype-tools
-
 A lightweight library (~600 lines of code with minimum dependencies) designed to make
 the [newtype idiom][newtype] more ergonomic to use.
 
@@ -94,14 +83,13 @@ Iterations over `newtype` ranges:
 ```rust
 # #[cfg(feature = "derive")]
 # {
-use newtype_tools::Newtype;
+use newtype_tools::{Newtype, NewtypeIterator};
 
 #[derive(Debug, Newtype)]
-#[newtype(from(usize, with = |u| Apples(u as u64)))]
-#[newtype(range_iter(usize))]
 struct Apples(u64);
 
-for apple in Apples::range_iter(Apples(0)..Apples(42)) {
+let range = Apples(0)..Apples(42);
+for apple in NewtypeIterator::iter(&range) {
     println!("{apple:?}");
 }
 # }
@@ -127,3 +115,14 @@ References
 
 [newtype]: https://doc.rust-lang.org/rust-by-example/generics/new_types.html
 [step]: https://doc.rust-lang.org/std/iter/trait.Step.html
+
+[Discussions]: https://img.shields.io/github/discussions/berestovskyy/newtype-tools?color=blueviolet
+[Discussions Link]: https://github.com/berestovskyy/newtype-tools/discussions
+[CI Status]: https://github.com/berestovskyy/newtype-tools/actions/workflows/ci.yaml/badge.svg?branch=main
+[CI Link]: https://github.com/berestovskyy/newtype-tools/actions/workflows/ci.yaml?query=branch%3Amain
+[CD Status]: https://github.com/berestovskyy/newtype-tools/actions/workflows/cd.yaml/badge.svg?branch=main
+[CD Link]: https://github.com/berestovskyy/newtype-tools/actions/workflows/cd.yaml?query=branch%3Amain
+[Docs.rs]: https://docs.rs/newtype-tools/badge.svg
+[Docs.rs Link]: https://docs.rs/newtype-tools
+[Crates.io]: https://img.shields.io/crates/v/newtype-tools.svg
+[Crates.io Link]: https://crates.io/crates/newtype-tools
