@@ -172,7 +172,7 @@ fn parse_into(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
 }
 
 /// Parses newtype `try_into` attribute from a list:
-/// `#[newtype(try_into(type, error = tye, with = expr))]`
+/// `#[newtype(try_into(type, error = type, with = expr))]`
 fn parse_try_into(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
     let (output_ty, error_ty, with_expr) =
         list.parse_args_with(|input: syn::parse::ParseStream| {
