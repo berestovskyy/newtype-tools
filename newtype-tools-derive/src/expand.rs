@@ -3,6 +3,7 @@ use crate::ParseResult;
 /// Expands all parsed derives into a token stream.
 pub(crate) fn expand_derive(res: &ParseResult) -> syn::Result<proc_macro::TokenStream> {
     let mut tokens = proc_macro2::TokenStream::new();
+    tokens.extend(expand_newtype_trait(res)?);
     tokens.extend(expand_from(res)?);
     tokens.extend(expand_try_from(res)?);
     tokens.extend(expand_into(res)?);
@@ -12,9 +13,32 @@ pub(crate) fn expand_derive(res: &ParseResult) -> syn::Result<proc_macro::TokenS
     Ok(tokens.into())
 }
 
+/// Expands newtype trait definition into a token stream.
+fn expand_newtype_trait(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
+    let ident = &res.newtype_ident;
+    let inner_member = &res.inner_member;
+    let inner_ty = &res.inner_ty;
+    let new_op = match inner_member {
+        syn::Member::Named(field_ident) => quote::quote! { #ident { #field_ident: inner } },
+        syn::Member::Unnamed(_index) => quote::quote! {#ident(inner)},
+    };
+    Ok(quote::quote! {
+        #[automatically_derived]
+        impl Newtype for #ident {
+            type Inner = #inner_ty;
+            fn new(inner: Self::Inner) -> Self {
+                #new_op
+            }
+            fn into_inner(self) -> Self::Inner {
+                self.#inner_member
+            }
+        }
+    })
+}
+
 /// Expands all `from` derives into a token stream.
 fn expand_from(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let ident = &res.ident;
+    let ident = &res.newtype_ident;
     res.from
         .iter()
         .map(|(input_ty, expr)| {
@@ -35,7 +59,7 @@ fn expand_from(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
 
 /// Expands all `try_from` derives into a token stream.
 fn expand_try_from(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let ident = &res.ident;
+    let ident = &res.newtype_ident;
     res.try_from
         .iter()
         .map(|(input_ty, error_ty, expr)| {
@@ -58,7 +82,7 @@ fn expand_try_from(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
 /// Expands all `into` derives into a token stream.
 /// Note, that it still produces the `from` derives, but with reversed types.
 fn expand_into(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let ident = &res.ident;
+    let ident = &res.newtype_ident;
     res.into
         .iter()
         .map(|(output_ty, expr)| {
@@ -80,7 +104,7 @@ fn expand_into(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
 /// Expands all `try_into` derives into a token stream.
 /// Note, that it still produces the `try_from` derives, but with reversed types.
 fn expand_try_into(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let ident = &res.ident;
+    let ident = &res.newtype_ident;
     res.try_into
         .iter()
         .map(|(output_ty, error_ty, expr)| {
@@ -102,7 +126,7 @@ fn expand_try_into(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
 
 /// Expands all `partial_eq` derives into a token stream.
 fn expand_partial_eq(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let ident = &res.ident;
+    let ident = &res.newtype_ident;
     res.partial_eq
         .iter()
         .map(|(other_ty, expr)| {
@@ -123,7 +147,7 @@ fn expand_partial_eq(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream>
 
 /// Expands `range_iter` derive into a token stream.
 fn expand_iter(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let ident = &res.ident;
+    let ident = &res.newtype_ident;
     let ident_range_iterator = quote::format_ident!("{ident}RangeIterator");
     let doc_msg = format!(
         "Creates a specialized iterator for RangeBounds<{ident}>.\n\n\

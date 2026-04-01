@@ -9,7 +9,8 @@ const NEWTYPE_NAME: &str = "newtype";
 
 /// Parses all attributes and produce their structured representation.
 pub(crate) fn parse_input(input: syn::DeriveInput) -> syn::Result<ParseResult> {
-    let mut res = ParseResult::new(input.ident);
+    let (inner_member, inner_ty) = parse_derive_input_data(input.data)?;
+    let mut res = ParseResult::new(input.ident, inner_member, inner_ty);
     for attr in input.attrs {
         // Just skip all other top-level attributes.
         if !attr.path().is_ident(NEWTYPE_NAME) {
@@ -18,6 +19,39 @@ pub(crate) fn parse_input(input: syn::DeriveInput) -> syn::Result<ParseResult> {
         parse_top_level_meta(attr.meta, &mut res)?;
     }
     Ok(res)
+}
+
+/// Parses the first data field for the inner newtype name and type.
+///
+/// For `struct NewType(type)` returns `0` and `type`.
+fn parse_derive_input_data(data: syn::Data) -> syn::Result<(syn::Member, syn::Type)> {
+    use syn::spanned::Spanned;
+    let msg = "expected `struct Type(inner_type)` or `struct Type { inner: type }`";
+
+    let field = match &data {
+        syn::Data::Struct(s) => match &s.fields {
+            syn::Fields::Named(fields) => fields
+                .named
+                .first()
+                .ok_or(syn::Error::new_spanned(fields, msg))?,
+            syn::Fields::Unnamed(fields) => fields
+                .unnamed
+                .first()
+                .ok_or(syn::Error::new_spanned(fields, msg))?,
+            syn::Fields::Unit => Err(syn::Error::new_spanned(s.struct_token, msg))?,
+        },
+        syn::Data::Enum(e) => Err(syn::Error::new_spanned(e.enum_token, msg))?,
+        syn::Data::Union(u) => Err(syn::Error::new_spanned(u.union_token, msg))?,
+    };
+    let inner_member = match &field.ident {
+        Some(ident) => syn::Member::Named(ident.clone()),
+        None => syn::Member::Unnamed(syn::Index {
+            index: 0,
+            span: field.span(),
+        }),
+    };
+    let inner_ty = field.ty.clone();
+    Ok((inner_member, inner_ty))
 }
 
 /// Parses a single top-level attribute's meta and fills in its structured representation.
@@ -254,8 +288,7 @@ impl TryFrom<Option<&syn::Ident>> for AttrType {
             Some(i) if i == "range_iter" => Ok(Self::RangeIter),
             _ => Err(syn::Error::new_spanned(
                 value,
-                "Error matching attribute: expected one of \
-                    `newtype`, `(try_)from`, `(try_)into`, `partial_eq`, `range_iter`",
+                "expected `(try_)from`, `(try_)into`, `partial_eq`, `range_iter`",
             )),
         }
     }

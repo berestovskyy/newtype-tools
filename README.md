@@ -1,7 +1,7 @@
 Newtype Tools
 =============
 
-A lightweight library (~400 lines of code with minimum dependencies) designed to make
+A lightweight library (~600 lines of code with minimum dependencies) designed to make
 the [newtype idiom][newtype] more ergonomic to use.
 
 Motivation
