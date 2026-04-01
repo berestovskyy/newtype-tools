@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.3](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-v0.1.0-beta.2...newtype-tools-v0.1.0-beta.3) - 2026-04-01
+
+### Added
+
+- add `Newtype` trait and derive ([#12](https://github.com/berestovskyy/newtype-tools/pull/12))
+- add basic try_from/try_into ([#10](https://github.com/berestovskyy/newtype-tools/pull/10))
+
+### Other
+
+- rename `release` to `cd` and add badges ([#14](https://github.com/berestovskyy/newtype-tools/pull/14))
+
 ## [0.1.0-beta.2](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-v0.1.0-beta.1...newtype-tools-v0.1.0-beta.2) - 2026-03-31
 
 ### Fixed
