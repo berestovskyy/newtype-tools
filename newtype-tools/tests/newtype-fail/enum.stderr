@@ -1,0 +1,5 @@
+error: expected `struct Type(inner_type)` or `struct Type { inner: type }`
+ --> tests/newtype-fail/enum.rs:4:1
+  |
+4 | enum Unit {}
+  | ^^^^
