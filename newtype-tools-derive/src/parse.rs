@@ -10,7 +10,7 @@ const NEWTYPE_NAME: &str = "newtype";
 /// Parses all attributes and produce their structured representation.
 pub(crate) fn parse_input(input: syn::DeriveInput) -> syn::Result<ParseResult> {
     let inner_ty = parse_derive_input_data(input.data)?;
-    let mut res = ParseResult::new(input.ident, inner_ty);
+    let mut res = ParseResult::new(input.ident, inner_ty, input.generics);
     for attr in input.attrs {
         // Just skip all other top-level attributes.
         if !attr.path().is_ident(NEWTYPE_NAME) {
