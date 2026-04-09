@@ -16,24 +16,19 @@ pub(crate) fn expand_derive(res: &ParseResult) -> syn::Result<proc_macro::TokenS
 fn expand_newtype_trait(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
     let newtype = &res.newtype_ident;
     let inner_ty = &res.inner_ty;
+    let (impl_generics, ty_generics, where_clause) = &res.generics.split_for_impl();
     Ok(quote::quote! {
         #[automatically_derived]
-        impl ::newtype_tools::Newtype for #newtype {
+        impl #impl_generics ::newtype_tools::Newtype for #newtype #ty_generics #where_clause {
             type Inner = #inner_ty;
             fn as_inner(&self) -> &Self::Inner {
                 &self.0
             }
         }
         #[automatically_derived]
-        impl From<#inner_ty> for #newtype {
+        impl #impl_generics From<#inner_ty> for #newtype #ty_generics #where_clause {
             fn from(inner: #inner_ty) -> Self {
                 #newtype(inner)
-            }
-        }
-        #[automatically_derived]
-        impl From<#newtype> for #inner_ty {
-            fn from(newtype: #newtype) -> Self {
-                newtype.0
             }
         }
     })

@@ -20,27 +20,30 @@ fn parse_input_and_expand_derive(input: syn::DeriveInput) -> syn::Result<TokenSt
 #[derive(Debug)]
 struct ParseResult {
     /// Top-level newtype identifier.
-    pub newtype_ident: syn::Ident,
+    newtype_ident: syn::Ident,
     /// Inner type field type.
-    pub inner_ty: syn::Type,
+    inner_ty: syn::Type,
+    /// Newtype generics.
+    generics: syn::Generics,
     /// Tuples of `(input type, conversion expression)`.
-    pub from: Vec<(syn::Type, syn::Expr)>,
+    from: Vec<(syn::Type, syn::Expr)>,
     /// Tuples of `(input type, error type, conversion expression)`.
-    pub try_from: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    try_from: Vec<(syn::Type, syn::Type, syn::Expr)>,
     /// Tuples of `(output type, conversion expression)`.
-    pub into: Vec<(syn::Type, syn::Expr)>,
+    into: Vec<(syn::Type, syn::Expr)>,
     /// Tuples of `(input type, error type, conversion expression)`.
-    pub try_into: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    try_into: Vec<(syn::Type, syn::Type, syn::Expr)>,
     /// Tuples of `(other type, comparison expression)`.
-    pub partial_eq: Vec<(syn::Type, syn::Expr)>,
+    partial_eq: Vec<(syn::Type, syn::Expr)>,
 }
 
 impl ParseResult {
     /// Creates a new `ParseResult` instance.
-    fn new(newtype_ident: syn::Ident, inner_ty: syn::Type) -> Self {
+    fn new(newtype_ident: syn::Ident, inner_ty: syn::Type, generics: syn::Generics) -> Self {
         Self {
             newtype_ident,
             inner_ty,
+            generics,
             from: Vec::default(),
             try_from: Vec::default(),
             into: Vec::default(),
