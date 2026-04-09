@@ -204,6 +204,8 @@ where
     ///
     /// # Example
     /// ```
+    /// # #[cfg(feature = "derive")]
+    /// # {
     /// #[derive(Debug, newtype_tools::Newtype, PartialEq)]
     /// struct Apples(u64);
     /// let range = Apples(1)..Apples(3);
@@ -212,6 +214,7 @@ where
     /// assert_eq!(iter.next(), Some(Apples(1)));
     /// assert_eq!(iter.next(), Some(Apples(2)));
     /// assert_eq!(iter.next(), None);
+    /// # }
     /// ```
     #[inline]
     pub fn iter<R: ::std::ops::RangeBounds<T>>(range: &R) -> Self {
