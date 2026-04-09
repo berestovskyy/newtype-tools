@@ -9,8 +9,8 @@ const NEWTYPE_NAME: &str = "newtype";
 
 /// Parses all attributes and produce their structured representation.
 pub(crate) fn parse_input(input: syn::DeriveInput) -> syn::Result<ParseResult> {
-    let (inner_member, inner_ty) = parse_derive_input_data(input.data)?;
-    let mut res = ParseResult::new(input.ident, inner_member, inner_ty);
+    let inner_ty = parse_derive_input_data(input.data)?;
+    let mut res = ParseResult::new(input.ident, inner_ty);
     for attr in input.attrs {
         // Just skip all other top-level attributes.
         if !attr.path().is_ident(NEWTYPE_NAME) {
@@ -23,35 +23,24 @@ pub(crate) fn parse_input(input: syn::DeriveInput) -> syn::Result<ParseResult> {
 
 /// Parses the first data field for the inner newtype name and type.
 ///
-/// For `struct NewType(type)` returns `0` and `type`.
-fn parse_derive_input_data(data: syn::Data) -> syn::Result<(syn::Member, syn::Type)> {
-    use syn::spanned::Spanned;
-    let msg = "expected `struct Type(inner_type)` or `struct Type { inner: type }`";
+/// For `struct Newtype(type)` returns `0` and `type`.
+fn parse_derive_input_data(data: syn::Data) -> syn::Result<syn::Type> {
+    let msg = "expected `struct Newtype(inner_type)`";
 
     let field = match &data {
         syn::Data::Struct(s) => match &s.fields {
-            syn::Fields::Named(fields) => fields
-                .named
-                .first()
-                .ok_or(syn::Error::new_spanned(fields, msg))?,
-            syn::Fields::Unnamed(fields) => fields
-                .unnamed
-                .first()
-                .ok_or(syn::Error::new_spanned(fields, msg))?,
+            syn::Fields::Unnamed(fields) if fields.unnamed.len() == 1 => {
+                fields.unnamed.first().unwrap()
+            }
+            syn::Fields::Unnamed(fields) => Err(syn::Error::new_spanned(fields, msg))?,
+            syn::Fields::Named(fields) => Err(syn::Error::new_spanned(fields, msg))?,
             syn::Fields::Unit => Err(syn::Error::new_spanned(s.struct_token, msg))?,
         },
         syn::Data::Enum(e) => Err(syn::Error::new_spanned(e.enum_token, msg))?,
         syn::Data::Union(u) => Err(syn::Error::new_spanned(u.union_token, msg))?,
     };
-    let inner_member = match &field.ident {
-        Some(ident) => syn::Member::Named(ident.clone()),
-        None => syn::Member::Unnamed(syn::Index {
-            index: 0,
-            span: field.span(),
-        }),
-    };
     let inner_ty = field.ty.clone();
-    Ok((inner_member, inner_ty))
+    Ok(inner_ty)
 }
 
 /// Parses a single top-level attribute's meta and fills in its structured representation.
@@ -120,10 +109,9 @@ fn parse_nested_path(
         | AttrType::TryFrom
         | AttrType::Into
         | AttrType::TryInto
-        | AttrType::PartialEq
-        | AttrType::RangeIter => Err(syn::Error::new_spanned(
+        | AttrType::PartialEq => Err(syn::Error::new_spanned(
             path,
-            format!("expected `{attr_type}(...)`"),
+            format!("expected `#[newtype({attr_type}(...))]`"),
         )),
     }
 }
@@ -141,7 +129,6 @@ fn parse_nested_list(
         AttrType::Into => parse_into(list, res),
         AttrType::TryInto => parse_try_into(list, res),
         AttrType::PartialEq => parse_partial_eq(list, res),
-        AttrType::RangeIter => parse_iter(list, res),
     }
 }
 
@@ -240,17 +227,6 @@ fn parse_partial_eq(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<
     Ok(())
 }
 
-/// Parses newtype `range_iter` attribute from a list:
-/// `#[newtype(range_iter(type))]`
-fn parse_iter(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let inner_ty = list.parse_args_with(|input: syn::parse::ParseStream| {
-        let inner_ty = parse_lit_or::<syn::Type>(&input)?;
-        Ok(inner_ty)
-    })?;
-    res.range_iter = Some(inner_ty);
-    Ok(())
-}
-
 /// Attribute types.
 #[derive(Debug, PartialEq)]
 enum AttrType {
@@ -259,7 +235,6 @@ enum AttrType {
     Into,
     TryInto,
     PartialEq,
-    RangeIter,
 }
 
 impl std::fmt::Display for AttrType {
@@ -270,7 +245,6 @@ impl std::fmt::Display for AttrType {
             Self::Into => f.write_str("into"),
             Self::TryInto => f.write_str("try_into"),
             Self::PartialEq => f.write_str("partial_eq"),
-            Self::RangeIter => f.write_str("range_iter"),
         }
     }
 }
@@ -285,10 +259,9 @@ impl TryFrom<Option<&syn::Ident>> for AttrType {
             Some(i) if i == "into" => Ok(Self::Into),
             Some(i) if i == "try_into" => Ok(Self::TryInto),
             Some(i) if i == "partial_eq" => Ok(Self::PartialEq),
-            Some(i) if i == "range_iter" => Ok(Self::RangeIter),
             _ => Err(syn::Error::new_spanned(
                 value,
-                "expected `(try_)from`, `(try_)into`, `partial_eq`, `range_iter`",
+                "expected `(try_)from`, `(try_)into`, `partial_eq`, `iter`",
             )),
         }
     }

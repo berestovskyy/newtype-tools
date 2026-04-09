@@ -1,4 +1,4 @@
-error: expected `struct Type(inner_type)` or `struct Type { inner: type }`
+error: expected `struct Newtype(inner_type)`
  --> tests/newtype-fail/union.rs:4:1
   |
 4 | union U {

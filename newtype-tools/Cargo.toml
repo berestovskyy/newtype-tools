@@ -19,6 +19,7 @@ newtype-tools-derive = { workspace = true, optional = true }
 
 [dev-dependencies]
 newtype-tools-derive = { workspace = true }
+rstest = { workspace = true }
 trybuild = { workspace = true }
 
 [features]

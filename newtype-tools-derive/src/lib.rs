@@ -21,8 +21,6 @@ fn parse_input_and_expand_derive(input: syn::DeriveInput) -> syn::Result<TokenSt
 struct ParseResult {
     /// Top-level newtype identifier.
     pub newtype_ident: syn::Ident,
-    /// Inner type field name or index.
-    pub inner_member: syn::Member,
     /// Inner type field type.
     pub inner_ty: syn::Type,
     /// Tuples of `(input type, conversion expression)`.
@@ -35,22 +33,19 @@ struct ParseResult {
     pub try_into: Vec<(syn::Type, syn::Type, syn::Expr)>,
     /// Tuples of `(other type, comparison expression)`.
     pub partial_eq: Vec<(syn::Type, syn::Expr)>,
-    /// Range iterator trait.
-    pub range_iter: Option<syn::Type>,
 }
 
 impl ParseResult {
-    fn new(ident: syn::Ident, inner_member: syn::Member, inner_ty: syn::Type) -> Self {
+    /// Creates a new `ParseResult` instance.
+    fn new(newtype_ident: syn::Ident, inner_ty: syn::Type) -> Self {
         Self {
-            newtype_ident: ident,
-            inner_member,
+            newtype_ident,
             inner_ty,
             from: Vec::default(),
             try_from: Vec::default(),
             into: Vec::default(),
             try_into: Vec::default(),
             partial_eq: Vec::default(),
-            range_iter: None,
         }
     }
 }
