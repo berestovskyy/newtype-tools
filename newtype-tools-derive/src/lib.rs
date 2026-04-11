@@ -25,13 +25,13 @@ struct ParseResult {
     inner_ty: syn::Type,
     /// Newtype generics.
     generics: syn::Generics,
-    /// Tuples of `(input type, conversion expression)`.
+    /// Tuples of `(from type, conversion expression)`.
     from: Vec<(syn::Type, syn::Expr)>,
-    /// Tuples of `(input type, error type, conversion expression)`.
+    /// Tuples of `(from type, error type, conversion expression)`.
     try_from: Vec<(syn::Type, syn::Type, syn::Expr)>,
-    /// Tuples of `(output type, conversion expression)`.
+    /// Tuples of `(into type, conversion expression)`.
     into: Vec<(syn::Type, syn::Expr)>,
-    /// Tuples of `(input type, error type, conversion expression)`.
+    /// Tuples of `(into type, error type, conversion expression)`.
     try_into: Vec<(syn::Type, syn::Type, syn::Expr)>,
     /// Tuples of `(other type, comparison expression)`.
     partial_eq: Vec<(syn::Type, syn::Expr)>,

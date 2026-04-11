@@ -7,20 +7,20 @@ Newtype Tools
 [![Docs.rs]][Docs.rs Link]
 [![Crates.io]][Crates.io Link]
 
-A lightweight library (~600 lines of code with minimum dependencies) designed to make
+A lightweight library (~1K lines of code with minimum dependencies) designed to make
 the [newtype idiom][newtype] more ergonomic to use.
 
 Motivation
 ----------
 
 Instead of trying to be everything or deriving dozens of unused trait implementations,
-this crate provides unique, simple, yet powerful tools for your `newtypes`.
+this crate provides unique, simple, yet powerful tools for your `newtype`s.
 
 The crate focuses on three main areas to make `newtype` usage more enjoyable:
 
 1. Conversions between types.
-2. Operations on `newtypes`.
-3. Iteration over `newtypes` ranges.
+2. Operations on `newtype`s.
+3. Iteration over `newtype` ranges.
 
 Usage
 -----
@@ -57,7 +57,7 @@ assert_eq!(oranges.0, 21);
 # }
 ```
 
-Operations on `newtypes`:
+Operations on `newtype`s:
 
 ```rust
 # #[cfg(feature = "derive")]
@@ -83,13 +83,13 @@ Iterations over `newtype` ranges:
 ```rust
 # #[cfg(feature = "derive")]
 # {
-use newtype_tools::{Newtype, NewtypeIterator};
+use newtype_tools::{Newtype, Iterator};
 
 #[derive(Debug, Newtype)]
 struct Apples(u64);
 
 let range = Apples(0)..Apples(42);
-for apple in NewtypeIterator::iter(&range) {
+for apple in Iterator::from(&range) {
     println!("{apple:?}");
 }
 # }
