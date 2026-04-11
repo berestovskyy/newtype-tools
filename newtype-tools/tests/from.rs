@@ -26,6 +26,20 @@ fn from() {
 }
 
 #[test]
+fn generic_from() {
+    #[derive(Newtype)]
+    #[newtype(from(Oranges, with = |oranges| Apples(T::from(oranges.0 * 2))))]
+    #[repr(transparent)]
+    struct Apples<T>(T)
+    where
+        T: From<u32>;
+    struct Oranges(u32);
+
+    let apples = Apples(42_u64);
+    assert_eq!(apples.0, 42);
+}
+
+#[test]
 fn try_from() {
     use std::num::TryFromIntError;
     #[derive(Newtype)]
@@ -39,4 +53,23 @@ fn try_from() {
 
     let oranges = Oranges::try_from(42_u64).unwrap();
     assert_eq!(oranges.0, 42);
+}
+
+#[test]
+fn generic_try_from() {
+    use std::num::TryFromIntError;
+    #[derive(Newtype)]
+    #[newtype(try_from(
+        Oranges,
+        error = TryFromIntError,
+        with = |a| T::try_from(a.0).map(Apples)
+    ))]
+    #[repr(transparent)]
+    struct Apples<T>(T)
+    where
+        T: TryFrom<u64, Error = TryFromIntError>;
+    struct Oranges(u64);
+
+    let apples = Apples::<u32>::try_from(Oranges(42)).unwrap();
+    assert_eq!(apples.0, 42);
 }

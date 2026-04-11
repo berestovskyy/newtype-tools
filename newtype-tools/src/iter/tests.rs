@@ -1,4 +1,4 @@
-/// `NewtypeStep` `steps_between` invariants:
+/// `Step::steps_between` invariants:
 ///
 /// For any `a`, `b`, and `n`:
 ///
@@ -29,7 +29,7 @@
 #[timeout(std::time::Duration::from_secs(1))]
 fn steps_between_invariants<T>(#[case] a: T, #[case] b: T, #[case] n: usize)
 where
-    T: crate::iter::NewtypeStep + Copy + core::fmt::Debug,
+    T: crate::iter::Step + Copy,
     usize: TryFrom<T>,
 {
     if let Some(b) = T::forward_checked(a, n) {
@@ -55,7 +55,7 @@ where
     }
 }
 
-/// `NewtypeStep` `forward_checked` invariants:
+/// `Step::forward_checked` invariants:
 ///
 /// For any `a`, `n`, and `m`:
 ///
@@ -81,7 +81,7 @@ where
 #[case::i64_a_max_n_max_m_max(i64::MAX, usize::MAX, usize::MAX)]
 #[case::i128_a_max_n1_m1(i128::MAX, 1_usize, 1_usize)]
 #[timeout(std::time::Duration::from_secs(1))]
-fn forward_checked_invariants<T: crate::iter::NewtypeStep + Copy + core::fmt::Debug>(
+fn forward_checked_invariants<T: crate::iter::Step + Copy + core::fmt::Debug>(
     #[case] a: T,
     #[case] n: usize,
     #[case] m: usize,
@@ -103,7 +103,7 @@ fn forward_checked_invariants<T: crate::iter::NewtypeStep + Copy + core::fmt::De
     assert_eq!(T::forward_checked(a, 0), Some(a));
 }
 
-/// `NewtypeStep` `backward_checked` invariants:
+/// `Step::backward_checked` invariants:
 ///
 /// For any `a`, `n`, and `m`:
 ///
@@ -129,7 +129,7 @@ fn forward_checked_invariants<T: crate::iter::NewtypeStep + Copy + core::fmt::De
 #[case::i64_a_max_n_max_m_max(i64::MAX, usize::MAX, usize::MAX)]
 #[case::i128_a_max_n1_m1(i128::MAX, 1_usize, 1_usize)]
 #[timeout(std::time::Duration::from_secs(1))]
-fn backward_checked_invariants<T: crate::iter::NewtypeStep + Copy + core::fmt::Debug>(
+fn backward_checked_invariants<T: crate::iter::Step + Copy + core::fmt::Debug>(
     #[case] a: T,
     #[case] n: usize,
     #[case] m: usize,

@@ -145,24 +145,24 @@ fn parse_nested_name_value(
 /// Parses newtype `from` attribute from a list:
 /// `#[newtype(from(type, with = expr))]`
 fn parse_from(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (input_ty, with_expr) = list.parse_args_with(|input: syn::parse::ParseStream| {
-        let input_ty = parse_lit_or::<syn::Type>(&input)?;
+    let (from_ty, with_expr) = list.parse_args_with(|input: syn::parse::ParseStream| {
+        let from_ty = parse_lit_or::<syn::Type>(&input)?;
         input.parse::<syn::Token![,]>()?;
         input.parse::<kw::with>()?;
         input.parse::<syn::Token![=]>()?;
         let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-        Ok((input_ty, with_expr))
+        Ok((from_ty, with_expr))
     })?;
-    res.from.push((input_ty, with_expr));
+    res.from.push((from_ty, with_expr));
     Ok(())
 }
 
 /// Parses newtype `try_from` attribute from a list:
 /// `#[newtype(try_from(type, error = type, with = expr))]`
 fn parse_try_from(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (input_ty, error_ty, with_expr) =
+    let (try_from_ty, error_ty, with_expr) =
         list.parse_args_with(|input: syn::parse::ParseStream| {
-            let input_ty = parse_lit_or::<syn::Type>(&input)?;
+            let try_from_ty = parse_lit_or::<syn::Type>(&input)?;
             input.parse::<syn::Token![,]>()?;
             input.parse::<kw::error>()?;
             input.parse::<syn::Token![=]>()?;
@@ -171,9 +171,9 @@ fn parse_try_from(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()
             input.parse::<kw::with>()?;
             input.parse::<syn::Token![=]>()?;
             let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-            Ok((input_ty, error_ty, with_expr))
+            Ok((try_from_ty, error_ty, with_expr))
         })?;
-    res.try_from.push((input_ty, error_ty, with_expr));
+    res.try_from.push((try_from_ty, error_ty, with_expr));
     Ok(())
 }
 

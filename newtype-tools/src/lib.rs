@@ -2,18 +2,16 @@
 
 pub mod iter;
 
-pub use iter::NewtypeIterator;
+pub use iter::Iterator;
 #[cfg(feature = "derive")]
 pub use newtype_tools_derive::Newtype;
 
-/// `Newtype` trait defines conversions from and into the inner type.
+/// `Newtype` trait defines the internal representation of the `newtype`.
 ///
-/// This trait is automatically derived for all types annotated with
-/// `#[derive(Newtype)]`.
-pub trait Newtype {
+/// This trait is automatically derived for all types annotated with `#[derive(Newtype)]`
+/// along with the `From<Self::Inner>` and `AsRef<Self::Inner>` traits to convert
+/// between the inner type and the newtype.
+pub trait Newtype: AsRef<Self::Inner> + From<Self::Inner> {
     /// The inner type.
     type Inner;
-
-    /// Unwraps the value returning a reference to the inner type.
-    fn as_inner(&self) -> &Self::Inner;
 }
