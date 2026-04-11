@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.5](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-derive-v0.1.0-beta.4...newtype-tools-derive-v0.1.0-beta.5) - 2026-04-11
+
+### Other
+
+- add links to documentation ([#20](https://github.com/berestovskyy/newtype-tools/pull/20))
+
 ## [0.1.0-beta.4](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-derive-v0.1.0-beta.3...newtype-tools-derive-v0.1.0-beta.4) - 2026-04-11
 
 ### Added
