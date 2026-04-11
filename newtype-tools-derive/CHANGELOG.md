@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.4](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-derive-v0.1.0-beta.3...newtype-tools-derive-v0.1.0-beta.4) - 2026-04-11
+
+### Added
+
+- adopt unstable `Step` implementation ([#19](https://github.com/berestovskyy/newtype-tools/pull/19))
+- add support or generic newtypes ([#18](https://github.com/berestovskyy/newtype-tools/pull/18))
+- refactor newtype iterator ([#16](https://github.com/berestovskyy/newtype-tools/pull/16))
+
 ## [0.1.0-beta.3](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-derive-v0.1.0-beta.2...newtype-tools-derive-v0.1.0-beta.3) - 2026-04-01
 
 ### Added
