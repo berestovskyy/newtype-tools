@@ -2,9 +2,12 @@
 ## Newtype-tools Makefile
 ##
 
+all:: test dry-run
+
 help::
 	@echo "Newtype-tools targets:"
 	@echo "    help        This help message."
+	@echo "    all         Run all the targets: test, dry-run."
 	@echo "    test        Run the cargo format, check, clippy and tests."
 	@echo "    dry-run     Run the cargo publish dry run."
 

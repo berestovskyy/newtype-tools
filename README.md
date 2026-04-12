@@ -14,12 +14,12 @@ Motivation
 ----------
 
 Instead of trying to be everything or deriving dozens of unused trait implementations,
-this crate provides unique, simple, yet powerful tools for your `newtype`s.
+this crate provides unique, simple, yet powerful tools for your `newtypes`.
 
 The crate focuses on three main areas to make `newtype` usage more enjoyable:
 
 1. Conversions between types.
-2. Operations on `newtype`s.
+2. Operations on `newtypes`.
 3. Iteration over `newtype` ranges.
 
 Usage
@@ -57,7 +57,7 @@ assert_eq!(oranges.0, 21);
 # }
 ```
 
-Operations on `newtype`s:
+Operations on `newtypes`:
 
 ```rust
 # #[cfg(feature = "derive")]

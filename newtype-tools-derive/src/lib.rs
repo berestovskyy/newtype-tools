@@ -1,16 +1,18 @@
+#![doc = include_str!("../README.md")]
+
 use proc_macro::TokenStream;
 
 mod expand;
 mod parse;
 
-/// Expands the derive macro into a TokenStream.
+/// Expands the derive macro into a `TokenStream`.
 #[proc_macro_derive(Newtype, attributes(newtype))]
 pub fn derive(input: TokenStream) -> TokenStream {
     let input = syn::parse_macro_input!(input as syn::DeriveInput);
     parse_input_and_expand_derive(input).unwrap_or_else(|err| err.to_compile_error().into())
 }
 
-/// Expands the derive macro into a TokenStream.
+/// Expands the `DeriveInput` into a `syn::Result<TokenStream>`.
 fn parse_input_and_expand_derive(input: syn::DeriveInput) -> syn::Result<TokenStream> {
     let derive = parse::parse_input(input)?;
     expand::expand_derive(&derive)
