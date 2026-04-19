@@ -1,0 +1,5 @@
+error: expected `struct Newtype(inner_type)`
+ --> tests/newtype-fail/struct-unit.rs:2:1
+  |
+2 | struct Oranges;
+  | ^^^^^^

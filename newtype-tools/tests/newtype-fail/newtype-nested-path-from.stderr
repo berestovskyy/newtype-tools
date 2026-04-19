@@ -1,0 +1,5 @@
+error: expected `#[newtype(from(...))]`
+ --> tests/newtype-fail/newtype-nested-path-from.rs:2:11
+  |
+2 | #[newtype(from)]
+  |           ^^^^

@@ -1,6 +1,4 @@
 #[derive(newtype_tools::Newtype)]
-union U {
-    u: u32,
-}
+struct Oranges;
 
 fn main() {}

@@ -1,8 +1,0 @@
-error: expected `struct Newtype(inner_type)`
- --> tests/newtype-fail/struct.rs:4:16
-  |
-4 |   struct Oranges {
-  |  ________________^
-5 | |     inner: u32,
-6 | | }
-  | |_^

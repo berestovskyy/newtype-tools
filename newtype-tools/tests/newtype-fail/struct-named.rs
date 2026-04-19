@@ -1,6 +1,4 @@
-use newtype_tools::Newtype;
-
-#[derive(Newtype)]
+#[derive(newtype_tools::Newtype)]
 struct Oranges {
     inner: u32,
 }

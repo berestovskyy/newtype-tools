@@ -1,6 +1,5 @@
 #[derive(newtype_tools::Newtype)]
-union U {
-    u: u32,
-}
+#[newtype(invalid_path)]
+struct Oranges(u32);
 
 fn main() {}

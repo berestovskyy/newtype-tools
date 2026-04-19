@@ -1,5 +1,8 @@
 use crate::ParseResult;
 
+#[cfg(test)]
+mod tests;
+
 mod kw {
     syn::custom_keyword!(error);
     syn::custom_keyword!(with);
@@ -21,9 +24,9 @@ pub(crate) fn parse_input(input: syn::DeriveInput) -> syn::Result<ParseResult> {
     Ok(res)
 }
 
-/// Parses the first data field for the inner newtype name and type.
+/// Parses the first struct field to get the inner type.
 ///
-/// For `struct Newtype(type)` returns `0` and `type`.
+/// For `struct Newtype(type)` returns `type`.
 fn parse_derive_input_data(data: syn::Data) -> syn::Result<syn::Type> {
     let msg = "expected `struct Newtype(inner_type)`";
 
@@ -48,7 +51,7 @@ fn parse_top_level_meta(meta: syn::Meta, res: &mut ParseResult) -> syn::Result<(
     match meta {
         // `#[newtype]`
         syn::Meta::Path(path) => parse_top_level_path(path, res)?,
-        // `#[newtype(item1, item2)]`
+        // `#[newtype(attr1, attr2)]`
         syn::Meta::List(list) => parse_top_level_list(list, res)?,
         // `#[newtype = value]`
         syn::Meta::NameValue(name_value) => parse_top_level_name_value(name_value, res)?,
@@ -58,12 +61,15 @@ fn parse_top_level_meta(meta: syn::Meta, res: &mut ParseResult) -> syn::Result<(
 
 /// Parses a single top-level path attribute and fills in its structured representation:
 /// `#[newtype]`
-fn parse_top_level_path(_path: syn::Path, _res: &mut ParseResult) -> syn::Result<()> {
-    Ok(())
+fn parse_top_level_path(path: syn::Path, _res: &mut ParseResult) -> syn::Result<()> {
+    Err(syn::Error::new_spanned(
+        path,
+        "expected `#[newtype(attr1, attr2)]`",
+    ))
 }
 
 /// Parses a single top-level list attribute and fills in its structured representation:
-/// `#[newtype(item1, item2)]`
+/// `#[newtype(attr1, attr2)]`
 fn parse_top_level_list(list: syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
     let args = list.parse_args_with(
         syn::punctuated::Punctuated::<syn::Meta, syn::Token![,]>::parse_terminated,
@@ -77,10 +83,13 @@ fn parse_top_level_list(list: syn::MetaList, res: &mut ParseResult) -> syn::Resu
 /// Parses a single top-level name-value attribute and fills in its structured representation.
 /// `#[newtype = value]`
 fn parse_top_level_name_value(
-    _name_value: syn::MetaNameValue,
+    name_value: syn::MetaNameValue,
     _res: &mut ParseResult,
 ) -> syn::Result<()> {
-    Ok(())
+    Err(syn::Error::new_spanned(
+        name_value,
+        "expected `#[newtype(attr1, attr2)]`",
+    ))
 }
 
 /// Parses a single nested attribute's meta and fills in its structured representation.
@@ -117,7 +126,7 @@ fn parse_nested_path(
 }
 
 /// Parses a single nested list attribute and fills in its structured representation:
-/// `#[newtype(attr(item1, item2))]`
+/// `#[newtype(attr(attr1, attr2))]`
 fn parse_nested_list(
     attr_type: AttrType,
     list: &syn::MetaList,
@@ -135,11 +144,14 @@ fn parse_nested_list(
 /// Parses a single nested name-value attribute and fills in its structured representation.
 /// `#[newtype(attr = value)]`
 fn parse_nested_name_value(
-    _attr_type: AttrType,
-    _name_value: &syn::MetaNameValue,
+    attr_type: AttrType,
+    name_value: &syn::MetaNameValue,
     _res: &mut ParseResult,
 ) -> syn::Result<()> {
-    Ok(())
+    Err(syn::Error::new_spanned(
+        name_value,
+        format!("expected `#[newtype({attr_type}(...))]`"),
+    ))
 }
 
 /// Parses newtype `from` attribute from a list:
