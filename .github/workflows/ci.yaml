@@ -1,10 +1,8 @@
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 name: CI
 env:
@@ -65,6 +63,20 @@ jobs:
       - name: Formatting
         if: matrix.rust == needs.config.outputs.stable
         run: cargo fmt --all -- --check
+
+      - name: Install `cargo-llvm-cov`
+        if: matrix.rust == needs.config.outputs.stable
+        uses: taiki-e/install-action@cargo-llvm-cov
+      - name: Generate Code Coverage Report
+        if: matrix.rust == needs.config.outputs.stable
+        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+      - name: Upload Coverage Report to Codecov
+        if: matrix.rust == needs.config.outputs.stable
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # required for private repos or protected branches
+          files: lcov.info
+          fail_ci_if_error: true
 
   # If this fails, consider changing your text or adding something to `.typos.toml`.
   typos:
