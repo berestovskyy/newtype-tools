@@ -1,28 +1,6 @@
 #[cfg(test)]
 mod tests;
 
-/// Blanket `Step` implementation for all `Newtype`s.
-impl<T> Step for T
-where
-    T: crate::Newtype + Clone + PartialOrd + MinMax,
-    T::Inner: Step,
-{
-    #[inline]
-    fn steps_between(start: &Self, end: &Self) -> (usize, Option<usize>) {
-        <T::Inner as Step>::steps_between(start.as_ref(), end.as_ref())
-    }
-
-    #[inline]
-    fn forward_checked(start: Self, count: usize) -> Option<Self> {
-        <T::Inner as Step>::forward_checked(start.as_ref().clone(), count).map(T::from)
-    }
-
-    #[inline]
-    fn backward_checked(start: Self, count: usize) -> Option<Self> {
-        <T::Inner as Step>::backward_checked(start.as_ref().clone(), count).map(Self::from)
-    }
-}
-
 /// Blanket `Iterator` implementation for all `Newtype`s.
 #[derive(Clone)]
 pub struct Iterator<T>
