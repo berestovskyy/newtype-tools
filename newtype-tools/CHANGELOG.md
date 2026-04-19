@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.6](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-v0.1.0-beta.5...newtype-tools-v0.1.0-beta.6) - 2026-04-19
+
+### Other
+
+- increase `parse` code coverage ([#27](https://github.com/berestovskyy/newtype-tools/pull/27))
+- increase code coverage ([#26](https://github.com/berestovskyy/newtype-tools/pull/26))
+- add a readme for derive ([#23](https://github.com/berestovskyy/newtype-tools/pull/23))
+
 ## [0.1.0-beta.5](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-v0.1.0-beta.4...newtype-tools-v0.1.0-beta.5) - 2026-04-11
 
 ### Other
