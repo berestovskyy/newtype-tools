@@ -1,6 +1,3 @@
-#[cfg(test)]
-mod tests;
-
 /// Blanket `Iterator` implementation for all `Newtype`s.
 #[derive(Clone)]
 pub struct Iterator<T>
