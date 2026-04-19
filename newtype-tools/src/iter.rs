@@ -4,7 +4,7 @@ mod tests;
 /// Blanket `Step` implementation for all `Newtype`s.
 impl<T> Step for T
 where
-    T: crate::Newtype + Clone + From<T::Inner> + PartialOrd + MinMax,
+    T: crate::Newtype + Clone + PartialOrd + MinMax,
     T::Inner: Step,
 {
     #[inline]
@@ -23,7 +23,7 @@ where
     }
 }
 
-/// Blanket `Iterator`` implementation for all `Newtype`s.
+/// Blanket `Iterator` implementation for all `Newtype`s.
 #[derive(Clone)]
 pub struct Iterator<T>
 where
