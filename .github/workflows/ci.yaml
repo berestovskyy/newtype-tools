@@ -1,12 +1,11 @@
+name: CI
+
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
-name: CI
 env:
   CARGO_TERM_COLOR: always
 
@@ -17,7 +16,7 @@ jobs:
     timeout-minutes: 5
     outputs:
       msrv: "1.86.0" # Also update `rust-version` in root `Cargo.toml`
-      stable: "1.94.1" # Stable release as of 2026-03-30
+      stable: stable
       nightly: nightly
     steps:
       - run: echo "Configuring Rust versions..."
