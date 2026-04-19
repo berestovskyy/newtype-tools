@@ -1,5 +1,5 @@
 error: expected `struct Newtype(inner_type)`
- --> tests/newtype-fail/union.rs:4:1
+ --> tests/newtype-fail/union.rs:2:1
   |
-4 | union U {
+2 | union U {
   | ^^^^^

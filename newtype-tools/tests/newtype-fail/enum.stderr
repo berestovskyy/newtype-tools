@@ -1,5 +1,5 @@
 error: expected `struct Newtype(inner_type)`
- --> tests/newtype-fail/enum.rs:4:1
+ --> tests/newtype-fail/enum.rs:2:1
   |
-4 | enum Unit {}
+2 | enum Enum {}
   | ^^^^

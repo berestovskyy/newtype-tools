@@ -1,5 +1,5 @@
 error: expected `struct Newtype(inner_type)`
- --> tests/newtype-fail/struct-tuple.rs:4:9
+ --> tests/newtype-fail/struct-tuple.rs:2:9
   |
-4 | struct N(u64, u64);
+2 | struct N(u64, u64);
   |         ^^^^^^^^^^

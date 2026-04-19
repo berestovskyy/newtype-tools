@@ -1,6 +1,4 @@
-use newtype_tools::Newtype;
-
-#[derive(Newtype)]
-enum Unit {}
+#[derive(newtype_tools::Newtype)]
+enum Enum {}
 
 fn main() {}
