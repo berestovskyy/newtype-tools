@@ -1,10 +1,11 @@
+name: CI
+
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
 
-name: CI
 env:
   CARGO_TERM_COLOR: always
 
@@ -15,7 +16,7 @@ jobs:
     timeout-minutes: 5
     outputs:
       msrv: "1.86.0" # Also update `rust-version` in root `Cargo.toml`
-      stable: "1.94.1" # Stable release as of 2026-03-30
+      stable: stable
       nightly: nightly
     steps:
       - run: echo "Configuring Rust versions..."
@@ -63,20 +64,6 @@ jobs:
       - name: Formatting
         if: matrix.rust == needs.config.outputs.stable
         run: cargo fmt --all -- --check
-
-      - name: Install `cargo-llvm-cov`
-        if: matrix.rust == needs.config.outputs.stable
-        uses: taiki-e/install-action@cargo-llvm-cov
-      - name: Generate Code Coverage Report
-        if: matrix.rust == needs.config.outputs.stable
-        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
-      - name: Upload Coverage Report to Codecov
-        if: matrix.rust == needs.config.outputs.stable
-        uses: codecov/codecov-action@v5
-        with:
-          use_oidc: true
-          files: lcov.info
-          fail_ci_if_error: true
 
   # If this fails, consider changing your text or adding something to `.typos.toml`.
   typos:
