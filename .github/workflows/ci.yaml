@@ -74,7 +74,7 @@ jobs:
         if: matrix.rust == needs.config.outputs.stable
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }} # required for private repos or protected branches
+          use_oidc: true
           files: lcov.info
           fail_ci_if_error: true
 
