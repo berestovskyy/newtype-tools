@@ -10,6 +10,7 @@ help::
 	@echo "    all         Run all the targets: test, dry-run."
 	@echo "    lcov        Generate lcov code coverage report."
 	@echo "    html        Generate HTML code coverage report."
+	@echo "    open        Open HTML code coverage report."
 	@echo "    test        Run the cargo format, check, clippy and tests."
 	@echo "    dry-run     Run the cargo publish dry run."
 
@@ -32,8 +33,11 @@ lcov::
 html::
 	@echo "==> Generating HTML code coverage report..."
 	cargo llvm-cov --html
-	open target/llvm-cov/html/index.html
 	@echo "All OK."
+
+open:: html
+	@echo "==> Open HTML code coverage report..."
+	open target/llvm-cov/html/index.html
 
 dry-run::
 	@echo "==> Running cargo publish dry run..."

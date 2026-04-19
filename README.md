@@ -4,6 +4,7 @@ Newtype Tools
 [![Discussions]][Discussions Link]
 [![CI Status]][CI Link]
 [![CD Status]][CD Link]
+[![Coverage Status]][Coverage Link]
 [![Docs.rs]][Docs.rs Link]
 [![Crates.io]][Crates.io Link]
 
@@ -122,6 +123,8 @@ References
 [CI Link]: https://github.com/berestovskyy/newtype-tools/actions/workflows/ci.yaml?query=branch%3Amain
 [CD Status]: https://github.com/berestovskyy/newtype-tools/actions/workflows/cd.yaml/badge.svg?branch=main
 [CD Link]: https://github.com/berestovskyy/newtype-tools/actions/workflows/cd.yaml?query=branch%3Amain
+[Coverage Status]: https://codecov.io/github/berestovskyy/newtype-tools/branch/main/graph/badge.svg?token=EDGTFYZI3P
+[Coverage Link]: https://codecov.io/github/berestovskyy/newtype-tools
 [Docs.rs]: https://docs.rs/newtype-tools/badge.svg
 [Docs.rs Link]: https://docs.rs/newtype-tools
 [Crates.io]: https://img.shields.io/crates/v/newtype-tools.svg
