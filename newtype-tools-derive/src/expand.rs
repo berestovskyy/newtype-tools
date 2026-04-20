@@ -11,12 +11,13 @@ pub(crate) fn expand_derive(res: &ParseResult) -> syn::Result<proc_macro::TokenS
     tokens.extend(expand_add(res)?);
     tokens.extend(expand_add_assign(res)?);
     tokens.extend(expand_partial_eq(res)?);
+    tokens.extend(expand_sub(res)?);
     Ok(tokens.into())
 }
 
 /// Expands newtype trait definition into a token stream.
 fn expand_newtype_trait(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let newtype = &res.newtype_ident;
+    let newtype = &res.newtype;
     let inner_ty = &res.inner_ty;
     let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
     Ok(quote::quote! {
@@ -41,7 +42,7 @@ fn expand_newtype_trait(res: &ParseResult) -> syn::Result<proc_macro2::TokenStre
 
 /// Expands all `from` derives into a token stream.
 fn expand_from(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let newtype = &res.newtype_ident;
+    let newtype = &res.newtype;
     let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
     res.from
         .iter()
@@ -63,7 +64,7 @@ fn expand_from(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
 
 /// Expands all `try_from` derives into a token stream.
 fn expand_try_from(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let newtype = &res.newtype_ident;
+    let newtype = &res.newtype;
     let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
     res.try_from
         .iter()
@@ -87,7 +88,7 @@ fn expand_try_from(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
 /// Expands all `into` derives into a token stream.
 /// Note, that it still produces the `from` derives, but with reversed types.
 fn expand_into(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let newtype = &res.newtype_ident;
+    let newtype = &res.newtype;
     let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
     res.into
         .iter()
@@ -110,7 +111,7 @@ fn expand_into(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
 /// Expands all `try_into` derives into a token stream.
 /// Note, that it still produces the `try_from` derives, but with reversed types.
 fn expand_try_into(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let newtype = &res.newtype_ident;
+    let newtype = &res.newtype;
     let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
     res.try_into
         .iter()
@@ -133,45 +134,17 @@ fn expand_try_into(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
 
 /// Expands all `add` derives into a token stream.
 fn expand_add(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let newtype = &res.newtype_ident;
-    let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
-    res.add
-        .iter()
-        .map(|(rhs_ty, output_ty, expr)| {
-            Ok(quote::quote! {
-                #[automatically_derived]
-                impl #impl_generics std::ops::Add<&#rhs_ty> for &#newtype #newtype_generics #where_clause {
-                    type Output = #output_ty;
-                    fn add(self, rhs: &#rhs_ty) -> Self::Output {
-                        fn call_inner<S, I, O, F: FnOnce(S, I) -> O>(f: F, s: S, i: I) -> O {
-                            f(s, i)
-                        }
-                        call_inner(#expr, self, rhs)
-                    }
-                }
-                #[automatically_derived]
-                impl #impl_generics std::ops::Add<&#rhs_ty> for #newtype #newtype_generics #where_clause {
-                    type Output = #output_ty;
-                    fn add(self, rhs: &#rhs_ty) -> Self::Output { &self + rhs }
-                }
-                #[automatically_derived]
-                impl #impl_generics std::ops::Add<#rhs_ty> for &#newtype #newtype_generics #where_clause {
-                    type Output = #output_ty;
-                    fn add(self, rhs: #rhs_ty) -> Self::Output { self + &rhs }
-                }
-                #[automatically_derived]
-                impl #impl_generics std::ops::Add<#rhs_ty> for #newtype #newtype_generics #where_clause {
-                    type Output = #output_ty;
-                    fn add(self, rhs: #rhs_ty) -> Self::Output { &self + &rhs }
-                }
-            })
-        })
-        .collect()
+    Ok(expand_bin_op(
+        syn::parse_quote!(std::ops::Add),
+        syn::parse_quote!(add),
+        res,
+        &res.add,
+    ))
 }
 
 /// Expands all `add_assign` derives into a token stream.
 fn expand_add_assign(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let newtype = &res.newtype_ident;
+    let newtype = &res.newtype;
     let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
     res.add_assign
         .iter()
@@ -197,7 +170,7 @@ fn expand_add_assign(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream>
 
 /// Expands all `partial_eq` derives into a token stream.
 fn expand_partial_eq(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let newtype = &res.newtype_ident;
+    let newtype = &res.newtype;
     let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
     res.partial_eq
         .iter()
@@ -213,6 +186,62 @@ fn expand_partial_eq(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream>
                     }
                 }
             })
+        })
+        .collect()
+}
+
+/// Expands all `sub` derives into a token stream.
+fn expand_sub(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
+    Ok(expand_bin_op(
+        syn::parse_quote!(std::ops::Sub),
+        syn::parse_quote!(sub),
+        res,
+        &res.sub,
+    ))
+}
+
+/// Expands a binary operation into a token stream.
+fn expand_bin_op(
+    trait_path: syn::Path,
+    method_ident: syn::Ident,
+    res: &ParseResult,
+    ops: &[(syn::Type, syn::Type, syn::Expr)],
+) -> proc_macro2::TokenStream {
+    if ops.is_empty() {
+        return proc_macro2::TokenStream::new();
+    }
+    let newtype = &res.newtype;
+    let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
+    ops
+        .iter()
+        .map(|(rhs_ty, output_ty, expr)| {
+            quote::quote! {
+                #[automatically_derived]
+                impl #impl_generics #trait_path<&#rhs_ty> for &#newtype #newtype_generics #where_clause {
+                    type Output = #output_ty;
+                    fn #method_ident(self, rhs: &#rhs_ty) -> Self::Output {
+                        fn call_inner<S, I, O, F: FnOnce(S, I) -> O>(f: F, s: S, i: I) -> O {
+                            f(s, i)
+                        }
+                        call_inner(#expr, self, rhs)
+                    }
+                }
+                #[automatically_derived]
+                impl #impl_generics #trait_path<&#rhs_ty> for #newtype #newtype_generics #where_clause {
+                    type Output = #output_ty;
+                    fn #method_ident(self, rhs: &#rhs_ty) -> Self::Output { #trait_path::#method_ident(&self, rhs) }
+                }
+                #[automatically_derived]
+                impl #impl_generics #trait_path<#rhs_ty> for &#newtype #newtype_generics #where_clause {
+                    type Output = #output_ty;
+                    fn #method_ident(self, rhs: #rhs_ty) -> Self::Output { #trait_path::#method_ident(self, &rhs) }
+                }
+                #[automatically_derived]
+                impl #impl_generics #trait_path<#rhs_ty> for #newtype #newtype_generics #where_clause {
+                    type Output = #output_ty;
+                    fn #method_ident(self, rhs: #rhs_ty) -> Self::Output { #trait_path::#method_ident(&self, &rhs) }
+                }
+            }
         })
         .collect()
 }

@@ -22,7 +22,7 @@ fn parse_input_and_expand_derive(input: syn::DeriveInput) -> syn::Result<TokenSt
 #[derive(Debug)]
 struct ParseResult {
     /// Top-level newtype identifier.
-    newtype_ident: syn::Ident,
+    newtype: syn::Ident,
     /// Inner type field type.
     inner_ty: syn::Type,
     /// Newtype generics.
@@ -41,13 +41,15 @@ struct ParseResult {
     add_assign: Vec<(syn::Type, syn::Expr)>,
     /// Tuples of `(other type, comparison expression)`.
     partial_eq: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, sub expression)`.
+    sub: Vec<(syn::Type, syn::Type, syn::Expr)>,
 }
 
 impl ParseResult {
     /// Creates a new `ParseResult` instance.
-    fn new(newtype_ident: syn::Ident, inner_ty: syn::Type, generics: syn::Generics) -> Self {
+    fn new(newtype: syn::Ident, inner_ty: syn::Type, generics: syn::Generics) -> Self {
         Self {
-            newtype_ident,
+            newtype,
             inner_ty,
             generics,
             from: Vec::default(),
@@ -57,6 +59,7 @@ impl ParseResult {
             add: Vec::default(),
             add_assign: Vec::default(),
             partial_eq: Vec::default(),
+            sub: Vec::default(),
         }
     }
 }
