@@ -2,17 +2,17 @@
 ## Newtype-tools Makefile
 ##
 
-all:: test lcov html dry-run
+all:: test lcov html publish
 
 help::
 	@echo "Newtype-tools targets:"
 	@echo "    help        This help message."
-	@echo "    all         Run all the targets: test, dry-run."
+	@echo "    all         Run all the targets: test, publish."
 	@echo "    lcov        Generate lcov code coverage report."
 	@echo "    html        Generate HTML code coverage report."
 	@echo "    open        Open HTML code coverage report."
 	@echo "    test        Run the cargo format, check, clippy and tests."
-	@echo "    dry-run     Run the cargo publish dry run."
+	@echo "    publish     Run the cargo publish dry run."
 
 test::
 	@echo "==> Running the cargo format, check, clippy and tests..."
@@ -39,7 +39,7 @@ open:: html
 	@echo "==> Open HTML code coverage report..."
 	open target/llvm-cov/html/index.html
 
-dry-run::
+publish::
 	@echo "==> Running cargo publish dry run..."
 	cargo publish --dry-run
 	@echo "All OK."
