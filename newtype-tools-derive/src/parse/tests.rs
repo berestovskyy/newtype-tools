@@ -9,4 +9,5 @@ fn attr_type_display_roundtrip() {
     assert_eq!(format!("{}", AttrType::AddAssign), "add_assign");
     assert_eq!(format!("{}", AttrType::PartialEq), "partial_eq");
     assert_eq!(format!("{}", AttrType::Sub), "sub");
+    assert_eq!(format!("{}", AttrType::SubAssign), "sub_assign");
 }

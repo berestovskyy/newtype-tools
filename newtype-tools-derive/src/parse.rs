@@ -122,7 +122,8 @@ fn parse_nested_path(
         | AttrType::Add
         | AttrType::AddAssign
         | AttrType::PartialEq
-        | AttrType::Sub => Err(syn::Error::new_spanned(
+        | AttrType::Sub
+        | AttrType::SubAssign => Err(syn::Error::new_spanned(
             path,
             format!("expected `#[newtype({attr_type}(...))]`"),
         )),
@@ -145,6 +146,7 @@ fn parse_nested_list(
         AttrType::AddAssign => parse_add_assign(list, res),
         AttrType::PartialEq => parse_partial_eq(list, res),
         AttrType::Sub => parse_sub(list, res),
+        AttrType::SubAssign => parse_sub_assign(list, res),
     }
 }
 
@@ -241,15 +243,7 @@ fn parse_add(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
 /// Parses newtype `add_assign` attribute from a list:
 /// `#[newtype(add_assign(type, with = expr))]`
 fn parse_add_assign(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (rhs_ty, with_expr) = list.parse_args_with(|input: syn::parse::ParseStream| {
-        let rhs_ty = parse_lit_or::<syn::Type>(&input)?;
-        input.parse::<syn::Token![,]>()?;
-        input.parse::<kw::with>()?;
-        input.parse::<syn::Token![=]>()?;
-        let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-        Ok((rhs_ty, with_expr))
-    })?;
-    res.add_assign.push((rhs_ty, with_expr));
+    res.add_assign.push(parse_assign_op(list)?);
     Ok(())
 }
 
@@ -275,6 +269,13 @@ fn parse_sub(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
     Ok(())
 }
 
+/// Parses newtype `sub` attribute from a list:
+/// `#[newtype(sub_assign(type, with = expr))]`
+fn parse_sub_assign(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
+    res.sub_assign.push(parse_assign_op(list)?);
+    Ok(())
+}
+
 /// Parses newtype binary operation attribute from a list:
 /// `#[newtype(binary_op(type, output = type, with = expr))]`
 fn parse_binary_op(list: &syn::MetaList) -> syn::Result<(syn::Type, syn::Type, syn::Expr)> {
@@ -292,6 +293,19 @@ fn parse_binary_op(list: &syn::MetaList) -> syn::Result<(syn::Type, syn::Type, s
     })
 }
 
+/// Parses newtype assign operation attribute from a list:
+/// `#[newtype(assign_op(type, with = expr))]`
+fn parse_assign_op(list: &syn::MetaList) -> syn::Result<(syn::Type, syn::Expr)> {
+    list.parse_args_with(|input: syn::parse::ParseStream| {
+        let rhs_ty = parse_lit_or::<syn::Type>(&input)?;
+        input.parse::<syn::Token![,]>()?;
+        input.parse::<kw::with>()?;
+        input.parse::<syn::Token![=]>()?;
+        let with_expr = parse_lit_or::<syn::Expr>(&input)?;
+        Ok((rhs_ty, with_expr))
+    })
+}
+
 /// Attribute types.
 #[derive(Debug, PartialEq)]
 enum AttrType {
@@ -303,6 +317,7 @@ enum AttrType {
     AddAssign,
     PartialEq,
     Sub,
+    SubAssign,
 }
 
 impl std::fmt::Display for AttrType {
@@ -316,6 +331,7 @@ impl std::fmt::Display for AttrType {
             Self::AddAssign => f.write_str("add_assign"),
             Self::PartialEq => f.write_str("partial_eq"),
             Self::Sub => f.write_str("sub"),
+            Self::SubAssign => f.write_str("sub_assign"),
         }
     }
 }
@@ -333,9 +349,11 @@ impl TryFrom<Option<&syn::Ident>> for AttrType {
             Some(i) if i == "add_assign" => Ok(Self::AddAssign),
             Some(i) if i == "partial_eq" => Ok(Self::PartialEq),
             Some(i) if i == "sub" => Ok(Self::Sub),
+            Some(i) if i == "sub_assign" => Ok(Self::SubAssign),
             _ => Err(syn::Error::new_spanned(
                 value,
-                "expected `(try_)from`, `(try_)into`, `add(_assign)`, `partial_eq`, `sub`, `iter`",
+                "expected `(try_)from`, `(try_)into`, `add(_assign)`, `partial_eq`, \
+                `sub(_assign)`, `iter`",
             )),
         }
     }
