@@ -9,6 +9,7 @@ pub(crate) fn expand_derive(res: &ParseResult) -> syn::Result<proc_macro::TokenS
     tokens.extend(expand_into(res)?);
     tokens.extend(expand_try_into(res)?);
     tokens.extend(expand_add(res)?);
+    tokens.extend(expand_add_assign(res)?);
     tokens.extend(expand_partial_eq(res)?);
     Ok(tokens.into())
 }
@@ -162,6 +163,32 @@ fn expand_add(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
                 impl #impl_generics std::ops::Add<#rhs_ty> for #newtype #newtype_generics #where_clause {
                     type Output = #output_ty;
                     fn add(self, rhs: #rhs_ty) -> Self::Output { &self + &rhs }
+                }
+            })
+        })
+        .collect()
+}
+
+/// Expands all `add_assign` derives into a token stream.
+fn expand_add_assign(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
+    let newtype = &res.newtype_ident;
+    let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
+    res.add_assign
+        .iter()
+        .map(|(rhs_ty, expr)| {
+            Ok(quote::quote! {
+                #[automatically_derived]
+                impl #impl_generics std::ops::AddAssign<&#rhs_ty> for #newtype #newtype_generics #where_clause {
+                    fn add_assign(&mut self, rhs: &#rhs_ty) {
+                        fn call_inner<S, I, F: FnOnce(S, I)>(f: F, s: S, i: I) {
+                            f(s, i)
+                        }
+                        call_inner(#expr, self, rhs)
+                    }
+                }
+                #[automatically_derived]
+                impl #impl_generics std::ops::AddAssign<#rhs_ty> for #newtype #newtype_generics #where_clause {
+                    fn add_assign(&mut self, rhs: #rhs_ty) { *self += &rhs }
                 }
             })
         })

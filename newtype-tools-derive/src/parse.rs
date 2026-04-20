@@ -120,6 +120,7 @@ fn parse_nested_path(
         | AttrType::Into
         | AttrType::TryInto
         | AttrType::Add
+        | AttrType::AddAssign
         | AttrType::PartialEq => Err(syn::Error::new_spanned(
             path,
             format!("expected `#[newtype({attr_type}(...))]`"),
@@ -140,6 +141,7 @@ fn parse_nested_list(
         AttrType::Into => parse_into(list, res),
         AttrType::TryInto => parse_try_into(list, res),
         AttrType::Add => parse_add(list, res),
+        AttrType::AddAssign => parse_add_assign(list, res),
         AttrType::PartialEq => parse_partial_eq(list, res),
     }
 }
@@ -247,6 +249,21 @@ fn parse_add(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
     Ok(())
 }
 
+/// Parses newtype `add_assign` attribute from a list:
+/// `#[newtype(add_assign(type, with = expr))]`
+fn parse_add_assign(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
+    let (rhs_ty, with_expr) = list.parse_args_with(|input: syn::parse::ParseStream| {
+        let rhs_ty = parse_lit_or::<syn::Type>(&input)?;
+        input.parse::<syn::Token![,]>()?;
+        input.parse::<kw::with>()?;
+        input.parse::<syn::Token![=]>()?;
+        let with_expr = parse_lit_or::<syn::Expr>(&input)?;
+        Ok((rhs_ty, with_expr))
+    })?;
+    res.add_assign.push((rhs_ty, with_expr));
+    Ok(())
+}
+
 /// Parses newtype `partial_eq` attribute from a list:
 /// `#[newtype(partial_eq(type, with = expr))]`
 fn parse_partial_eq(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
@@ -270,6 +287,7 @@ enum AttrType {
     Into,
     TryInto,
     Add,
+    AddAssign,
     PartialEq,
 }
 
@@ -281,6 +299,7 @@ impl std::fmt::Display for AttrType {
             Self::Into => f.write_str("into"),
             Self::TryInto => f.write_str("try_into"),
             Self::Add => f.write_str("add"),
+            Self::AddAssign => f.write_str("add_assign"),
             Self::PartialEq => f.write_str("partial_eq"),
         }
     }
@@ -296,10 +315,11 @@ impl TryFrom<Option<&syn::Ident>> for AttrType {
             Some(i) if i == "into" => Ok(Self::Into),
             Some(i) if i == "try_into" => Ok(Self::TryInto),
             Some(i) if i == "add" => Ok(Self::Add),
+            Some(i) if i == "add_assign" => Ok(Self::AddAssign),
             Some(i) if i == "partial_eq" => Ok(Self::PartialEq),
             _ => Err(syn::Error::new_spanned(
                 value,
-                "expected `(try_)from`, `(try_)into`, `add`, `partial_eq`, `iter`",
+                "expected `(try_)from`, `(try_)into`, `add(_assign)`, `partial_eq`, `iter`",
             )),
         }
     }
