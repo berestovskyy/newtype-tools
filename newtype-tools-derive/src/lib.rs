@@ -43,6 +43,8 @@ struct ParseResult {
     partial_eq: Vec<(syn::Type, syn::Expr)>,
     /// Tuples of `(rhs type, output type, sub expression)`.
     sub: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, sub-assign expression)`.
+    sub_assign: Vec<(syn::Type, syn::Expr)>,
 }
 
 impl ParseResult {
@@ -60,6 +62,7 @@ impl ParseResult {
             add_assign: Vec::default(),
             partial_eq: Vec::default(),
             sub: Vec::default(),
+            sub_assign: Vec::default(),
         }
     }
 }
