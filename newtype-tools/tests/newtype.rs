@@ -1,12 +1,6 @@
 #![cfg(feature = "derive")]
 
 #[test]
-fn newtype_trybuild() {
-    let t = trybuild::TestCases::new();
-    t.compile_fail("tests/newtype-fail/*.rs");
-}
-
-#[test]
 fn newtype() {
     #[derive(newtype_tools::Newtype)]
     #[repr(transparent)]

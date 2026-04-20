@@ -1,0 +1,53 @@
+error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
+ --> tests/trybuild/try_from.rs:5:24
+  |
+5 |     #[newtype(try_from())]
+  |                        ^
+
+error: expected `,`
+  --> tests/trybuild/try_from.rs:11:27
+   |
+11 |     #[newtype(try_from(u64))]
+   |                           ^
+
+error: unexpected end of input, expected `error`
+  --> tests/trybuild/try_from.rs:17:28
+   |
+17 |     #[newtype(try_from(u64,))]
+   |                            ^
+
+error: expected `=`
+  --> tests/trybuild/try_from.rs:23:34
+   |
+23 |     #[newtype(try_from(u64, error))]
+   |                                  ^
+
+error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
+  --> tests/trybuild/try_from.rs:29:36
+   |
+29 |     #[newtype(try_from(u64, error =))]
+   |                                    ^
+
+error: expected `,`
+  --> tests/trybuild/try_from.rs:35:42
+   |
+35 |     #[newtype(try_from(u64, error = Error))]
+   |                                          ^
+
+error: unexpected end of input, expected `with`
+  --> tests/trybuild/try_from.rs:41:43
+   |
+41 |     #[newtype(try_from(u64, error = Error,))]
+   |                                           ^
+
+error: expected `=`
+  --> tests/trybuild/try_from.rs:47:48
+   |
+47 |     #[newtype(try_from(u64, error = Error, with))]
+   |                                                ^
+
+error: unexpected end of input, expected an expression
+  --> tests/trybuild/try_from.rs:53:50
+   |
+53 |     #[newtype(try_from(u64, error = Error, with =))]
+   |                                                  ^

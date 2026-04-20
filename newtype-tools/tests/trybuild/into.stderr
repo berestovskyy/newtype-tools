@@ -1,0 +1,29 @@
+error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
+ --> tests/trybuild/into.rs:5:20
+  |
+5 |     #[newtype(into())]
+  |                    ^
+
+error: expected `,`
+  --> tests/trybuild/into.rs:11:23
+   |
+11 |     #[newtype(into(u64))]
+   |                       ^
+
+error: unexpected end of input, expected `with`
+  --> tests/trybuild/into.rs:17:24
+   |
+17 |     #[newtype(into(u64,))]
+   |                        ^
+
+error: expected `=`
+  --> tests/trybuild/into.rs:23:29
+   |
+23 |     #[newtype(into(u64, with))]
+   |                             ^
+
+error: unexpected end of input, expected an expression
+  --> tests/trybuild/into.rs:29:31
+   |
+29 |     #[newtype(into(u64, with =))]
+   |                               ^

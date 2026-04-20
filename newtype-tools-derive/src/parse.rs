@@ -236,14 +236,14 @@ fn parse_try_into(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()
 /// Parses newtype `add` attribute from a list:
 /// `#[newtype(add(type, output = type, with = expr))]`
 fn parse_add(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    res.add.push(parse_binary_op(list)?);
+    res.add.push(parse_type_output_with(list)?);
     Ok(())
 }
 
 /// Parses newtype `add_assign` attribute from a list:
 /// `#[newtype(add_assign(type, with = expr))]`
 fn parse_add_assign(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    res.add_assign.push(parse_assign_op(list)?);
+    res.add_assign.push(parse_type_with(list)?);
     Ok(())
 }
 
@@ -265,20 +265,20 @@ fn parse_partial_eq(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<
 /// Parses newtype `sub` attribute from a list:
 /// `#[newtype(sub(type, output = type, with = expr))]`
 fn parse_sub(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    res.sub.push(parse_binary_op(list)?);
+    res.sub.push(parse_type_output_with(list)?);
     Ok(())
 }
 
 /// Parses newtype `sub` attribute from a list:
 /// `#[newtype(sub_assign(type, with = expr))]`
 fn parse_sub_assign(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    res.sub_assign.push(parse_assign_op(list)?);
+    res.sub_assign.push(parse_type_with(list)?);
     Ok(())
 }
 
-/// Parses newtype binary operation attribute from a list:
-/// `#[newtype(binary_op(type, output = type, with = expr))]`
-fn parse_binary_op(list: &syn::MetaList) -> syn::Result<(syn::Type, syn::Type, syn::Expr)> {
+/// Parses newtype attribute from a list:
+/// `#[newtype(attribute(type, output = type, with = expr))]`
+fn parse_type_output_with(list: &syn::MetaList) -> syn::Result<(syn::Type, syn::Type, syn::Expr)> {
     list.parse_args_with(|input: syn::parse::ParseStream| {
         let rhs_ty = parse_lit_or::<syn::Type>(&input)?;
         input.parse::<syn::Token![,]>()?;
@@ -293,9 +293,9 @@ fn parse_binary_op(list: &syn::MetaList) -> syn::Result<(syn::Type, syn::Type, s
     })
 }
 
-/// Parses newtype assign operation attribute from a list:
-/// `#[newtype(assign_op(type, with = expr))]`
-fn parse_assign_op(list: &syn::MetaList) -> syn::Result<(syn::Type, syn::Expr)> {
+/// Parses newtype attribute from a list:
+/// `#[newtype(attribute(type, with = expr))]`
+fn parse_type_with(list: &syn::MetaList) -> syn::Result<(syn::Type, syn::Expr)> {
     list.parse_args_with(|input: syn::parse::ParseStream| {
         let rhs_ty = parse_lit_or::<syn::Type>(&input)?;
         input.parse::<syn::Token![,]>()?;
