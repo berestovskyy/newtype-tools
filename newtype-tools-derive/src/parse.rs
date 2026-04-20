@@ -234,20 +234,7 @@ fn parse_try_into(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()
 /// Parses newtype `add` attribute from a list:
 /// `#[newtype(add(type, output = type, with = expr))]`
 fn parse_add(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (rhs_ty, output_ty, with_expr) =
-        list.parse_args_with(|input: syn::parse::ParseStream| {
-            let rhs_ty = parse_lit_or::<syn::Type>(&input)?;
-            input.parse::<syn::Token![,]>()?;
-            input.parse::<kw::output>()?;
-            input.parse::<syn::Token![=]>()?;
-            let output_ty = parse_lit_or::<syn::Type>(&input)?;
-            input.parse::<syn::Token![,]>()?;
-            input.parse::<kw::with>()?;
-            input.parse::<syn::Token![=]>()?;
-            let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-            Ok((rhs_ty, output_ty, with_expr))
-        })?;
-    res.add.push((rhs_ty, output_ty, with_expr));
+    res.add.push(parse_binary_op(list)?);
     Ok(())
 }
 

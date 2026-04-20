@@ -134,40 +134,12 @@ fn expand_try_into(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
 
 /// Expands all `add` derives into a token stream.
 fn expand_add(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    let newtype = &res.newtype;
-    let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
-    res.add
-        .iter()
-        .map(|(rhs_ty, output_ty, expr)| {
-            Ok(quote::quote! {
-                #[automatically_derived]
-                impl #impl_generics std::ops::Add<&#rhs_ty> for &#newtype #newtype_generics #where_clause {
-                    type Output = #output_ty;
-                    fn add(self, rhs: &#rhs_ty) -> Self::Output {
-                        fn call_inner<S, I, O, F: FnOnce(S, I) -> O>(f: F, s: S, i: I) -> O {
-                            f(s, i)
-                        }
-                        call_inner(#expr, self, rhs)
-                    }
-                }
-                #[automatically_derived]
-                impl #impl_generics std::ops::Add<&#rhs_ty> for #newtype #newtype_generics #where_clause {
-                    type Output = #output_ty;
-                    fn add(self, rhs: &#rhs_ty) -> Self::Output { &self + rhs }
-                }
-                #[automatically_derived]
-                impl #impl_generics std::ops::Add<#rhs_ty> for &#newtype #newtype_generics #where_clause {
-                    type Output = #output_ty;
-                    fn add(self, rhs: #rhs_ty) -> Self::Output { self + &rhs }
-                }
-                #[automatically_derived]
-                impl #impl_generics std::ops::Add<#rhs_ty> for #newtype #newtype_generics #where_clause {
-                    type Output = #output_ty;
-                    fn add(self, rhs: #rhs_ty) -> Self::Output { &self + &rhs }
-                }
-            })
-        })
-        .collect()
+    Ok(expand_bin_op(
+        syn::parse_quote!(std::ops::Add),
+        syn::parse_quote!(add),
+        res,
+        &res.add,
+    ))
 }
 
 /// Expands all `add_assign` derives into a token stream.
@@ -220,23 +192,24 @@ fn expand_partial_eq(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream>
 
 /// Expands all `sub` derives into a token stream.
 fn expand_sub(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
-    Ok(expand_bin_op("std::ops::Sub", "sub", "-", res, &res.sub))
+    Ok(expand_bin_op(
+        syn::parse_quote!(std::ops::Sub),
+        syn::parse_quote!(sub),
+        res,
+        &res.sub,
+    ))
 }
 
 /// Expands a binary operation into a token stream.
 fn expand_bin_op(
-    trait_name: &str,
-    method_name: &str,
-    op: &str,
+    trait_path: syn::Path,
+    method_ident: syn::Ident,
     res: &ParseResult,
     ops: &[(syn::Type, syn::Type, syn::Expr)],
 ) -> proc_macro2::TokenStream {
     if ops.is_empty() {
         return proc_macro2::TokenStream::new();
     }
-    let trait_path = syn::parse_str::<syn::Path>(trait_name).expect("Invalid trait name");
-    let method_ident = syn::parse_str::<syn::Ident>(method_name).expect("Invalid method name");
-    let bin_op = syn::parse_str::<syn::BinOp>(op).expect("Invalid binary operation");
     let newtype = &res.newtype;
     let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
     ops
@@ -256,17 +229,17 @@ fn expand_bin_op(
                 #[automatically_derived]
                 impl #impl_generics #trait_path<&#rhs_ty> for #newtype #newtype_generics #where_clause {
                     type Output = #output_ty;
-                    fn #method_ident(self, rhs: &#rhs_ty) -> Self::Output { &self #bin_op rhs }
+                    fn #method_ident(self, rhs: &#rhs_ty) -> Self::Output { #trait_path::#method_ident(&self, rhs) }
                 }
                 #[automatically_derived]
                 impl #impl_generics #trait_path<#rhs_ty> for &#newtype #newtype_generics #where_clause {
                     type Output = #output_ty;
-                    fn #method_ident(self, rhs: #rhs_ty) -> Self::Output { self #bin_op &rhs }
+                    fn #method_ident(self, rhs: #rhs_ty) -> Self::Output { #trait_path::#method_ident(self, &rhs) }
                 }
                 #[automatically_derived]
                 impl #impl_generics #trait_path<#rhs_ty> for #newtype #newtype_generics #where_clause {
                     type Output = #output_ty;
-                    fn #method_ident(self, rhs: #rhs_ty) -> Self::Output { &self #bin_op &rhs }
+                    fn #method_ident(self, rhs: #rhs_ty) -> Self::Output { #trait_path::#method_ident(&self, &rhs) }
                 }
             }
         })
