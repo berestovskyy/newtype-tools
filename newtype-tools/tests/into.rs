@@ -1,10 +1,8 @@
 #![cfg(feature = "derive")]
 
-use newtype_tools::Newtype;
-
 #[test]
 fn into() {
-    #[derive(Newtype)]
+    #[derive(newtype_tools::Newtype)]
     /// Doc comment.
     #[newtype(into(Oranges, with = |apples| Oranges((apples.0 / 2) as u32)))]
     #[repr(transparent)]
@@ -20,7 +18,7 @@ fn into() {
 
 #[test]
 fn generic_into() {
-    #[derive(Newtype)]
+    #[derive(newtype_tools::Newtype)]
     #[newtype(into(Oranges, with = |apples| Oranges((apples.0.into() / 2) as u32)))]
     #[repr(transparent)]
     struct Apples<T>(T)
@@ -38,7 +36,7 @@ fn generic_into() {
 #[test]
 fn try_into() {
     use std::num::TryFromIntError;
-    #[derive(Newtype)]
+    #[derive(newtype_tools::Newtype)]
     #[newtype(try_into(
         Oranges,
         error = TryFromIntError,
@@ -58,7 +56,7 @@ fn try_into() {
 #[test]
 fn generic_try_into() {
     use std::num::TryFromIntError;
-    #[derive(Newtype)]
+    #[derive(newtype_tools::Newtype)]
     #[newtype(try_into(
         Oranges,
         error = TryFromIntError,

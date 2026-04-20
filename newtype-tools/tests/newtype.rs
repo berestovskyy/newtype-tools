@@ -1,7 +1,5 @@
 #![cfg(feature = "derive")]
 
-use newtype_tools::Newtype;
-
 #[test]
 fn newtype_trybuild() {
     let t = trybuild::TestCases::new();
@@ -10,7 +8,7 @@ fn newtype_trybuild() {
 
 #[test]
 fn newtype() {
-    #[derive(Newtype)]
+    #[derive(newtype_tools::Newtype)]
     #[repr(transparent)]
     struct Apples(u64);
 
@@ -27,7 +25,7 @@ fn newtype() {
 
 #[test]
 fn generic_newtype() {
-    #[derive(Newtype)]
+    #[derive(newtype_tools::Newtype)]
     #[repr(transparent)]
     struct Apples<T>(T)
     where

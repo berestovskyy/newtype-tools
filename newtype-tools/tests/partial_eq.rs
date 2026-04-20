@@ -1,10 +1,8 @@
 #![cfg(feature = "derive")]
 
-use newtype_tools::Newtype;
-
 #[test]
 fn partial_eq() {
-    #[derive(Debug, Newtype)]
+    #[derive(Debug, newtype_tools::Newtype)]
     /// Doc comment.
     #[newtype(partial_eq(Oranges, with = "|apples, oranges| apples.0 == oranges.0 as u64 * 2"))]
     struct Apples(u64);
@@ -18,7 +16,7 @@ fn partial_eq() {
 
 #[test]
 fn generic_partial_eq() {
-    #[derive(Debug, Newtype)]
+    #[derive(Debug, newtype_tools::Newtype)]
     #[newtype(partial_eq(Oranges, with = "|apples, oranges| apples.0 == oranges.0 as u64 * 2"))]
     struct Apples<T>(T)
     where

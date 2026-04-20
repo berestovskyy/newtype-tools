@@ -8,6 +8,7 @@ pub(crate) fn expand_derive(res: &ParseResult) -> syn::Result<proc_macro::TokenS
     tokens.extend(expand_try_from(res)?);
     tokens.extend(expand_into(res)?);
     tokens.extend(expand_try_into(res)?);
+    tokens.extend(expand_add(res)?);
     tokens.extend(expand_partial_eq(res)?);
     Ok(tokens.into())
 }
@@ -123,6 +124,44 @@ fn expand_try_into(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
                         }
                         call_inner(#expr, newtype)
                     }
+                }
+            })
+        })
+        .collect()
+}
+
+/// Expands all `add` derives into a token stream.
+fn expand_add(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
+    let newtype = &res.newtype_ident;
+    let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
+    res.add
+        .iter()
+        .map(|(rhs_ty, output_ty, expr)| {
+            Ok(quote::quote! {
+                #[automatically_derived]
+                impl #impl_generics std::ops::Add<&#rhs_ty> for &#newtype #newtype_generics #where_clause {
+                    type Output = #output_ty;
+                    fn add(self, rhs: &#rhs_ty) -> Self::Output {
+                        fn call_inner<S, I, O, F: FnOnce(S, I) -> O>(f: F, s: S, i: I) -> O {
+                            f(s, i)
+                        }
+                        call_inner(#expr, self, rhs)
+                    }
+                }
+                #[automatically_derived]
+                impl #impl_generics std::ops::Add<&#rhs_ty> for #newtype #newtype_generics #where_clause {
+                    type Output = #output_ty;
+                    fn add(self, rhs: &#rhs_ty) -> Self::Output { &self + rhs }
+                }
+                #[automatically_derived]
+                impl #impl_generics std::ops::Add<#rhs_ty> for &#newtype #newtype_generics #where_clause {
+                    type Output = #output_ty;
+                    fn add(self, rhs: #rhs_ty) -> Self::Output { self + &rhs }
+                }
+                #[automatically_derived]
+                impl #impl_generics std::ops::Add<#rhs_ty> for #newtype #newtype_generics #where_clause {
+                    type Output = #output_ty;
+                    fn add(self, rhs: #rhs_ty) -> Self::Output { &self + &rhs }
                 }
             })
         })
