@@ -35,8 +35,10 @@ struct ParseResult {
     into: Vec<(syn::Type, syn::Expr)>,
     /// Tuples of `(into type, error type, conversion expression)`.
     try_into: Vec<(syn::Type, syn::Type, syn::Expr)>,
-    /// Tuples of `(rhs type, output type, comparison expression)`.
+    /// Tuples of `(rhs type, output type, add expression)`.
     add: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    add_assign: Vec<(syn::Type, syn::Expr)>,
     /// Tuples of `(other type, comparison expression)`.
     partial_eq: Vec<(syn::Type, syn::Expr)>,
 }
@@ -53,6 +55,7 @@ impl ParseResult {
             into: Vec::default(),
             try_into: Vec::default(),
             add: Vec::default(),
+            add_assign: Vec::default(),
             partial_eq: Vec::default(),
         }
     }
