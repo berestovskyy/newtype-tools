@@ -1,5 +1,5 @@
 error: expected `struct Newtype(inner_type)`
- --> tests/newtype-fail/enum.rs:2:1
+ --> tests/trybuild/enum.rs:2:1
   |
 2 | enum Enum {}
   | ^^^^
