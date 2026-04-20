@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.7](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-v0.1.0-beta.6...newtype-tools-v0.1.0-beta.7) - 2026-04-20
+
+### Added
+
+- derive `SubAssign` trait ([#35](https://github.com/berestovskyy/newtype-tools/pull/35))
+- derive `Sub` trait ([#34](https://github.com/berestovskyy/newtype-tools/pull/34))
+- derive `AddAssign` trait ([#33](https://github.com/berestovskyy/newtype-tools/pull/33))
+- derive `Add` trait ([#32](https://github.com/berestovskyy/newtype-tools/pull/32))
+
+### Other
+
+- increase code coverage ([#36](https://github.com/berestovskyy/newtype-tools/pull/36))
+- cover all lines ([#30](https://github.com/berestovskyy/newtype-tools/pull/30))
+
 ## [0.1.0-beta.6](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-v0.1.0-beta.5...newtype-tools-v0.1.0-beta.6) - 2026-04-19
 
 ### Other
