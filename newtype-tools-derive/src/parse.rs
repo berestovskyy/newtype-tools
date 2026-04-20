@@ -5,6 +5,7 @@ mod tests;
 
 mod kw {
     syn::custom_keyword!(error);
+    syn::custom_keyword!(output);
     syn::custom_keyword!(with);
 }
 
@@ -118,6 +119,7 @@ fn parse_nested_path(
         | AttrType::TryFrom
         | AttrType::Into
         | AttrType::TryInto
+        | AttrType::Add
         | AttrType::PartialEq => Err(syn::Error::new_spanned(
             path,
             format!("expected `#[newtype({attr_type}(...))]`"),
@@ -137,6 +139,7 @@ fn parse_nested_list(
         AttrType::TryFrom => parse_try_from(list, res),
         AttrType::Into => parse_into(list, res),
         AttrType::TryInto => parse_try_into(list, res),
+        AttrType::Add => parse_add(list, res),
         AttrType::PartialEq => parse_partial_eq(list, res),
     }
 }
@@ -224,6 +227,26 @@ fn parse_try_into(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()
     Ok(())
 }
 
+/// Parses newtype `add` attribute from a list:
+/// `#[newtype(add(type, output = type, with = expr))]`
+fn parse_add(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
+    let (rhs_ty, output_ty, with_expr) =
+        list.parse_args_with(|input: syn::parse::ParseStream| {
+            let rhs_ty = parse_lit_or::<syn::Type>(&input)?;
+            input.parse::<syn::Token![,]>()?;
+            input.parse::<kw::output>()?;
+            input.parse::<syn::Token![=]>()?;
+            let output_ty = parse_lit_or::<syn::Type>(&input)?;
+            input.parse::<syn::Token![,]>()?;
+            input.parse::<kw::with>()?;
+            input.parse::<syn::Token![=]>()?;
+            let with_expr = parse_lit_or::<syn::Expr>(&input)?;
+            Ok((rhs_ty, output_ty, with_expr))
+        })?;
+    res.add.push((rhs_ty, output_ty, with_expr));
+    Ok(())
+}
+
 /// Parses newtype `partial_eq` attribute from a list:
 /// `#[newtype(partial_eq(type, with = expr))]`
 fn parse_partial_eq(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
@@ -246,6 +269,7 @@ enum AttrType {
     TryFrom,
     Into,
     TryInto,
+    Add,
     PartialEq,
 }
 
@@ -256,6 +280,7 @@ impl std::fmt::Display for AttrType {
             Self::TryFrom => f.write_str("try_from"),
             Self::Into => f.write_str("into"),
             Self::TryInto => f.write_str("try_into"),
+            Self::Add => f.write_str("add"),
             Self::PartialEq => f.write_str("partial_eq"),
         }
     }
@@ -270,10 +295,11 @@ impl TryFrom<Option<&syn::Ident>> for AttrType {
             Some(i) if i == "try_from" => Ok(Self::TryFrom),
             Some(i) if i == "into" => Ok(Self::Into),
             Some(i) if i == "try_into" => Ok(Self::TryInto),
+            Some(i) if i == "add" => Ok(Self::Add),
             Some(i) if i == "partial_eq" => Ok(Self::PartialEq),
             _ => Err(syn::Error::new_spanned(
                 value,
-                "expected `(try_)from`, `(try_)into`, `partial_eq`, `iter`",
+                "expected `(try_)from`, `(try_)into`, `add`, `partial_eq`, `iter`",
             )),
         }
     }

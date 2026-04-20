@@ -1,10 +1,8 @@
 #![cfg(feature = "derive")]
 
-use newtype_tools::Newtype;
-
 #[test]
 fn from() {
-    #[derive(Newtype)]
+    #[derive(newtype_tools::Newtype)]
     /// Doc comment.
     #[newtype(
         // From oranges.
@@ -27,7 +25,7 @@ fn from() {
 
 #[test]
 fn generic_from() {
-    #[derive(Newtype)]
+    #[derive(newtype_tools::Newtype)]
     #[newtype(from(Oranges, with = |oranges| Apples(T::from(oranges.0 * 2))))]
     #[repr(transparent)]
     struct Apples<T>(T)
@@ -42,7 +40,7 @@ fn generic_from() {
 #[test]
 fn try_from() {
     use std::num::TryFromIntError;
-    #[derive(Newtype)]
+    #[derive(newtype_tools::Newtype)]
     #[newtype(try_from(
         u64,
         error = "TryFromIntError",
@@ -58,7 +56,7 @@ fn try_from() {
 #[test]
 fn generic_try_from() {
     use std::num::TryFromIntError;
-    #[derive(Newtype)]
+    #[derive(newtype_tools::Newtype)]
     #[newtype(try_from(
         Oranges,
         error = TryFromIntError,

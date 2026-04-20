@@ -1,4 +1,4 @@
-error: expected `(try_)from`, `(try_)into`, `partial_eq`, `iter`
+error: expected `(try_)from`, `(try_)into`, `add`, `partial_eq`, `iter`
  --> tests/newtype-fail/newtype-nested-path-invalid.rs:2:11
   |
 2 | #[newtype(invalid_path)]
