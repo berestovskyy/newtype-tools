@@ -72,7 +72,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v6
-      - uses: crate-ci/typos@v1.45.0
+      - uses: crate-ci/typos@v1.45.1
 
   # Make sure the library builds with all dependencies downgraded to their
   # oldest versions allowed by the semver spec. This ensures we have not
