@@ -139,14 +139,29 @@ fn expand_add(res: &ParseResult) -> syn::Result<proc_macro2::TokenStream> {
         .map(|(rhs_ty, output_ty, expr)| {
             Ok(quote::quote! {
                 #[automatically_derived]
-                impl #impl_generics std::ops::Add<#rhs_ty> for #newtype #newtype_generics #where_clause {
+                impl #impl_generics std::ops::Add<&#rhs_ty> for &#newtype #newtype_generics #where_clause {
                     type Output = #output_ty;
-                    fn add(self, rhs: #rhs_ty) -> Self::Output {
+                    fn add(self, rhs: &#rhs_ty) -> Self::Output {
                         fn call_inner<S, I, O, F: FnOnce(S, I) -> O>(f: F, s: S, i: I) -> O {
                             f(s, i)
                         }
                         call_inner(#expr, self, rhs)
                     }
+                }
+                #[automatically_derived]
+                impl #impl_generics std::ops::Add<&#rhs_ty> for #newtype #newtype_generics #where_clause {
+                    type Output = #output_ty;
+                    fn add(self, rhs: &#rhs_ty) -> Self::Output { &self + rhs }
+                }
+                #[automatically_derived]
+                impl #impl_generics std::ops::Add<#rhs_ty> for &#newtype #newtype_generics #where_clause {
+                    type Output = #output_ty;
+                    fn add(self, rhs: #rhs_ty) -> Self::Output { self + &rhs }
+                }
+                #[automatically_derived]
+                impl #impl_generics std::ops::Add<#rhs_ty> for #newtype #newtype_generics #where_clause {
+                    type Output = #output_ty;
+                    fn add(self, rhs: #rhs_ty) -> Self::Output { &self + &rhs }
                 }
             })
         })
