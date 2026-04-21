@@ -24,8 +24,21 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - &install-rust
+        id: rust-toolchain
         name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+      - &cache-rust
+        name: Cache Rust toolchain
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: OS:${{runner.os}} Rust:stable-${{steps.rust-toolchain.outputs.cachekey}}
+            Lock:${{hashFiles('**/Cargo.lock')}}
       - name: Run release-plz
         uses: release-plz/action@v0.5
         with:
@@ -48,6 +61,7 @@ jobs:
     steps:
       - *checkout
       - *install-rust
+      - *cache-rust
       - name: Run release-plz
         uses: release-plz/action@v0.5
         with:
