@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.8](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-v0.1.0-beta.7...newtype-tools-v0.1.0-beta.8) - 2026-04-21
+
+### Other
+
+- increase code coverage ([#40](https://github.com/berestovskyy/newtype-tools/pull/40))
+- run keepsorted and reorder_impl_items ([#39](https://github.com/berestovskyy/newtype-tools/pull/39))
+- migrate to actions/cache ([#37](https://github.com/berestovskyy/newtype-tools/pull/37))
+
 ## [0.1.0-beta.7](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-v0.1.0-beta.6...newtype-tools-v0.1.0-beta.7) - 2026-04-20
 
 ### Added
