@@ -80,5 +80,5 @@ lcov::
 html::
 	cargo llvm-cov --html
 
-open:: html
-	open target/llvm-cov/html/index.html
+open::
+	cargo llvm-cov --html --open
