@@ -9,7 +9,8 @@ mod kw {
     syn::custom_keyword!(with);
 }
 
-const NEWTYPE_NAME: &str = "newtype";
+/// Newtype attribute name.
+const NEWTYPE_ATTR_NAME: &str = "newtype";
 
 /// Parses all attributes and produce their structured representation.
 pub(crate) fn parse_input(input: syn::DeriveInput) -> syn::Result<ParseResult> {
@@ -17,7 +18,7 @@ pub(crate) fn parse_input(input: syn::DeriveInput) -> syn::Result<ParseResult> {
     let mut res = ParseResult::new(input.ident, inner_ty, input.generics);
     for attr in input.attrs {
         // Just skip all other top-level attributes.
-        if !attr.path().is_ident(NEWTYPE_NAME) {
+        if !attr.path().is_ident(NEWTYPE_ATTR_NAME) {
             continue;
         }
         parse_top_level_meta(attr.meta, &mut res)?;
@@ -166,70 +167,28 @@ fn parse_nested_name_value(
 /// Parses newtype `from` attribute from a list:
 /// `#[newtype(from(type, with = expr))]`
 fn parse_from(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (from_ty, with_expr) = list.parse_args_with(|input: syn::parse::ParseStream| {
-        let from_ty = parse_lit_or::<syn::Type>(&input)?;
-        input.parse::<syn::Token![,]>()?;
-        input.parse::<kw::with>()?;
-        input.parse::<syn::Token![=]>()?;
-        let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-        Ok((from_ty, with_expr))
-    })?;
-    res.from.push((from_ty, with_expr));
+    res.from.push(parse_type_with(list)?);
     Ok(())
 }
 
 /// Parses newtype `try_from` attribute from a list:
 /// `#[newtype(try_from(type, error = type, with = expr))]`
 fn parse_try_from(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (try_from_ty, error_ty, with_expr) =
-        list.parse_args_with(|input: syn::parse::ParseStream| {
-            let try_from_ty = parse_lit_or::<syn::Type>(&input)?;
-            input.parse::<syn::Token![,]>()?;
-            input.parse::<kw::error>()?;
-            input.parse::<syn::Token![=]>()?;
-            let error_ty = parse_lit_or::<syn::Type>(&input)?;
-            input.parse::<syn::Token![,]>()?;
-            input.parse::<kw::with>()?;
-            input.parse::<syn::Token![=]>()?;
-            let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-            Ok((try_from_ty, error_ty, with_expr))
-        })?;
-    res.try_from.push((try_from_ty, error_ty, with_expr));
+    res.try_from.push(parse_type_error_with(list)?);
     Ok(())
 }
 
 /// Parses newtype `into` attribute from a list:
 /// `#[newtype(into(type, with = expr))]`
 fn parse_into(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (output_ty, with_expr) = list.parse_args_with(|input: syn::parse::ParseStream| {
-        let output_ty = parse_lit_or::<syn::Type>(&input)?;
-        input.parse::<syn::Token![,]>()?;
-        input.parse::<kw::with>()?;
-        input.parse::<syn::Token![=]>()?;
-        let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-        Ok((output_ty, with_expr))
-    })?;
-    res.into.push((output_ty, with_expr));
+    res.into.push(parse_type_with(list)?);
     Ok(())
 }
 
 /// Parses newtype `try_into` attribute from a list:
 /// `#[newtype(try_into(type, error = type, with = expr))]`
 fn parse_try_into(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (output_ty, error_ty, with_expr) =
-        list.parse_args_with(|input: syn::parse::ParseStream| {
-            let output_ty = parse_lit_or::<syn::Type>(&input)?;
-            input.parse::<syn::Token![,]>()?;
-            input.parse::<kw::error>()?;
-            input.parse::<syn::Token![=]>()?;
-            let error_ty = parse_lit_or::<syn::Type>(&input)?;
-            input.parse::<syn::Token![,]>()?;
-            input.parse::<kw::with>()?;
-            input.parse::<syn::Token![=]>()?;
-            let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-            Ok((output_ty, error_ty, with_expr))
-        })?;
-    res.try_into.push((output_ty, error_ty, with_expr));
+    res.try_into.push(parse_type_error_with(list)?);
     Ok(())
 }
 
@@ -250,15 +209,7 @@ fn parse_add_assign(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<
 /// Parses newtype `partial_eq` attribute from a list:
 /// `#[newtype(partial_eq(type, with = expr))]`
 fn parse_partial_eq(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (other_ty, with_expr) = list.parse_args_with(|input: syn::parse::ParseStream| {
-        let other_ty = parse_lit_or::<syn::Type>(&input)?;
-        input.parse::<syn::Token![,]>()?;
-        input.parse::<kw::with>()?;
-        input.parse::<syn::Token![=]>()?;
-        let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-        Ok((other_ty, with_expr))
-    })?;
-    res.partial_eq.push((other_ty, with_expr));
+    res.partial_eq.push(parse_type_with(list)?);
     Ok(())
 }
 
@@ -274,6 +225,23 @@ fn parse_sub(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
 fn parse_sub_assign(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
     res.sub_assign.push(parse_type_with(list)?);
     Ok(())
+}
+
+/// Parses newtype attribute from a list:
+/// `#[newtype(attribute(type, error = type, with = expr))]`
+fn parse_type_error_with(list: &syn::MetaList) -> syn::Result<(syn::Type, syn::Type, syn::Expr)> {
+    list.parse_args_with(|input: syn::parse::ParseStream| {
+        let rhs_ty = parse_lit_or::<syn::Type>(&input)?;
+        input.parse::<syn::Token![,]>()?;
+        input.parse::<kw::error>()?;
+        input.parse::<syn::Token![=]>()?;
+        let output_ty = parse_lit_or::<syn::Type>(&input)?;
+        input.parse::<syn::Token![,]>()?;
+        input.parse::<kw::with>()?;
+        input.parse::<syn::Token![=]>()?;
+        let with_expr = parse_lit_or::<syn::Expr>(&input)?;
+        Ok((rhs_ty, output_ty, with_expr))
+    })
 }
 
 /// Parses newtype attribute from a list:
@@ -304,6 +272,24 @@ fn parse_type_with(list: &syn::MetaList) -> syn::Result<(syn::Type, syn::Expr)> 
         let with_expr = parse_lit_or::<syn::Expr>(&input)?;
         Ok((rhs_ty, with_expr))
     })
+}
+
+/// Parses a syntax tree node of type `T` or a literal with `T` inside:
+/// `with = \"|x| x.into()\"`
+fn parse_lit_or<T>(input: &syn::parse::ParseStream) -> syn::Result<T>
+where
+    T: syn::parse::Parse,
+{
+    // Try to parse `LitStr` containing `T` first.
+    // We fork so that if `parse` fails, we haven't moved the cursor.
+    let fork = input.fork();
+    if let Ok(lit_str) = fork.parse::<syn::LitStr>() {
+        use syn::parse::discouraged::Speculative;
+        input.advance_to(&fork);
+        return lit_str.parse::<T>();
+    }
+    // If `LitStr` parsing failed, try to parse the `T` directly.
+    input.parse::<T>()
 }
 
 /// Attribute types.
@@ -357,22 +343,4 @@ impl TryFrom<Option<&syn::Ident>> for AttrType {
             )),
         }
     }
-}
-
-/// Parses a syntax tree node of type `T` or a literal with `T` inside:
-/// `with = \"|x| x.into()\"`
-fn parse_lit_or<T>(input: &syn::parse::ParseStream) -> syn::Result<T>
-where
-    T: syn::parse::Parse,
-{
-    // Try to parse `LitStr` containing `T` first.
-    // We fork so that if `parse` fails, we haven't moved the cursor.
-    let fork = input.fork();
-    if let Ok(lit_str) = fork.parse::<syn::LitStr>() {
-        use syn::parse::discouraged::Speculative;
-        input.advance_to(&fork);
-        return lit_str.parse::<T>();
-    }
-    // If `LitStr` parsing failed, try to parse the `T` directly.
-    input.parse::<T>()
 }
