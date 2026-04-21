@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
-      msrv: "1.86.0" # Also update `rust-version` in root `Cargo.toml`
+      msrv: "1.86.0" # Also update `rust-version` in root `Cargo.toml` and `Makefile`.
       stable: stable
       nightly: nightly
     steps:
@@ -73,8 +73,9 @@ jobs:
         run: cargo test --all-features
 
       - name: Formatting
-        if: matrix.toolchain == needs.config.outputs.stable
-        run: cargo fmt --all -- --check
+        if: matrix.toolchain == needs.config.outputs.nightly
+        run: cargo fmt --all -- --check --config
+          reorder_impl_items=true,error_on_unformatted=true,error_on_line_overflow=true
 
   # If this fails, consider changing your text or adding something to `.typos.toml`.
   typos:
