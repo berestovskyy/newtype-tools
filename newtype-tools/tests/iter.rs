@@ -19,8 +19,10 @@ impl TryFrom<Gold> for usize {
 ///
 /// For any `a`, `b`, and `n`:
 ///
-/// * `steps_between(&a, &b) == (n, Some(n))` if and only if `Step::forward_checked(&a, n) == Some(b)`
-/// * `steps_between(&a, &b) == (n, Some(n))` if and only if `Step::backward_checked(&b, n) == Some(a)`
+/// * `steps_between(&a, &b) == (n, Some(n))` \
+///     if and only if `Step::forward_checked(&a, n) == Some(b)`
+/// * `steps_between(&a, &b) == (n, Some(n))` \
+///     if and only if `Step::backward_checked(&b, n) == Some(a)`
 /// * `steps_between(&a, &b) == (n, Some(n))` only if `a <= b`
 ///   * Corollary: `steps_between(&a, &b) == (0, Some(0))` if and only if `a == b`
 /// * `steps_between(&a, &b) == (0, None)` if `a > b`
@@ -93,8 +95,10 @@ where
 ///
 /// For any `a`, `n`, and `m`:
 ///
-/// * `Step::forward_checked(a, n).and_then(|x| Step::forward_checked(x, m)) == Step::forward_checked(a, m).and_then(|x| Step::forward_checked(x, n))`
-/// * `Step::forward_checked(a, n).and_then(|x| Step::forward_checked(x, m)) == try { Step::forward_checked(a, n.checked_add(m)) }`
+/// * `Step::forward_checked(a, n).and_then(|x| Step::forward_checked(x, m)) \
+///     == Step::forward_checked(a, m).and_then(|x| Step::forward_checked(x, n))`
+/// * `Step::forward_checked(a, n).and_then(|x| Step::forward_checked(x, m)) \
+///     == try { Step::forward_checked(a, n.checked_add(m)) }`
 ///
 /// For any `a` and `n`:
 ///
@@ -192,7 +196,8 @@ fn step_identical_methods_backward() {
     let _ = i32::backward(i32::MIN, 1);
 }
 
-/// Cover `Step::forward_checked` and `backward_checked` implementation for `step_integer_impls` macro.
+/// Cover `Step::forward_checked` and `backward_checked` implementation
+/// for `step_integer_impls` macro.
 #[test]
 fn step_integer_impls_forward_backward_checked() {
     use newtype_tools::iter::Step;
@@ -204,8 +209,10 @@ fn step_integer_impls_forward_backward_checked() {
 ///
 /// For any `a`, `n`, and `m`:
 ///
-/// * `Step::backward_checked(a, n).and_then(|x| Step::backward_checked(x, m)) == n.checked_add(m).and_then(|x| Step::backward_checked(a, x))`
-/// * `Step::backward_checked(a, n).and_then(|x| Step::backward_checked(x, m)) == try { Step::backward_checked(a, n.checked_add(m)?) }`
+/// * `Step::backward_checked(a, n).and_then(|x| Step::backward_checked(x, m)) \
+///     == n.checked_add(m).and_then(|x| Step::backward_checked(a, x))`
+/// * `Step::backward_checked(a, n).and_then(|x| Step::backward_checked(x, m)) \
+///     == try { Step::backward_checked(a, n.checked_add(m)?) }`
 ///
 /// For any `a` and `n`:
 ///
