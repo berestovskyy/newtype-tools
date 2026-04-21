@@ -1,0 +1,29 @@
+error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
+ --> tests/trybuild/partial_eq.rs:5:26
+  |
+5 |     #[newtype(partial_eq())]
+  |                          ^
+
+error: expected `,`
+  --> tests/trybuild/partial_eq.rs:11:29
+   |
+11 |     #[newtype(partial_eq(u64))]
+   |                             ^
+
+error: unexpected end of input, expected `with`
+  --> tests/trybuild/partial_eq.rs:17:30
+   |
+17 |     #[newtype(partial_eq(u64,))]
+   |                              ^
+
+error: expected `=`
+  --> tests/trybuild/partial_eq.rs:23:35
+   |
+23 |     #[newtype(partial_eq(u64, with))]
+   |                                   ^
+
+error: unexpected end of input, expected an expression
+  --> tests/trybuild/partial_eq.rs:29:37
+   |
+29 |     #[newtype(partial_eq(u64, with =))]
+   |                                     ^
