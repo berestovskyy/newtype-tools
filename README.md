@@ -44,16 +44,14 @@ use newtype_tools::Newtype;
 
 #[derive(Newtype)]
 #[newtype(
-    from(Oranges, with = "|oranges| Apples(oranges.0 as u64 * 2)"),
     into(Oranges, with = "|apples| Oranges((apples.0 / 2) as u32)")
 )]
 struct Apples(u64);
 struct Oranges(u32);
 
 let apples = Apples(42);
-assert_eq!(apples.0, 42);
-
 let oranges = Oranges::from(apples);
+
 assert_eq!(oranges.0, 21);
 # }
 ```
@@ -70,12 +68,12 @@ use newtype_tools::Newtype;
     partial_eq(Oranges, with = "|apples, oranges| apples.0 == oranges.0 as u64 * 2")
 )]
 struct Apples(u64);
-#[derive(Debug)]
 struct Oranges(u32);
 
 let apples = Apples(42);
 let oranges = Oranges(21);
-assert_eq!(apples, oranges);
+
+assert!(apples == oranges);
 # }
 ```
 
@@ -89,7 +87,8 @@ use newtype_tools::{Newtype, Iter};
 #[derive(Debug, Newtype)]
 struct Apples(u64);
 
-for apple in (Apples(0)..Apples(42)).iter() {
+let range = Apples(0)..Apples(42);
+for apple in range.iter() {
     println!("{apple:?}");
 }
 # }
