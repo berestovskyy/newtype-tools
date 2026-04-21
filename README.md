@@ -119,10 +119,10 @@ References
 
 [Discussions]: https://img.shields.io/github/discussions/berestovskyy/newtype-tools?color=blueviolet
 [Discussions Link]: https://github.com/berestovskyy/newtype-tools/discussions
-[CI Status]: https://github.com/berestovskyy/newtype-tools/actions/workflows/ci.yml/badge.svg?branch=main
-[CI Link]: https://github.com/berestovskyy/newtype-tools/actions/workflows/ci.yml?query=branch%3Amain
-[CD Status]: https://github.com/berestovskyy/newtype-tools/actions/workflows/cd.yml/badge.svg?branch=main
-[CD Link]: https://github.com/berestovskyy/newtype-tools/actions/workflows/cd.yml?query=branch%3Amain
+[CI Status]: https://github.com/berestovskyy/newtype-tools/actions/workflows/ci.yaml/badge.svg?branch=main
+[CI Link]: https://github.com/berestovskyy/newtype-tools/actions/workflows/ci.yaml?query=branch%3Amain
+[CD Status]: https://github.com/berestovskyy/newtype-tools/actions/workflows/cd.yaml/badge.svg?branch=main
+[CD Link]: https://github.com/berestovskyy/newtype-tools/actions/workflows/cd.yaml?query=branch%3Amain
 [Coverage Status]: https://codecov.io/github/berestovskyy/newtype-tools/branch/main/graph/badge.svg?token=EDGTFYZI3P
 [Coverage Link]: https://codecov.io/github/berestovskyy/newtype-tools
 [Docs.rs]: https://docs.rs/newtype-tools/badge.svg
