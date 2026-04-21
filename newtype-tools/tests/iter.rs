@@ -1,14 +1,15 @@
 #![cfg(feature = "derive")]
 
-#[derive(Copy, Clone, Debug, PartialOrd, PartialEq, newtype_tools::Newtype)]
+#[derive(Clone, Copy, Debug, newtype_tools::Newtype, PartialEq, PartialOrd)]
 struct Gold(i8);
 impl newtype_tools::iter::MinMax for Gold {
-    const MIN: Self = Gold(i8::MIN);
     const MAX: Self = Gold(i8::MAX);
+    const MIN: Self = Gold(i8::MIN);
 }
 
 impl TryFrom<Gold> for usize {
     type Error = std::num::TryFromIntError;
+
     fn try_from(value: Gold) -> Result<Self, Self::Error> {
         usize::try_from(value.0)
     }
@@ -18,8 +19,10 @@ impl TryFrom<Gold> for usize {
 ///
 /// For any `a`, `b`, and `n`:
 ///
-/// * `steps_between(&a, &b) == (n, Some(n))` if and only if `Step::forward_checked(&a, n) == Some(b)`
-/// * `steps_between(&a, &b) == (n, Some(n))` if and only if `Step::backward_checked(&b, n) == Some(a)`
+/// * `steps_between(&a, &b) == (n, Some(n))` \
+///     if and only if `Step::forward_checked(&a, n) == Some(b)`
+/// * `steps_between(&a, &b) == (n, Some(n))` \
+///     if and only if `Step::backward_checked(&b, n) == Some(a)`
 /// * `steps_between(&a, &b) == (n, Some(n))` only if `a <= b`
 ///   * Corollary: `steps_between(&a, &b) == (0, Some(0))` if and only if `a == b`
 /// * `steps_between(&a, &b) == (0, None)` if `a > b`
@@ -92,8 +95,10 @@ where
 ///
 /// For any `a`, `n`, and `m`:
 ///
-/// * `Step::forward_checked(a, n).and_then(|x| Step::forward_checked(x, m)) == Step::forward_checked(a, m).and_then(|x| Step::forward_checked(x, n))`
-/// * `Step::forward_checked(a, n).and_then(|x| Step::forward_checked(x, m)) == try { Step::forward_checked(a, n.checked_add(m)) }`
+/// * `Step::forward_checked(a, n).and_then(|x| Step::forward_checked(x, m)) \
+///     == Step::forward_checked(a, m).and_then(|x| Step::forward_checked(x, n))`
+/// * `Step::forward_checked(a, n).and_then(|x| Step::forward_checked(x, m)) \
+///     == try { Step::forward_checked(a, n.checked_add(m)) }`
 ///
 /// For any `a` and `n`:
 ///
@@ -191,7 +196,8 @@ fn step_identical_methods_backward() {
     let _ = i32::backward(i32::MIN, 1);
 }
 
-/// Cover `Step::forward_checked` and `backward_checked` implementation for `step_integer_impls` macro.
+/// Cover `Step::forward_checked` and `backward_checked` implementation
+/// for `step_integer_impls` macro.
 #[test]
 fn step_integer_impls_forward_backward_checked() {
     use newtype_tools::iter::Step;
@@ -203,8 +209,10 @@ fn step_integer_impls_forward_backward_checked() {
 ///
 /// For any `a`, `n`, and `m`:
 ///
-/// * `Step::backward_checked(a, n).and_then(|x| Step::backward_checked(x, m)) == n.checked_add(m).and_then(|x| Step::backward_checked(a, x))`
-/// * `Step::backward_checked(a, n).and_then(|x| Step::backward_checked(x, m)) == try { Step::backward_checked(a, n.checked_add(m)?) }`
+/// * `Step::backward_checked(a, n).and_then(|x| Step::backward_checked(x, m)) \
+///     == n.checked_add(m).and_then(|x| Step::backward_checked(a, x))`
+/// * `Step::backward_checked(a, n).and_then(|x| Step::backward_checked(x, m)) \
+///     == try { Step::backward_checked(a, n.checked_add(m)?) }`
 ///
 /// For any `a` and `n`:
 ///
@@ -268,7 +276,7 @@ fn iter() {
         assert_eq!(iter.next(), None);
     }
 
-    #[derive(Clone, Debug, PartialOrd, PartialEq, newtype_tools::Newtype)]
+    #[derive(Clone, Debug, newtype_tools::Newtype, PartialEq, PartialOrd)]
     struct Apples(u64);
 
     test(Apples(0)..Apples(3));
@@ -291,7 +299,7 @@ fn infinite_iter() {
         assert_eq!(iter.next(), Some(Apples(1)));
         assert_eq!(iter.next(), Some(Apples(2)));
     }
-    #[derive(Clone, Debug, PartialOrd, PartialEq, newtype_tools::Newtype)]
+    #[derive(Clone, Debug, newtype_tools::Newtype, PartialEq, PartialOrd)]
     struct Apples(u64);
 
     test(Apples(1)..);
@@ -314,7 +322,7 @@ fn empty_iter() {
         assert!(iter.clone().is_sorted());
         assert_eq!(iter.next(), None);
     }
-    #[derive(Clone, Debug, PartialOrd, PartialEq, newtype_tools::Newtype)]
+    #[derive(Clone, Debug, newtype_tools::Newtype, PartialEq, PartialOrd)]
     struct Apples(u64);
 
     test(Apples(1)..Apples(1));
@@ -323,12 +331,12 @@ fn empty_iter() {
 #[rstest::rstest]
 #[timeout(std::time::Duration::from_secs(1))]
 fn custom_inner_type() {
-    #[derive(Clone, Debug, Default, PartialOrd, PartialEq)]
+    #[derive(Clone, Debug, Default, PartialEq, PartialOrd)]
     struct CustomInner(u64);
 
     impl newtype_tools::iter::MinMax for CustomInner {
-        const MIN: Self = Self(u64::MIN);
         const MAX: Self = Self(u64::MAX);
+        const MIN: Self = Self(u64::MIN);
     }
 
     impl newtype_tools::iter::Step for CustomInner {
@@ -348,7 +356,7 @@ fn custom_inner_type() {
         }
     }
 
-    #[derive(Clone, Debug, PartialOrd, PartialEq, newtype_tools::Newtype)]
+    #[derive(Clone, Debug, newtype_tools::Newtype, PartialEq, PartialOrd)]
     struct Oranges(CustomInner);
 
     let range = Oranges(CustomInner(1))..Oranges(CustomInner(3));
@@ -386,7 +394,7 @@ fn generic_iter() {
         assert_eq!(iter.next(), None);
     }
 
-    #[derive(Clone, Copy, Debug, Default, PartialOrd, PartialEq, newtype_tools::Newtype)]
+    #[derive(Clone, Copy, Debug, Default, newtype_tools::Newtype, PartialEq, PartialOrd)]
     struct Apples<T>(T)
     where
         T: Into<u64>;
@@ -415,7 +423,7 @@ fn generic_infinite_iter() {
         assert_eq!(iter.next(), Some(Apples(T::from(2))));
     }
 
-    #[derive(Clone, Copy, Debug, Default, PartialOrd, PartialEq, newtype_tools::Newtype)]
+    #[derive(Clone, Copy, Debug, Default, newtype_tools::Newtype, PartialEq, PartialOrd)]
     struct Apples<T>(T)
     where
         T: Into<u64>;

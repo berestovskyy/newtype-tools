@@ -20,20 +20,20 @@ pub(crate) fn expand_derive(res: &ParseResult) -> syn::Result<proc_macro::TokenS
 fn expand_newtype_trait(res: &ParseResult) -> proc_macro2::TokenStream {
     let newtype = &res.newtype;
     let inner_ty = &res.inner_ty;
-    let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
+    let (impl_generics, newtype_generics, r#where) = &res.generics.split_for_impl();
     quote::quote! {
         #[automatically_derived]
-        impl #impl_generics newtype_tools::Newtype for #newtype #newtype_generics #where_clause {
+        impl #impl_generics newtype_tools::Newtype for #newtype #newtype_generics #r#where {
             type Inner = #inner_ty;
         }
         #[automatically_derived]
-        impl #impl_generics From<#inner_ty> for #newtype #newtype_generics #where_clause {
+        impl #impl_generics From<#inner_ty> for #newtype #newtype_generics #r#where {
             fn from(inner: #inner_ty) -> Self {
                 #newtype(inner)
             }
         }
         #[automatically_derived]
-        impl #impl_generics AsRef<#inner_ty> for #newtype #newtype_generics #where_clause {
+        impl #impl_generics AsRef<#inner_ty> for #newtype #newtype_generics #r#where {
             fn as_ref(&self) -> &#inner_ty {
                 &self.0
             }
@@ -44,13 +44,13 @@ fn expand_newtype_trait(res: &ParseResult) -> proc_macro2::TokenStream {
 /// Expands all `from` derives into a token stream.
 fn expand_from(res: &ParseResult) -> proc_macro2::TokenStream {
     let newtype = &res.newtype;
-    let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
+    let (impl_generics, newtype_generics, r#where) = &res.generics.split_for_impl();
     res.from
         .iter()
         .map(|(from_ty, expr)| {
             quote::quote! {
                 #[automatically_derived]
-                impl #impl_generics From<#from_ty> for #newtype #newtype_generics #where_clause {
+                impl #impl_generics From<#from_ty> for #newtype #newtype_generics #r#where {
                     fn from(value: #from_ty) -> Self {
                         fn call_inner<I, O, F: FnOnce(I) -> O>(f: F, i: I) -> O {
                             f(i)
@@ -66,13 +66,13 @@ fn expand_from(res: &ParseResult) -> proc_macro2::TokenStream {
 /// Expands all `try_from` derives into a token stream.
 fn expand_try_from(res: &ParseResult) -> proc_macro2::TokenStream {
     let newtype = &res.newtype;
-    let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
+    let (impl_generics, newtype_generics, r#where) = &res.generics.split_for_impl();
     res.try_from
         .iter()
         .map(|(try_from_ty, error_ty, expr)| {
             quote::quote! {
                 #[automatically_derived]
-                impl #impl_generics TryFrom<#try_from_ty> for #newtype #newtype_generics #where_clause {
+                impl #impl_generics TryFrom<#try_from_ty> for #newtype #newtype_generics #r#where {
                     type Error = #error_ty;
                     fn try_from(value: #try_from_ty) -> Result<Self, Self::Error> {
                         fn call_inner<I, O, F: FnOnce(I) -> O>(f: F, i: I) -> O {
@@ -90,13 +90,13 @@ fn expand_try_from(res: &ParseResult) -> proc_macro2::TokenStream {
 /// Note, that it still produces the `from` derives, but with reversed types.
 fn expand_into(res: &ParseResult) -> proc_macro2::TokenStream {
     let newtype = &res.newtype;
-    let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
+    let (impl_generics, newtype_generics, r#where) = &res.generics.split_for_impl();
     res.into
         .iter()
         .map(|(output_ty, expr)| {
             quote::quote! {
                 #[automatically_derived]
-                impl #impl_generics From<#newtype #newtype_generics> for #output_ty #where_clause {
+                impl #impl_generics From<#newtype #newtype_generics> for #output_ty #r#where {
                     fn from(newtype: #newtype #newtype_generics) -> Self {
                         fn call_inner<I, O, F: FnOnce(I) -> O>(f: F, i: I) -> O {
                             f(i)
@@ -113,13 +113,13 @@ fn expand_into(res: &ParseResult) -> proc_macro2::TokenStream {
 /// Note, that it still produces the `try_from` derives, but with reversed types.
 fn expand_try_into(res: &ParseResult) -> proc_macro2::TokenStream {
     let newtype = &res.newtype;
-    let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
+    let (impl_generics, newtype_generics, r#where) = &res.generics.split_for_impl();
     res.try_into
         .iter()
         .map(|(output_ty, error_ty, expr)| {
             quote::quote! {
                 #[automatically_derived]
-                impl #impl_generics TryFrom<#newtype #newtype_generics> for #output_ty #where_clause {
+                impl #impl_generics TryFrom<#newtype #newtype_generics> for #output_ty #r#where {
                     type Error = #error_ty;
                     fn try_from(newtype: #newtype #newtype_generics) -> Result<Self, Self::Error> {
                         fn call_inner<I, O, F: FnOnce(I) -> O>(f: F, i: I) -> O {
@@ -156,13 +156,13 @@ fn expand_add_assign(res: &ParseResult) -> proc_macro2::TokenStream {
 /// Expands all `partial_eq` derives into a token stream.
 fn expand_partial_eq(res: &ParseResult) -> proc_macro2::TokenStream {
     let newtype = &res.newtype;
-    let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
+    let (impl_generics, newtype_generics, r#where) = &res.generics.split_for_impl();
     res.partial_eq
         .iter()
         .map(|(other_ty, expr)| {
             quote::quote! {
                 #[automatically_derived]
-                impl #impl_generics PartialEq<#other_ty> for #newtype #newtype_generics #where_clause {
+                impl #impl_generics PartialEq<#other_ty> for #newtype #newtype_generics #r#where {
                     fn eq(&self, other: &#other_ty) -> bool {
                         fn call_inner<S, I, O, F: FnOnce(S, I) -> O>(f: F, s: S, i: I) -> O {
                             f(s, i)
@@ -198,8 +198,8 @@ fn expand_sub_assign(res: &ParseResult) -> proc_macro2::TokenStream {
 /// Expands a binary operation into a token stream.
 /// `#[newtype(binary_op(type, output = type, with = expr))]`
 fn expand_bin_op(
-    trait_path: syn::Path,
-    method_ident: syn::Ident,
+    r#trait: syn::Path,
+    method: syn::Ident,
     res: &ParseResult,
     ops: &[(syn::Type, syn::Type, syn::Expr)],
 ) -> proc_macro2::TokenStream {
@@ -207,15 +207,14 @@ fn expand_bin_op(
         return proc_macro2::TokenStream::new();
     }
     let newtype = &res.newtype;
-    let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
-    ops
-        .iter()
+    let (impl_generics, newtype_generics, r#where) = &res.generics.split_for_impl();
+    ops.iter()
         .map(|(rhs_ty, output_ty, expr)| {
             quote::quote! {
                 #[automatically_derived]
-                impl #impl_generics #trait_path<&#rhs_ty> for &#newtype #newtype_generics #where_clause {
+                impl #impl_generics #r#trait<&#rhs_ty> for &#newtype #newtype_generics #r#where {
                     type Output = #output_ty;
-                    fn #method_ident(self, rhs: &#rhs_ty) -> Self::Output {
+                    fn #method(self, rhs: &#rhs_ty) -> Self::Output {
                         fn call_inner<S, I, O, F: FnOnce(S, I) -> O>(f: F, s: S, i: I) -> O {
                             f(s, i)
                         }
@@ -223,19 +222,23 @@ fn expand_bin_op(
                     }
                 }
                 #[automatically_derived]
-                impl #impl_generics #trait_path<&#rhs_ty> for #newtype #newtype_generics #where_clause {
+                impl #impl_generics #r#trait<&#rhs_ty> for #newtype #newtype_generics #r#where {
                     type Output = #output_ty;
-                    fn #method_ident(self, rhs: &#rhs_ty) -> Self::Output { #trait_path::#method_ident(&self, rhs) }
+                    fn #method(self, rhs: &#rhs_ty) -> Self::Output {
+                        #r#trait::#method(&self, rhs)
+                    }
                 }
                 #[automatically_derived]
-                impl #impl_generics #trait_path<#rhs_ty> for &#newtype #newtype_generics #where_clause {
+                impl #impl_generics #r#trait<#rhs_ty> for &#newtype #newtype_generics #r#where {
                     type Output = #output_ty;
-                    fn #method_ident(self, rhs: #rhs_ty) -> Self::Output { #trait_path::#method_ident(self, &rhs) }
+                    fn #method(self, rhs: #rhs_ty) -> Self::Output { #r#trait::#method(self, &rhs) }
                 }
                 #[automatically_derived]
-                impl #impl_generics #trait_path<#rhs_ty> for #newtype #newtype_generics #where_clause {
+                impl #impl_generics #r#trait<#rhs_ty> for #newtype #newtype_generics #r#where {
                     type Output = #output_ty;
-                    fn #method_ident(self, rhs: #rhs_ty) -> Self::Output { #trait_path::#method_ident(&self, &rhs) }
+                    fn #method(self, rhs: #rhs_ty) -> Self::Output {
+                        #r#trait::#method(&self, &rhs)
+                    }
                 }
             }
         })
@@ -245,8 +248,8 @@ fn expand_bin_op(
 /// Expands an assignment operation into a token stream.
 /// `#[newtype(assignment_op(type, with = expr))]`
 fn expand_assign_op(
-    trait_path: syn::Path,
-    method_ident: syn::Ident,
+    r#trait: syn::Path,
+    method: syn::Ident,
     res: &ParseResult,
     ops: &[(syn::Type, syn::Expr)],
 ) -> proc_macro2::TokenStream {
@@ -254,14 +257,13 @@ fn expand_assign_op(
         return proc_macro2::TokenStream::new();
     }
     let newtype = &res.newtype;
-    let (impl_generics, newtype_generics, where_clause) = &res.generics.split_for_impl();
-    ops
-        .iter()
+    let (impl_generics, newtype_generics, r#where) = &res.generics.split_for_impl();
+    ops.iter()
         .map(|(rhs_ty, expr)| {
             quote::quote! {
                 #[automatically_derived]
-                impl #impl_generics #trait_path<&#rhs_ty> for #newtype #newtype_generics #where_clause {
-                    fn #method_ident(&mut self, rhs: &#rhs_ty) {
+                impl #impl_generics #r#trait<&#rhs_ty> for #newtype #newtype_generics #r#where {
+                    fn #method(&mut self, rhs: &#rhs_ty) {
                         fn call_inner<S, I, F: FnOnce(S, I)>(f: F, s: S, i: I) {
                             f(s, i)
                         }
@@ -269,8 +271,8 @@ fn expand_assign_op(
                     }
                 }
                 #[automatically_derived]
-                impl #impl_generics #trait_path<#rhs_ty> for #newtype #newtype_generics #where_clause {
-                    fn #method_ident(&mut self, rhs: #rhs_ty) { #trait_path::#method_ident(self, &rhs) }
+                impl #impl_generics #r#trait<#rhs_ty> for #newtype #newtype_generics #r#where {
+                    fn #method(&mut self, rhs: #rhs_ty) { #r#trait::#method(self, &rhs) }
                 }
             }
         })

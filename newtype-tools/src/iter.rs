@@ -158,16 +158,16 @@ where
 
 /// A helper trait to support inner values ranges.
 pub trait MinMax {
-    const MIN: Self;
     const MAX: Self;
+    const MIN: Self;
 }
 
 macro_rules! impl_min_max {
     ($($t:ty),*) => {
         $(
             impl MinMax for $t {
-                const MIN: Self = <$t>::MIN;
                 const MAX: Self = <$t>::MAX;
+                const MIN: Self = <$t>::MIN;
             }
         )+
     };
@@ -189,8 +189,10 @@ pub trait Step: Clone + PartialOrd + MinMax + Sized {
     ///
     /// For any `a`, `b`, and `n`:
     ///
-    /// * `steps_between(&a, &b) == (n, Some(n))` if and only if `Step::forward_checked(&a, n) == Some(b)`
-    /// * `steps_between(&a, &b) == (n, Some(n))` if and only if `Step::backward_checked(&b, n) == Some(a)`
+    /// * `steps_between(&a, &b) == (n, Some(n))` \
+    ///   if and only if `Step::forward_checked(&a, n) == Some(b)`
+    /// * `steps_between(&a, &b) == (n, Some(n))` \
+    ///   if and only if `Step::backward_checked(&b, n) == Some(a)`
     /// * `steps_between(&a, &b) == (n, Some(n))` only if `a <= b`
     ///   * Corollary: `steps_between(&a, &b) == (0, Some(0))` if and only if `a == b`
     /// * `steps_between(&a, &b) == (0, None)` if `a > b`
@@ -205,8 +207,10 @@ pub trait Step: Clone + PartialOrd + MinMax + Sized {
     ///
     /// For any `a`, `n`, and `m`:
     ///
-    /// * `Step::forward_checked(a, n).and_then(|x| Step::forward_checked(x, m)) == Step::forward_checked(a, m).and_then(|x| Step::forward_checked(x, n))`
-    /// * `Step::forward_checked(a, n).and_then(|x| Step::forward_checked(x, m)) == try { Step::forward_checked(a, n.checked_add(m)) }`
+    /// * `Step::forward_checked(a, n).and_then(|x| Step::forward_checked(x, m)) \
+    ///     == Step::forward_checked(a, m).and_then(|x| Step::forward_checked(x, n))`
+    /// * `Step::forward_checked(a, n).and_then(|x| Step::forward_checked(x, m)) \
+    ///     == try { Step::forward_checked(a, n.checked_add(m)) }`
     ///
     /// For any `a` and `n`:
     ///
@@ -248,8 +252,10 @@ pub trait Step: Clone + PartialOrd + MinMax + Sized {
     ///
     /// For any `a`, `n`, and `m`:
     ///
-    /// * `Step::backward_checked(a, n).and_then(|x| Step::backward_checked(x, m)) == n.checked_add(m).and_then(|x| Step::backward_checked(a, x))`
-    /// * `Step::backward_checked(a, n).and_then(|x| Step::backward_checked(x, m)) == try { Step::backward_checked(a, n.checked_add(m)?) }`
+    /// * `Step::backward_checked(a, n).and_then(|x| Step::backward_checked(x, m)) \
+    ///     == n.checked_add(m).and_then(|x| Step::backward_checked(a, x))`
+    /// * `Step::backward_checked(a, n).and_then(|x| Step::backward_checked(x, m)) \
+    ///     == try { Step::backward_checked(a, n.checked_add(m)?) }`
     ///
     /// For any `a` and `n`:
     ///

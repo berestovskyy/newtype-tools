@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
-      msrv: "1.86.0" # Also update `rust-version` in root `Cargo.toml`
+      msrv: "1.86.0" # Also update `rust-version` in root `Cargo.toml`.
       stable: stable
       nightly: nightly
     steps:
@@ -35,9 +35,10 @@ jobs:
           - ${{ needs.config.outputs.nightly }}
     steps:
       - uses: actions/checkout@v6
-      - uses: dtolnay/rust-toolchain@${{ matrix.toolchain }}
+      - uses: dtolnay/rust-toolchain@master
         id: rust-toolchain
         with:
+          toolchain: ${{ matrix.toolchain }}
           components: rustfmt, clippy
       - uses: actions/cache@v5
         with:
@@ -72,8 +73,9 @@ jobs:
         run: cargo test --all-features
 
       - name: Formatting
-        if: matrix.toolchain == needs.config.outputs.stable
-        run: cargo fmt --all -- --check
+        if: matrix.toolchain == needs.config.outputs.nightly
+        run: cargo fmt --all -- --check --config
+          reorder_impl_items=true,error_on_unformatted=true,error_on_line_overflow=true
 
   # If this fails, consider changing your text or adding something to `.typos.toml`.
   typos:
@@ -94,10 +96,14 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v6
-      - uses: dtolnay/rust-toolchain@$${{ needs.config.outputs.msrv }}
+      - uses: dtolnay/rust-toolchain@master
         id: msrv-toolchain
-      - uses: dtolnay/rust-toolchain@$${{ needs.config.outputs.nightly }}
+        with:
+          toolchain: ${{ needs.config.outputs.msrv }}
+      - uses: dtolnay/rust-toolchain@master
         id: nightly-toolchain
+        with:
+          toolchain: ${{ needs.config.outputs.msrv }}
       - uses: actions/cache@v5
         with:
           path: |
@@ -107,8 +113,8 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: OS:${{runner.os}}
-            Rust:$${{needs.config.outputs.msrv}}-${{steps.msrv-toolchain.outputs.cachekey}}
-            Rust:$${{needs.config.outputs.nightly}}-${{steps.nightly-toolchain.outputs.cachekey}}
+            Rust:${{needs.config.outputs.msrv}}-${{steps.msrv-toolchain.outputs.cachekey}}
+            Rust:${{needs.config.outputs.nightly}}-${{steps.nightly-toolchain.outputs.cachekey}}
             Lock:${{hashFiles('**/Cargo.lock')}}
 
       - name: Downgrade dependencies to minimal versions
