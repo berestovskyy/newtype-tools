@@ -1,53 +1,53 @@
 error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
- --> tests/trybuild/sub.rs:5:19
+ --> tests/trybuild/ops/sub.rs:5:19
   |
 5 |     #[newtype(sub())]
   |                   ^
 
 error: expected `,`
-  --> tests/trybuild/sub.rs:11:22
+  --> tests/trybuild/ops/sub.rs:11:22
    |
 11 |     #[newtype(sub(u64))]
    |                      ^
 
 error: unexpected end of input, expected `output`
-  --> tests/trybuild/sub.rs:17:23
+  --> tests/trybuild/ops/sub.rs:17:23
    |
 17 |     #[newtype(sub(u64,))]
    |                       ^
 
 error: expected `=`
-  --> tests/trybuild/sub.rs:23:30
+  --> tests/trybuild/ops/sub.rs:23:30
    |
 23 |     #[newtype(sub(u64, output))]
    |                              ^
 
 error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
-  --> tests/trybuild/sub.rs:29:32
+  --> tests/trybuild/ops/sub.rs:29:32
    |
 29 |     #[newtype(sub(u64, output =))]
    |                                ^
 
 error: expected `,`
-  --> tests/trybuild/sub.rs:35:36
+  --> tests/trybuild/ops/sub.rs:35:36
    |
 35 |     #[newtype(sub(u64, output = u64))]
    |                                    ^
 
 error: unexpected end of input, expected `with`
-  --> tests/trybuild/sub.rs:41:37
+  --> tests/trybuild/ops/sub.rs:41:37
    |
 41 |     #[newtype(sub(u64, output = u64,))]
    |                                     ^
 
 error: expected `=`
-  --> tests/trybuild/sub.rs:47:42
+  --> tests/trybuild/ops/sub.rs:47:42
    |
 47 |     #[newtype(sub(u64, output = u64, with))]
    |                                          ^
 
 error: unexpected end of input, expected an expression
-  --> tests/trybuild/sub.rs:53:44
+  --> tests/trybuild/ops/sub.rs:53:44
    |
 53 |     #[newtype(sub(u64, output = u64, with =))]
    |                                            ^

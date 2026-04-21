@@ -1,29 +1,29 @@
 error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
- --> tests/trybuild/add_assign.rs:5:26
+ --> tests/trybuild/ops/partial_eq.rs:5:26
   |
-5 |     #[newtype(add_assign())]
+5 |     #[newtype(partial_eq())]
   |                          ^
 
 error: expected `,`
-  --> tests/trybuild/add_assign.rs:11:29
+  --> tests/trybuild/ops/partial_eq.rs:11:29
    |
-11 |     #[newtype(add_assign(u64))]
+11 |     #[newtype(partial_eq(u64))]
    |                             ^
 
 error: unexpected end of input, expected `with`
-  --> tests/trybuild/add_assign.rs:17:30
+  --> tests/trybuild/ops/partial_eq.rs:17:30
    |
-17 |     #[newtype(add_assign(u64,))]
+17 |     #[newtype(partial_eq(u64,))]
    |                              ^
 
 error: expected `=`
-  --> tests/trybuild/add_assign.rs:23:35
+  --> tests/trybuild/ops/partial_eq.rs:23:35
    |
-23 |     #[newtype(add_assign(u64, with))]
+23 |     #[newtype(partial_eq(u64, with))]
    |                                   ^
 
 error: unexpected end of input, expected an expression
-  --> tests/trybuild/add_assign.rs:29:37
+  --> tests/trybuild/ops/partial_eq.rs:29:37
    |
-29 |     #[newtype(add_assign(u64, with =))]
+29 |     #[newtype(partial_eq(u64, with =))]
    |                                     ^

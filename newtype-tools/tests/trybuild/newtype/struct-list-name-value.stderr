@@ -1,5 +1,5 @@
 error: expected `#[newtype(from(...))]`
- --> tests/trybuild/newtype-nested-name-value.rs:2:11
+ --> tests/trybuild/newtype/struct-list-name-value.rs:2:11
   |
 2 | #[newtype(from = Oranges)]
   |           ^^^^^^^^^^^^^^

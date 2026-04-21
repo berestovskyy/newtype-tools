@@ -1,5 +1,5 @@
 error: expected `(try_)from`, `(try_)into`, `add(_assign)`, `partial_eq`, `sub(_assign)`, `iter`
- --> tests/trybuild/newtype-nested-path-invalid.rs:2:11
+ --> tests/trybuild/newtype/struct-list-path-invalid.rs:2:11
   |
 2 | #[newtype(invalid_path)]
   |           ^^^^^^^^^^^^

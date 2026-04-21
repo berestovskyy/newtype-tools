@@ -1,5 +1,5 @@
 error: expected `struct Newtype(inner_type)`
- --> tests/trybuild/struct-named.rs:2:16
+ --> tests/trybuild/newtype/named-struct.rs:2:16
   |
 2 |   struct Oranges {
   |  ________________^
