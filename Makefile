@@ -4,14 +4,16 @@
 
 MSRV = 1.86.0
 
-all:: check lcov html
+check:: clippy fmt
+	cargo test
+	cargo check
+	cargo test --no-default-features
 	@echo "All OK."
 
 help::
 	@echo "Newtype-tools targets:"
-	@echo "    help        This help message."
-	@echo "    all         Run sensible defaults: check, lcov, html"
 	@echo "    check       Run quick checks: clippy, fmt, cargo test, cargo check."
+	@echo "    help        This help message."
 	@echo "    ci          Run CI pipeline locally: clippy, build, test, fmt, publish."
 	@echo "  Test targets:"
 	@echo "    clippy      Run cargo clippy."
@@ -20,18 +22,12 @@ help::
 	@echo "    trybuild    Overwrite trybuild test results."
 	@echo "  Misc targets:"
 	@echo "    fmt         Run cargo fmt."
+	@echo "    keepsorted  Sort Rust derives alphabetically (cargo install keepsorted)."
 	@echo "    publish     Run the cargo publish dry run."
 	@echo "  Code coverage targets:"
 	@echo "    lcov        Generate lcov code coverage report."
 	@echo "    html        Generate HTML code coverage report."
 	@echo "    open        Open HTML code coverage report."
-
-check:: clippy fmt
-	cargo test
-	cargo check
-	cargo check --no-default-features
-	cargo test --no-default-features
-	@echo "All OK."
 
 ci:: clippy build test fmt publish
 	@echo "All OK."
@@ -69,6 +65,9 @@ trybuild::
 fmt::
 	cargo +nightly fmt -- --config reorder_impl_items=true,error_on_unformatted=true,error_on_line_overflow=true
 
+keepsorted::
+	keepsorted -f rust_derive_alphabetical -r .
+
 publish::
 	cargo publish --dry-run
 
@@ -83,4 +82,3 @@ html::
 
 open:: html
 	open target/llvm-cov/html/index.html
-
