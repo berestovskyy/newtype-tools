@@ -1,5 +1,5 @@
 error: expected `#[newtype(from(...))]`
- --> tests/trybuild/newtype-nested-path-from.rs:2:11
+ --> tests/trybuild/newtype/struct-list-path-valid.rs:2:11
   |
 2 | #[newtype(from)]
   |           ^^^^
