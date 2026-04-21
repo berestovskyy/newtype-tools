@@ -84,13 +84,12 @@ Iterations over `newtype` ranges:
 ```rust
 # #[cfg(feature = "derive")]
 # {
-use newtype_tools::{Newtype, Iterator};
+use newtype_tools::{Newtype, Iter};
 
 #[derive(Debug, Newtype)]
 struct Apples(u64);
 
-let range = Apples(0)..Apples(42);
-for apple in Iterator::from(&range) {
+for apple in (Apples(0)..Apples(42)).iter() {
     println!("{apple:?}");
 }
 # }
