@@ -23,26 +23,36 @@ jobs:
 
   ci:
     needs: config
-    name: Rust ${{ matrix.rust }}
+    name: Rust ${{ matrix.toolchain }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     strategy:
       fail-fast: false
       matrix:
-        rust:
+        toolchain:
           - ${{ needs.config.outputs.msrv }}
           - ${{ needs.config.outputs.stable }}
           - ${{ needs.config.outputs.nightly }}
     steps:
       - uses: actions/checkout@v6
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@${{ matrix.toolchain }}
+        id: rust-toolchain
         with:
-          toolchain: ${{ matrix.rust }}
           components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@v2
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: OS:${{runner.os}}
+            Rust:${{matrix.toolchain}}-fmt-clippy-${{steps.rust-toolchain.outputs.cachekey}}
+            Lock:${{hashFiles('**/Cargo.lock')}}
 
       - name: Clippy (Default Features)
-        if: matrix.rust == needs.config.outputs.stable
+        if: matrix.toolchain == needs.config.outputs.stable
         run: cargo clippy --workspace --all-targets -- -D warnings
       - name: Build (Default Features)
         run: cargo build
@@ -55,14 +65,14 @@ jobs:
         run: cargo test --no-default-features
 
       - name: Build (Unstable Features)
-        if: matrix.rust == needs.config.outputs.nightly
+        if: matrix.toolchain == needs.config.outputs.nightly
         run: cargo build --all-features
       - name: Test (Unstable Features)
-        if: matrix.rust == needs.config.outputs.nightly
+        if: matrix.toolchain == needs.config.outputs.nightly
         run: cargo test --all-features
 
       - name: Formatting
-        if: matrix.rust == needs.config.outputs.stable
+        if: matrix.toolchain == needs.config.outputs.stable
         run: cargo fmt --all -- --check
 
   # If this fails, consider changing your text or adding something to `.typos.toml`.
@@ -84,11 +94,22 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v6
-
-      - name: Install needed Rust toolchain versions
-        run: |
-          rustup toolchain install "${{ needs.config.outputs.msrv }}" --profile minimal
-          rustup toolchain install "${{ needs.config.outputs.nightly }}" --profile minimal
+      - uses: dtolnay/rust-toolchain@$${{ needs.config.outputs.msrv }}
+        id: msrv-toolchain
+      - uses: dtolnay/rust-toolchain@$${{ needs.config.outputs.nightly }}
+        id: nightly-toolchain
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: OS:${{runner.os}}
+            Rust:$${{needs.config.outputs.msrv}}-${{steps.msrv-toolchain.outputs.cachekey}}
+            Rust:$${{needs.config.outputs.nightly}}-${{steps.nightly-toolchain.outputs.cachekey}}
+            Lock:${{hashFiles('**/Cargo.lock')}}
 
       - name: Downgrade dependencies to minimal versions
         run: cargo "+${{ needs.config.outputs.nightly }}" update -Z minimal-versions
