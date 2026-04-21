@@ -2,6 +2,8 @@
 
 pub mod iter;
 
+pub use iter::IntoIter;
+pub use iter::Iter;
 pub use iter::Iterator;
 #[cfg(feature = "derive")]
 pub use newtype_tools_derive::Newtype;

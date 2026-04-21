@@ -20,6 +20,52 @@ where
     }
 }
 
+/// Iterator extension trait defining the `Iter::iter` method.
+pub trait Iter<N, R>
+where
+    N: crate::Newtype,
+    N::Inner: crate::iter::Step,
+    R: std::ops::RangeBounds<N>,
+{
+    /// Converts a range bounds into a `newtype` `Iterator` instance.
+    fn iter(&self) -> crate::Iterator<N>;
+}
+
+/// Blanket `Iter::iter` implementation for all `newtype` range types.
+impl<N, R> Iter<N, R> for R
+where
+    N: crate::Newtype,
+    N::Inner: crate::iter::Step,
+    R: std::ops::RangeBounds<N>,
+{
+    fn iter(&self) -> crate::Iterator<N> {
+        crate::Iterator::from(self)
+    }
+}
+
+/// Iterator extension trait defining the `IntoIter::into_iter` method.
+pub trait IntoIter<N, R>
+where
+    N: crate::Newtype,
+    N::Inner: crate::iter::Step,
+    R: std::ops::RangeBounds<N>,
+{
+    /// Converts a range bounds into a `newtype` `Iterator` instance.
+    fn into_iter(self) -> crate::Iterator<N>;
+}
+
+/// Blanket `IntoIter::into_iter` implementation for all `newtype` range types.
+impl<N, R> IntoIter<N, R> for R
+where
+    N: crate::Newtype,
+    N::Inner: crate::iter::Step,
+    R: std::ops::RangeBounds<N>,
+{
+    fn into_iter(self) -> crate::Iterator<N> {
+        crate::Iterator::from(&self)
+    }
+}
+
 /// Blanket `Iterator` implementation for all `Newtype`s.
 #[derive(Clone)]
 pub struct Iterator<T>
@@ -78,8 +124,8 @@ where
 
 impl<T> std::iter::Iterator for Iterator<T>
 where
-    T: crate::Newtype + From<T::Inner>,
-    T::Inner: Step + std::fmt::Debug,
+    T: crate::Newtype,
+    T::Inner: Step,
 {
     type Item = T;
 
@@ -126,8 +172,8 @@ where
 
 impl<T> DoubleEndedIterator for Iterator<T>
 where
-    T: crate::Newtype + From<T::Inner>,
-    T::Inner: Step + std::fmt::Debug,
+    T: crate::Newtype,
+    T::Inner: Step,
 {
     fn next_back(&mut self) -> Option<Self::Item> {
         if Iterator::is_empty(self) {
@@ -140,15 +186,15 @@ where
 
 impl<T> ExactSizeIterator for Iterator<T>
 where
-    T: crate::Newtype + From<T::Inner>,
-    T::Inner: Step + std::fmt::Debug,
+    T: crate::Newtype,
+    T::Inner: Step,
 {
 }
 
 impl<T> std::iter::FusedIterator for Iterator<T>
 where
-    T: crate::Newtype + From<T::Inner>,
-    T::Inner: Step + std::fmt::Debug,
+    T: crate::Newtype,
+    T::Inner: Step,
 {
 }
 
