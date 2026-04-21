@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
-      msrv: "1.86.0" # Also update `rust-version` in root `Cargo.toml` and `Makefile`.
+      msrv: "1.86.0" # Also update `rust-version` in root `Cargo.toml`.
       stable: stable
       nightly: nightly
     steps:

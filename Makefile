@@ -2,7 +2,7 @@
 ## Newtype-tools Makefile
 ##
 
-MSRV = 1.86.0
+MSRV := $(shell grep ^rust-version Cargo.toml | cut -d '"' -f 2)
 
 check:: clippy fmt
 	cargo test
