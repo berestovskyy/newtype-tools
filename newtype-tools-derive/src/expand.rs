@@ -38,6 +38,24 @@ pub(crate) fn expand_derive(res: &ParseResult) -> syn::Result<proc_macro::TokenS
         syn::parse_quote!(std::ops::MulAssign),
         syn::parse_quote!(mul_assign),
     );
+    let rem = (
+        syn::parse_quote!(std::ops::Rem),
+        syn::parse_quote!(rem),
+        syn::parse_quote!(std::ops::RemAssign),
+        syn::parse_quote!(rem_assign),
+    );
+    let shl = (
+        syn::parse_quote!(std::ops::Shl),
+        syn::parse_quote!(shl),
+        syn::parse_quote!(std::ops::ShlAssign),
+        syn::parse_quote!(shl_assign),
+    );
+    let shr = (
+        syn::parse_quote!(std::ops::Shr),
+        syn::parse_quote!(shr),
+        syn::parse_quote!(std::ops::ShrAssign),
+        syn::parse_quote!(shr_assign),
+    );
     let sub = (
         syn::parse_quote!(std::ops::Sub),
         syn::parse_quote!(sub),
@@ -63,6 +81,12 @@ pub(crate) fn expand_derive(res: &ParseResult) -> syn::Result<proc_macro::TokenS
     tokens.extend(expand_assign_op(div.2, div.3, res, &res.div_assign));
     tokens.extend(expand_bin_op(mul.0, mul.1, res, &res.mul));
     tokens.extend(expand_assign_op(mul.2, mul.3, res, &res.mul_assign));
+    tokens.extend(expand_bin_op(rem.0, rem.1, res, &res.rem));
+    tokens.extend(expand_assign_op(rem.2, rem.3, res, &res.rem_assign));
+    tokens.extend(expand_bin_op(shl.0, shl.1, res, &res.shl));
+    tokens.extend(expand_assign_op(shl.2, shl.3, res, &res.shl_assign));
+    tokens.extend(expand_bin_op(shr.0, shr.1, res, &res.shr));
+    tokens.extend(expand_assign_op(shr.2, shr.3, res, &res.shr_assign));
     tokens.extend(expand_partial_eq(res));
     tokens.extend(expand_bin_op(sub.0, sub.1, res, &res.sub));
     tokens.extend(expand_assign_op(sub.2, sub.3, res, &res.sub_assign));

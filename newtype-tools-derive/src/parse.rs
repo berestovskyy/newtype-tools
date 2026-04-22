@@ -132,6 +132,12 @@ fn parse_nested_path(
         | AttrType::DivAssign
         | AttrType::Mul
         | AttrType::MulAssign
+        | AttrType::Rem
+        | AttrType::RemAssign
+        | AttrType::Shl
+        | AttrType::ShlAssign
+        | AttrType::Shr
+        | AttrType::ShrAssign
         | AttrType::PartialEq
         | AttrType::Sub
         | AttrType::SubAssign => Err(syn::Error::new_spanned(
@@ -165,6 +171,12 @@ fn parse_nested_list(
         AttrType::DivAssign => parse_type_with(list, &mut res.div_assign),
         AttrType::Mul => parse_type_output_with(list, &mut res.mul),
         AttrType::MulAssign => parse_type_with(list, &mut res.mul_assign),
+        AttrType::Rem => parse_type_output_with(list, &mut res.rem),
+        AttrType::RemAssign => parse_type_with(list, &mut res.rem_assign),
+        AttrType::Shl => parse_type_output_with(list, &mut res.shl),
+        AttrType::ShlAssign => parse_type_with(list, &mut res.shl_assign),
+        AttrType::Shr => parse_type_output_with(list, &mut res.shr),
+        AttrType::ShrAssign => parse_type_with(list, &mut res.shr_assign),
         AttrType::PartialEq => parse_type_with(list, &mut res.partial_eq),
         AttrType::Sub => parse_type_output_with(list, &mut res.sub),
         AttrType::SubAssign => parse_type_with(list, &mut res.sub_assign),
@@ -280,6 +292,12 @@ enum AttrType {
     DivAssign,
     Mul,
     MulAssign,
+    Rem,
+    RemAssign,
+    Shl,
+    ShlAssign,
+    Shr,
+    ShrAssign,
     PartialEq,
     Sub,
     SubAssign,
@@ -304,6 +322,12 @@ impl std::fmt::Display for AttrType {
             Self::DivAssign => f.write_str("div_assign"),
             Self::Mul => f.write_str("mul"),
             Self::MulAssign => f.write_str("mul_assign"),
+            Self::Rem => f.write_str("rem"),
+            Self::RemAssign => f.write_str("rem_assign"),
+            Self::Shl => f.write_str("shl"),
+            Self::ShlAssign => f.write_str("shl_assign"),
+            Self::Shr => f.write_str("shr"),
+            Self::ShrAssign => f.write_str("shr_assign"),
             Self::PartialEq => f.write_str("partial_eq"),
             Self::Sub => f.write_str("sub"),
             Self::SubAssign => f.write_str("sub_assign"),
@@ -332,6 +356,12 @@ impl TryFrom<Option<&syn::Ident>> for AttrType {
             Some(i) if i == "div_assign" => Ok(Self::DivAssign),
             Some(i) if i == "mul" => Ok(Self::Mul),
             Some(i) if i == "mul_assign" => Ok(Self::MulAssign),
+            Some(i) if i == "rem" => Ok(Self::Rem),
+            Some(i) if i == "rem_assign" => Ok(Self::RemAssign),
+            Some(i) if i == "shl" => Ok(Self::Shl),
+            Some(i) if i == "shl_assign" => Ok(Self::ShlAssign),
+            Some(i) if i == "shr" => Ok(Self::Shr),
+            Some(i) if i == "shr_assign" => Ok(Self::ShrAssign),
             Some(i) if i == "partial_eq" => Ok(Self::PartialEq),
             Some(i) if i == "sub" => Ok(Self::Sub),
             Some(i) if i == "sub_assign" => Ok(Self::SubAssign),

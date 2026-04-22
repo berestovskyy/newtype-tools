@@ -59,6 +59,18 @@ struct ParseResult {
     mul: Vec<(syn::Type, syn::Type, syn::Expr)>,
     /// Tuples of `(rhs type, add-assign expression)`.
     mul_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
+    rem: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    rem_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
+    shl: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    shl_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
+    shr: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    shr_assign: Vec<(syn::Type, syn::Expr)>,
     /// Tuples of `(other type, comparison expression)`.
     partial_eq: Vec<(syn::Type, syn::Expr)>,
     /// Tuples of `(rhs type, output type, sub expression)`.
@@ -90,6 +102,12 @@ impl ParseResult {
             div_assign: Vec::default(),
             mul: Vec::default(),
             mul_assign: Vec::default(),
+            rem: Vec::default(),
+            rem_assign: Vec::default(),
+            shl: Vec::default(),
+            shl_assign: Vec::default(),
+            shr: Vec::default(),
+            shr_assign: Vec::default(),
             partial_eq: Vec::default(),
             sub: Vec::default(),
             sub_assign: Vec::default(),

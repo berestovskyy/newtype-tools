@@ -1,0 +1,53 @@
+error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
+ --> tests/trybuild/ops/shr.rs:5:19
+  |
+5 |     #[newtype(shr())]
+  |                   ^
+
+error: expected `,`
+  --> tests/trybuild/ops/shr.rs:11:22
+   |
+11 |     #[newtype(shr(u64))]
+   |                      ^
+
+error: unexpected end of input, expected `output`
+  --> tests/trybuild/ops/shr.rs:17:23
+   |
+17 |     #[newtype(shr(u64,))]
+   |                       ^
+
+error: expected `=`
+  --> tests/trybuild/ops/shr.rs:23:30
+   |
+23 |     #[newtype(shr(u64, output))]
+   |                              ^
+
+error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
+  --> tests/trybuild/ops/shr.rs:29:32
+   |
+29 |     #[newtype(shr(u64, output =))]
+   |                                ^
+
+error: expected `,`
+  --> tests/trybuild/ops/shr.rs:35:36
+   |
+35 |     #[newtype(shr(u64, output = u64))]
+   |                                    ^
+
+error: unexpected end of input, expected `with`
+  --> tests/trybuild/ops/shr.rs:41:37
+   |
+41 |     #[newtype(shr(u64, output = u64,))]
+   |                                     ^
+
+error: expected `=`
+  --> tests/trybuild/ops/shr.rs:47:42
+   |
+47 |     #[newtype(shr(u64, output = u64, with))]
+   |                                          ^
+
+error: unexpected end of input, expected an expression
+  --> tests/trybuild/ops/shr.rs:53:44
+   |
+53 |     #[newtype(shr(u64, output = u64, with =))]
+   |                                            ^

@@ -17,6 +17,12 @@ fn attr_type_display_roundtrip() {
     assert_eq!(format!("{}", AttrType::DivAssign), "div_assign");
     assert_eq!(format!("{}", AttrType::Mul), "mul");
     assert_eq!(format!("{}", AttrType::MulAssign), "mul_assign");
+    assert_eq!(format!("{}", AttrType::Rem), "rem");
+    assert_eq!(format!("{}", AttrType::RemAssign), "rem_assign");
+    assert_eq!(format!("{}", AttrType::Shl), "shl");
+    assert_eq!(format!("{}", AttrType::ShlAssign), "shl_assign");
+    assert_eq!(format!("{}", AttrType::Shr), "shr");
+    assert_eq!(format!("{}", AttrType::ShrAssign), "shr_assign");
     assert_eq!(format!("{}", AttrType::PartialEq), "partial_eq");
     assert_eq!(format!("{}", AttrType::Sub), "sub");
     assert_eq!(format!("{}", AttrType::SubAssign), "sub_assign");

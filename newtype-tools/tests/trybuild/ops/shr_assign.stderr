@@ -1,0 +1,29 @@
+error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
+ --> tests/trybuild/ops/shr_assign.rs:5:26
+  |
+5 |     #[newtype(shr_assign())]
+  |                          ^
+
+error: expected `,`
+  --> tests/trybuild/ops/shr_assign.rs:11:29
+   |
+11 |     #[newtype(shr_assign(u64))]
+   |                             ^
+
+error: unexpected end of input, expected `with`
+  --> tests/trybuild/ops/shr_assign.rs:17:30
+   |
+17 |     #[newtype(shr_assign(u64,))]
+   |                              ^
+
+error: expected `=`
+  --> tests/trybuild/ops/shr_assign.rs:23:35
+   |
+23 |     #[newtype(shr_assign(u64, with))]
+   |                                   ^
+
+error: unexpected end of input, expected an expression
+  --> tests/trybuild/ops/shr_assign.rs:29:37
+   |
+29 |     #[newtype(shr_assign(u64, with =))]
+   |                                     ^
