@@ -1,0 +1,53 @@
+error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
+ --> tests/trybuild/ops/bitand.rs:5:22
+  |
+5 |     #[newtype(bitand())]
+  |                      ^
+
+error: expected `,`
+  --> tests/trybuild/ops/bitand.rs:11:25
+   |
+11 |     #[newtype(bitand(u64))]
+   |                         ^
+
+error: unexpected end of input, expected `output`
+  --> tests/trybuild/ops/bitand.rs:17:26
+   |
+17 |     #[newtype(bitand(u64,))]
+   |                          ^
+
+error: expected `=`
+  --> tests/trybuild/ops/bitand.rs:23:33
+   |
+23 |     #[newtype(bitand(u64, output))]
+   |                                 ^
+
+error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
+  --> tests/trybuild/ops/bitand.rs:29:35
+   |
+29 |     #[newtype(bitand(u64, output =))]
+   |                                   ^
+
+error: expected `,`
+  --> tests/trybuild/ops/bitand.rs:35:39
+   |
+35 |     #[newtype(bitand(u64, output = u64))]
+   |                                       ^
+
+error: unexpected end of input, expected `with`
+  --> tests/trybuild/ops/bitand.rs:41:40
+   |
+41 |     #[newtype(bitand(u64, output = u64,))]
+   |                                        ^
+
+error: expected `=`
+  --> tests/trybuild/ops/bitand.rs:47:45
+   |
+47 |     #[newtype(bitand(u64, output = u64, with))]
+   |                                             ^
+
+error: unexpected end of input, expected an expression
+  --> tests/trybuild/ops/bitand.rs:53:47
+   |
+53 |     #[newtype(bitand(u64, output = u64, with =))]
+   |                                               ^

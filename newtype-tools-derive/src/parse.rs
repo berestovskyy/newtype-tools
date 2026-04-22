@@ -9,7 +9,8 @@ mod kw {
     syn::custom_keyword!(with);
 }
 
-const NEWTYPE_NAME: &str = "newtype";
+/// Newtype attribute name.
+const NEWTYPE_ATTR_NAME: &str = "newtype";
 
 /// Parses all attributes and produce their structured representation.
 pub(crate) fn parse_input(input: syn::DeriveInput) -> syn::Result<ParseResult> {
@@ -17,7 +18,7 @@ pub(crate) fn parse_input(input: syn::DeriveInput) -> syn::Result<ParseResult> {
     let mut res = ParseResult::new(input.ident, inner_ty, input.generics);
     for attr in input.attrs {
         // Just skip all other top-level attributes.
-        if !attr.path().is_ident(NEWTYPE_NAME) {
+        if !attr.path().is_ident(NEWTYPE_ATTR_NAME) {
             continue;
         }
         parse_top_level_meta(attr.meta, &mut res)?;
@@ -121,6 +122,22 @@ fn parse_nested_path(
         | AttrType::TryInto
         | AttrType::Add
         | AttrType::AddAssign
+        | AttrType::BitAnd
+        | AttrType::BitAndAssign
+        | AttrType::BitOr
+        | AttrType::BitOrAssign
+        | AttrType::BitXor
+        | AttrType::BitXorAssign
+        | AttrType::Div
+        | AttrType::DivAssign
+        | AttrType::Mul
+        | AttrType::MulAssign
+        | AttrType::Rem
+        | AttrType::RemAssign
+        | AttrType::Shl
+        | AttrType::ShlAssign
+        | AttrType::Shr
+        | AttrType::ShrAssign
         | AttrType::PartialEq
         | AttrType::Sub
         | AttrType::SubAssign => Err(syn::Error::new_spanned(
@@ -138,15 +155,31 @@ fn parse_nested_list(
     res: &mut ParseResult,
 ) -> syn::Result<()> {
     match attr_type {
-        AttrType::From => parse_from(list, res),
-        AttrType::TryFrom => parse_try_from(list, res),
-        AttrType::Into => parse_into(list, res),
-        AttrType::TryInto => parse_try_into(list, res),
-        AttrType::Add => parse_add(list, res),
-        AttrType::AddAssign => parse_add_assign(list, res),
-        AttrType::PartialEq => parse_partial_eq(list, res),
-        AttrType::Sub => parse_sub(list, res),
-        AttrType::SubAssign => parse_sub_assign(list, res),
+        AttrType::From => parse_type_with(list, &mut res.from),
+        AttrType::TryFrom => parse_type_error_with(list, &mut res.try_from),
+        AttrType::Into => parse_type_with(list, &mut res.into),
+        AttrType::TryInto => parse_type_error_with(list, &mut res.try_into),
+        AttrType::Add => parse_type_output_with(list, &mut res.add),
+        AttrType::AddAssign => parse_type_with(list, &mut res.add_assign),
+        AttrType::BitAnd => parse_type_output_with(list, &mut res.bitand),
+        AttrType::BitAndAssign => parse_type_with(list, &mut res.bitand_assign),
+        AttrType::BitOr => parse_type_output_with(list, &mut res.bitor),
+        AttrType::BitOrAssign => parse_type_with(list, &mut res.bitor_assign),
+        AttrType::BitXor => parse_type_output_with(list, &mut res.bitxor),
+        AttrType::BitXorAssign => parse_type_with(list, &mut res.bitxor_assign),
+        AttrType::Div => parse_type_output_with(list, &mut res.div),
+        AttrType::DivAssign => parse_type_with(list, &mut res.div_assign),
+        AttrType::Mul => parse_type_output_with(list, &mut res.mul),
+        AttrType::MulAssign => parse_type_with(list, &mut res.mul_assign),
+        AttrType::Rem => parse_type_output_with(list, &mut res.rem),
+        AttrType::RemAssign => parse_type_with(list, &mut res.rem_assign),
+        AttrType::Shl => parse_type_output_with(list, &mut res.shl),
+        AttrType::ShlAssign => parse_type_with(list, &mut res.shl_assign),
+        AttrType::Shr => parse_type_output_with(list, &mut res.shr),
+        AttrType::ShrAssign => parse_type_with(list, &mut res.shr_assign),
+        AttrType::PartialEq => parse_type_with(list, &mut res.partial_eq),
+        AttrType::Sub => parse_type_output_with(list, &mut res.sub),
+        AttrType::SubAssign => parse_type_with(list, &mut res.sub_assign),
     }
 }
 
@@ -163,122 +196,33 @@ fn parse_nested_name_value(
     ))
 }
 
-/// Parses newtype `from` attribute from a list:
-/// `#[newtype(from(type, with = expr))]`
-fn parse_from(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (from_ty, with_expr) = list.parse_args_with(|input: syn::parse::ParseStream| {
-        let from_ty = parse_lit_or::<syn::Type>(&input)?;
+/// Parses newtype attribute from a list:
+/// `#[newtype(attribute(type, error = type, with = expr))]`
+fn parse_type_error_with(
+    list: &syn::MetaList,
+    res_ops: &mut Vec<(syn::Type, syn::Type, syn::Expr)>,
+) -> syn::Result<()> {
+    list.parse_args_with(|input: syn::parse::ParseStream| {
+        let rhs_ty = parse_lit_or::<syn::Type>(&input)?;
+        input.parse::<syn::Token![,]>()?;
+        input.parse::<kw::error>()?;
+        input.parse::<syn::Token![=]>()?;
+        let error_ty = parse_lit_or::<syn::Type>(&input)?;
         input.parse::<syn::Token![,]>()?;
         input.parse::<kw::with>()?;
         input.parse::<syn::Token![=]>()?;
         let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-        Ok((from_ty, with_expr))
-    })?;
-    res.from.push((from_ty, with_expr));
-    Ok(())
-}
-
-/// Parses newtype `try_from` attribute from a list:
-/// `#[newtype(try_from(type, error = type, with = expr))]`
-fn parse_try_from(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (try_from_ty, error_ty, with_expr) =
-        list.parse_args_with(|input: syn::parse::ParseStream| {
-            let try_from_ty = parse_lit_or::<syn::Type>(&input)?;
-            input.parse::<syn::Token![,]>()?;
-            input.parse::<kw::error>()?;
-            input.parse::<syn::Token![=]>()?;
-            let error_ty = parse_lit_or::<syn::Type>(&input)?;
-            input.parse::<syn::Token![,]>()?;
-            input.parse::<kw::with>()?;
-            input.parse::<syn::Token![=]>()?;
-            let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-            Ok((try_from_ty, error_ty, with_expr))
-        })?;
-    res.try_from.push((try_from_ty, error_ty, with_expr));
-    Ok(())
-}
-
-/// Parses newtype `into` attribute from a list:
-/// `#[newtype(into(type, with = expr))]`
-fn parse_into(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (output_ty, with_expr) = list.parse_args_with(|input: syn::parse::ParseStream| {
-        let output_ty = parse_lit_or::<syn::Type>(&input)?;
-        input.parse::<syn::Token![,]>()?;
-        input.parse::<kw::with>()?;
-        input.parse::<syn::Token![=]>()?;
-        let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-        Ok((output_ty, with_expr))
-    })?;
-    res.into.push((output_ty, with_expr));
-    Ok(())
-}
-
-/// Parses newtype `try_into` attribute from a list:
-/// `#[newtype(try_into(type, error = type, with = expr))]`
-fn parse_try_into(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (output_ty, error_ty, with_expr) =
-        list.parse_args_with(|input: syn::parse::ParseStream| {
-            let output_ty = parse_lit_or::<syn::Type>(&input)?;
-            input.parse::<syn::Token![,]>()?;
-            input.parse::<kw::error>()?;
-            input.parse::<syn::Token![=]>()?;
-            let error_ty = parse_lit_or::<syn::Type>(&input)?;
-            input.parse::<syn::Token![,]>()?;
-            input.parse::<kw::with>()?;
-            input.parse::<syn::Token![=]>()?;
-            let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-            Ok((output_ty, error_ty, with_expr))
-        })?;
-    res.try_into.push((output_ty, error_ty, with_expr));
-    Ok(())
-}
-
-/// Parses newtype `add` attribute from a list:
-/// `#[newtype(add(type, output = type, with = expr))]`
-fn parse_add(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    res.add.push(parse_type_output_with(list)?);
-    Ok(())
-}
-
-/// Parses newtype `add_assign` attribute from a list:
-/// `#[newtype(add_assign(type, with = expr))]`
-fn parse_add_assign(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    res.add_assign.push(parse_type_with(list)?);
-    Ok(())
-}
-
-/// Parses newtype `partial_eq` attribute from a list:
-/// `#[newtype(partial_eq(type, with = expr))]`
-fn parse_partial_eq(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    let (other_ty, with_expr) = list.parse_args_with(|input: syn::parse::ParseStream| {
-        let other_ty = parse_lit_or::<syn::Type>(&input)?;
-        input.parse::<syn::Token![,]>()?;
-        input.parse::<kw::with>()?;
-        input.parse::<syn::Token![=]>()?;
-        let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-        Ok((other_ty, with_expr))
-    })?;
-    res.partial_eq.push((other_ty, with_expr));
-    Ok(())
-}
-
-/// Parses newtype `sub` attribute from a list:
-/// `#[newtype(sub(type, output = type, with = expr))]`
-fn parse_sub(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    res.sub.push(parse_type_output_with(list)?);
-    Ok(())
-}
-
-/// Parses newtype `sub` attribute from a list:
-/// `#[newtype(sub_assign(type, with = expr))]`
-fn parse_sub_assign(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
-    res.sub_assign.push(parse_type_with(list)?);
-    Ok(())
+        res_ops.push((rhs_ty, error_ty, with_expr));
+        Ok(())
+    })
 }
 
 /// Parses newtype attribute from a list:
 /// `#[newtype(attribute(type, output = type, with = expr))]`
-fn parse_type_output_with(list: &syn::MetaList) -> syn::Result<(syn::Type, syn::Type, syn::Expr)> {
+fn parse_type_output_with(
+    list: &syn::MetaList,
+    res_ops: &mut Vec<(syn::Type, syn::Type, syn::Expr)>,
+) -> syn::Result<()> {
     list.parse_args_with(|input: syn::parse::ParseStream| {
         let rhs_ty = parse_lit_or::<syn::Type>(&input)?;
         input.parse::<syn::Token![,]>()?;
@@ -289,74 +233,26 @@ fn parse_type_output_with(list: &syn::MetaList) -> syn::Result<(syn::Type, syn::
         input.parse::<kw::with>()?;
         input.parse::<syn::Token![=]>()?;
         let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-        Ok((rhs_ty, output_ty, with_expr))
+        res_ops.push((rhs_ty, output_ty, with_expr));
+        Ok(())
     })
 }
 
 /// Parses newtype attribute from a list:
 /// `#[newtype(attribute(type, with = expr))]`
-fn parse_type_with(list: &syn::MetaList) -> syn::Result<(syn::Type, syn::Expr)> {
+fn parse_type_with(
+    list: &syn::MetaList,
+    res_ops: &mut Vec<(syn::Type, syn::Expr)>,
+) -> syn::Result<()> {
     list.parse_args_with(|input: syn::parse::ParseStream| {
         let rhs_ty = parse_lit_or::<syn::Type>(&input)?;
         input.parse::<syn::Token![,]>()?;
         input.parse::<kw::with>()?;
         input.parse::<syn::Token![=]>()?;
         let with_expr = parse_lit_or::<syn::Expr>(&input)?;
-        Ok((rhs_ty, with_expr))
+        res_ops.push((rhs_ty, with_expr));
+        Ok(())
     })
-}
-
-/// Attribute types.
-#[derive(Debug, PartialEq)]
-enum AttrType {
-    From,
-    TryFrom,
-    Into,
-    TryInto,
-    Add,
-    AddAssign,
-    PartialEq,
-    Sub,
-    SubAssign,
-}
-
-impl std::fmt::Display for AttrType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::From => f.write_str("from"),
-            Self::TryFrom => f.write_str("try_from"),
-            Self::Into => f.write_str("into"),
-            Self::TryInto => f.write_str("try_into"),
-            Self::Add => f.write_str("add"),
-            Self::AddAssign => f.write_str("add_assign"),
-            Self::PartialEq => f.write_str("partial_eq"),
-            Self::Sub => f.write_str("sub"),
-            Self::SubAssign => f.write_str("sub_assign"),
-        }
-    }
-}
-
-impl TryFrom<Option<&syn::Ident>> for AttrType {
-    type Error = syn::Error;
-
-    fn try_from(value: Option<&syn::Ident>) -> Result<Self, Self::Error> {
-        match value {
-            Some(i) if i == "from" => Ok(Self::From),
-            Some(i) if i == "try_from" => Ok(Self::TryFrom),
-            Some(i) if i == "into" => Ok(Self::Into),
-            Some(i) if i == "try_into" => Ok(Self::TryInto),
-            Some(i) if i == "add" => Ok(Self::Add),
-            Some(i) if i == "add_assign" => Ok(Self::AddAssign),
-            Some(i) if i == "partial_eq" => Ok(Self::PartialEq),
-            Some(i) if i == "sub" => Ok(Self::Sub),
-            Some(i) if i == "sub_assign" => Ok(Self::SubAssign),
-            _ => Err(syn::Error::new_spanned(
-                value,
-                "expected `(try_)from`, `(try_)into`, `add(_assign)`, `partial_eq`, \
-                `sub(_assign)`, `iter`",
-            )),
-        }
-    }
 }
 
 /// Parses a syntax tree node of type `T` or a literal with `T` inside:
@@ -375,4 +271,106 @@ where
     }
     // If `LitStr` parsing failed, try to parse the `T` directly.
     input.parse::<T>()
+}
+
+/// Attribute types.
+#[derive(Debug, PartialEq)]
+enum AttrType {
+    From,
+    TryFrom,
+    Into,
+    TryInto,
+    Add,
+    AddAssign,
+    BitAnd,
+    BitAndAssign,
+    BitOr,
+    BitOrAssign,
+    BitXor,
+    BitXorAssign,
+    Div,
+    DivAssign,
+    Mul,
+    MulAssign,
+    Rem,
+    RemAssign,
+    Shl,
+    ShlAssign,
+    Shr,
+    ShrAssign,
+    PartialEq,
+    Sub,
+    SubAssign,
+}
+
+impl std::fmt::Display for AttrType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::From => f.write_str("from"),
+            Self::TryFrom => f.write_str("try_from"),
+            Self::Into => f.write_str("into"),
+            Self::TryInto => f.write_str("try_into"),
+            Self::Add => f.write_str("add"),
+            Self::AddAssign => f.write_str("add_assign"),
+            Self::BitAnd => f.write_str("bitand"),
+            Self::BitAndAssign => f.write_str("bitand_assign"),
+            Self::BitOr => f.write_str("bitor"),
+            Self::BitOrAssign => f.write_str("bitor_assign"),
+            Self::BitXor => f.write_str("bitxor"),
+            Self::BitXorAssign => f.write_str("bitxor_assign"),
+            Self::Div => f.write_str("div"),
+            Self::DivAssign => f.write_str("div_assign"),
+            Self::Mul => f.write_str("mul"),
+            Self::MulAssign => f.write_str("mul_assign"),
+            Self::Rem => f.write_str("rem"),
+            Self::RemAssign => f.write_str("rem_assign"),
+            Self::Shl => f.write_str("shl"),
+            Self::ShlAssign => f.write_str("shl_assign"),
+            Self::Shr => f.write_str("shr"),
+            Self::ShrAssign => f.write_str("shr_assign"),
+            Self::PartialEq => f.write_str("partial_eq"),
+            Self::Sub => f.write_str("sub"),
+            Self::SubAssign => f.write_str("sub_assign"),
+        }
+    }
+}
+
+impl TryFrom<Option<&syn::Ident>> for AttrType {
+    type Error = syn::Error;
+
+    fn try_from(value: Option<&syn::Ident>) -> Result<Self, Self::Error> {
+        match value {
+            Some(i) if i == "from" => Ok(Self::From),
+            Some(i) if i == "try_from" => Ok(Self::TryFrom),
+            Some(i) if i == "into" => Ok(Self::Into),
+            Some(i) if i == "try_into" => Ok(Self::TryInto),
+            Some(i) if i == "add" => Ok(Self::Add),
+            Some(i) if i == "add_assign" => Ok(Self::AddAssign),
+            Some(i) if i == "bitand" => Ok(Self::BitAnd),
+            Some(i) if i == "bitand_assign" => Ok(Self::BitAndAssign),
+            Some(i) if i == "bitor" => Ok(Self::BitOr),
+            Some(i) if i == "bitor_assign" => Ok(Self::BitOrAssign),
+            Some(i) if i == "bitxor" => Ok(Self::BitXor),
+            Some(i) if i == "bitxor_assign" => Ok(Self::BitXorAssign),
+            Some(i) if i == "div" => Ok(Self::Div),
+            Some(i) if i == "div_assign" => Ok(Self::DivAssign),
+            Some(i) if i == "mul" => Ok(Self::Mul),
+            Some(i) if i == "mul_assign" => Ok(Self::MulAssign),
+            Some(i) if i == "rem" => Ok(Self::Rem),
+            Some(i) if i == "rem_assign" => Ok(Self::RemAssign),
+            Some(i) if i == "shl" => Ok(Self::Shl),
+            Some(i) if i == "shl_assign" => Ok(Self::ShlAssign),
+            Some(i) if i == "shr" => Ok(Self::Shr),
+            Some(i) if i == "shr_assign" => Ok(Self::ShrAssign),
+            Some(i) if i == "partial_eq" => Ok(Self::PartialEq),
+            Some(i) if i == "sub" => Ok(Self::Sub),
+            Some(i) if i == "sub_assign" => Ok(Self::SubAssign),
+            _ => Err(syn::Error::new_spanned(
+                value,
+                "expected `(try_)from`, `(try_)into`, `add(_assign)`, `bitand(_assign)`, \
+                `bitor(_assign)`, `bitxor(_assign)`, `mul(_assign)`, `partial_eq`, `sub(_assign)`, \
+                `iter`",
+            )),
+        }
+    }
 }

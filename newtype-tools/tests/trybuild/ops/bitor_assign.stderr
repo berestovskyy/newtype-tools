@@ -1,0 +1,29 @@
+error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
+ --> tests/trybuild/ops/bitor_assign.rs:5:28
+  |
+5 |     #[newtype(bitor_assign())]
+  |                            ^
+
+error: expected `,`
+  --> tests/trybuild/ops/bitor_assign.rs:11:31
+   |
+11 |     #[newtype(bitor_assign(u64))]
+   |                               ^
+
+error: unexpected end of input, expected `with`
+  --> tests/trybuild/ops/bitor_assign.rs:17:32
+   |
+17 |     #[newtype(bitor_assign(u64,))]
+   |                                ^
+
+error: expected `=`
+  --> tests/trybuild/ops/bitor_assign.rs:23:37
+   |
+23 |     #[newtype(bitor_assign(u64, with))]
+   |                                     ^
+
+error: unexpected end of input, expected an expression
+  --> tests/trybuild/ops/bitor_assign.rs:29:39
+   |
+29 |     #[newtype(bitor_assign(u64, with =))]
+   |                                       ^

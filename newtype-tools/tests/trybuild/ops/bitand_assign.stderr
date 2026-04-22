@@ -1,0 +1,29 @@
+error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
+ --> tests/trybuild/ops/bitand_assign.rs:5:29
+  |
+5 |     #[newtype(bitand_assign())]
+  |                             ^
+
+error: expected `,`
+  --> tests/trybuild/ops/bitand_assign.rs:11:32
+   |
+11 |     #[newtype(bitand_assign(u64))]
+   |                                ^
+
+error: unexpected end of input, expected `with`
+  --> tests/trybuild/ops/bitand_assign.rs:17:33
+   |
+17 |     #[newtype(bitand_assign(u64,))]
+   |                                 ^
+
+error: expected `=`
+  --> tests/trybuild/ops/bitand_assign.rs:23:38
+   |
+23 |     #[newtype(bitand_assign(u64, with))]
+   |                                      ^
+
+error: unexpected end of input, expected an expression
+  --> tests/trybuild/ops/bitand_assign.rs:29:40
+   |
+29 |     #[newtype(bitand_assign(u64, with =))]
+   |                                        ^

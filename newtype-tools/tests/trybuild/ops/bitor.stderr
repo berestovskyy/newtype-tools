@@ -1,0 +1,53 @@
+error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
+ --> tests/trybuild/ops/bitor.rs:5:21
+  |
+5 |     #[newtype(bitor())]
+  |                     ^
+
+error: expected `,`
+  --> tests/trybuild/ops/bitor.rs:11:24
+   |
+11 |     #[newtype(bitor(u64))]
+   |                        ^
+
+error: unexpected end of input, expected `output`
+  --> tests/trybuild/ops/bitor.rs:17:25
+   |
+17 |     #[newtype(bitor(u64,))]
+   |                         ^
+
+error: expected `=`
+  --> tests/trybuild/ops/bitor.rs:23:32
+   |
+23 |     #[newtype(bitor(u64, output))]
+   |                                ^
+
+error: unexpected end of input, expected one of: `for`, parentheses, `fn`, `unsafe`, `extern`, identifier, `::`, `<`, `dyn`, square brackets, `*`, `&`, `!`, `impl`, `_`, lifetime
+  --> tests/trybuild/ops/bitor.rs:29:34
+   |
+29 |     #[newtype(bitor(u64, output =))]
+   |                                  ^
+
+error: expected `,`
+  --> tests/trybuild/ops/bitor.rs:35:38
+   |
+35 |     #[newtype(bitor(u64, output = u64))]
+   |                                      ^
+
+error: unexpected end of input, expected `with`
+  --> tests/trybuild/ops/bitor.rs:41:39
+   |
+41 |     #[newtype(bitor(u64, output = u64,))]
+   |                                       ^
+
+error: expected `=`
+  --> tests/trybuild/ops/bitor.rs:47:44
+   |
+47 |     #[newtype(bitor(u64, output = u64, with))]
+   |                                            ^
+
+error: unexpected end of input, expected an expression
+  --> tests/trybuild/ops/bitor.rs:53:46
+   |
+53 |     #[newtype(bitor(u64, output = u64, with =))]
+   |                                              ^

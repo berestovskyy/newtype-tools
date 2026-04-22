@@ -39,6 +39,38 @@ struct ParseResult {
     add: Vec<(syn::Type, syn::Type, syn::Expr)>,
     /// Tuples of `(rhs type, add-assign expression)`.
     add_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
+    bitand: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    bitand_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
+    bitor: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    bitor_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
+    bitxor: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    bitxor_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
+    div: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    div_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
+    mul: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    mul_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
+    rem: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    rem_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
+    shl: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    shl_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
+    shr: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    shr_assign: Vec<(syn::Type, syn::Expr)>,
     /// Tuples of `(other type, comparison expression)`.
     partial_eq: Vec<(syn::Type, syn::Expr)>,
     /// Tuples of `(rhs type, output type, sub expression)`.
@@ -60,6 +92,22 @@ impl ParseResult {
             try_into: Vec::default(),
             add: Vec::default(),
             add_assign: Vec::default(),
+            bitand: Vec::default(),
+            bitand_assign: Vec::default(),
+            bitor: Vec::default(),
+            bitor_assign: Vec::default(),
+            bitxor: Vec::default(),
+            bitxor_assign: Vec::default(),
+            div: Vec::default(),
+            div_assign: Vec::default(),
+            mul: Vec::default(),
+            mul_assign: Vec::default(),
+            rem: Vec::default(),
+            rem_assign: Vec::default(),
+            shl: Vec::default(),
+            shl_assign: Vec::default(),
+            shr: Vec::default(),
+            shr_assign: Vec::default(),
             partial_eq: Vec::default(),
             sub: Vec::default(),
             sub_assign: Vec::default(),

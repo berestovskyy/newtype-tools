@@ -1,5 +1,7 @@
 #![cfg(feature = "derive")]
 
+const EXPECTED_WEIGHT: u64 = 42 + 21 * 2;
+
 #[test]
 fn add() {
     #[derive(Debug, newtype_tools::Newtype)]
@@ -15,14 +17,14 @@ fn add() {
     #[derive(Debug, PartialEq)]
     struct Weight(u64);
 
-    let sum = Apples(42) + Oranges(21);
-    assert_eq!(sum, Weight(84));
-    let sum = &Apples(42) + Oranges(21);
-    assert_eq!(sum, Weight(84));
-    let sum = Apples(42) + &Oranges(21);
-    assert_eq!(sum, Weight(84));
-    let sum = &Apples(42) + &Oranges(21);
-    assert_eq!(sum, Weight(84));
+    let res = Apples(42) + Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = &Apples(42) + Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = Apples(42) + &Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = &Apples(42) + &Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
 }
 
 #[test]
@@ -41,12 +43,12 @@ fn generic_add() {
     #[derive(Debug, PartialEq)]
     struct Weight(u64);
 
-    let sum = Apples(42) + Oranges(21);
-    assert_eq!(sum, Weight(84));
-    let sum = &Apples(42) + Oranges(21);
-    assert_eq!(sum, Weight(84));
-    let sum = Apples(42) + &Oranges(21);
-    assert_eq!(sum, Weight(84));
-    let sum = &Apples(42) + &Oranges(21);
-    assert_eq!(sum, Weight(84));
+    let res = Apples(42) + Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = &Apples(42) + Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = Apples(42) + &Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = &Apples(42) + &Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
 }
