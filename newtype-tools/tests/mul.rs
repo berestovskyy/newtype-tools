@@ -17,14 +17,14 @@ fn mul() {
     #[derive(Debug, PartialEq)]
     struct Weight(u64);
 
-    let prod = Apples(42) * Oranges(21);
-    assert_eq!(prod, Weight(EXPECTED_WEIGHT));
-    let prod = &Apples(42) * Oranges(21);
-    assert_eq!(prod, Weight(EXPECTED_WEIGHT));
-    let prod = Apples(42) * &Oranges(21);
-    assert_eq!(prod, Weight(EXPECTED_WEIGHT));
-    let prod = &Apples(42) * &Oranges(21);
-    assert_eq!(prod, Weight(EXPECTED_WEIGHT));
+    let res = Apples(42) * Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = &Apples(42) * Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = Apples(42) * &Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = &Apples(42) * &Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
 }
 
 #[test]
@@ -43,12 +43,12 @@ fn generic_mul() {
     #[derive(Debug, PartialEq)]
     struct Weight(u64);
 
-    let prod = Apples(42) * Oranges(21);
-    assert_eq!(prod, Weight(EXPECTED_WEIGHT));
-    let prod = &Apples(42) * Oranges(21);
-    assert_eq!(prod, Weight(EXPECTED_WEIGHT));
-    let prod = Apples(42) * &Oranges(21);
-    assert_eq!(prod, Weight(EXPECTED_WEIGHT));
-    let prod = &Apples(42) * &Oranges(21);
-    assert_eq!(prod, Weight(EXPECTED_WEIGHT));
+    let res = Apples(42) * Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = &Apples(42) * Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = Apples(42) * &Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = &Apples(42) * &Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
 }

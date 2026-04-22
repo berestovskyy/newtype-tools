@@ -2,21 +2,70 @@ use crate::ParseResult;
 
 /// Expands all parsed derives into a token stream.
 pub(crate) fn expand_derive(res: &ParseResult) -> syn::Result<proc_macro::TokenStream> {
+    let add = (
+        syn::parse_quote!(std::ops::Add),
+        syn::parse_quote!(add),
+        syn::parse_quote!(std::ops::AddAssign),
+        syn::parse_quote!(add_assign),
+    );
+    let band = (
+        syn::parse_quote!(std::ops::BitAnd),
+        syn::parse_quote!(bitand),
+        syn::parse_quote!(std::ops::BitAndAssign),
+        syn::parse_quote!(bitand_assign),
+    );
+    let bor = (
+        syn::parse_quote!(std::ops::BitOr),
+        syn::parse_quote!(bitor),
+        syn::parse_quote!(std::ops::BitOrAssign),
+        syn::parse_quote!(bitor_assign),
+    );
+    let bxor = (
+        syn::parse_quote!(std::ops::BitXor),
+        syn::parse_quote!(bitxor),
+        syn::parse_quote!(std::ops::BitXorAssign),
+        syn::parse_quote!(bitxor_assign),
+    );
+    let div = (
+        syn::parse_quote!(std::ops::Div),
+        syn::parse_quote!(div),
+        syn::parse_quote!(std::ops::DivAssign),
+        syn::parse_quote!(div_assign),
+    );
+    let mul = (
+        syn::parse_quote!(std::ops::Mul),
+        syn::parse_quote!(mul),
+        syn::parse_quote!(std::ops::MulAssign),
+        syn::parse_quote!(mul_assign),
+    );
+    let sub = (
+        syn::parse_quote!(std::ops::Sub),
+        syn::parse_quote!(sub),
+        syn::parse_quote!(std::ops::SubAssign),
+        syn::parse_quote!(sub_assign),
+    );
+
     let mut tokens = proc_macro2::TokenStream::new();
     tokens.extend(expand_newtype_trait(res));
     tokens.extend(expand_from(res));
     tokens.extend(expand_try_from(res));
     tokens.extend(expand_into(res));
     tokens.extend(expand_try_into(res));
-    tokens.extend(expand_add(res));
-    tokens.extend(expand_add_assign(res));
-    tokens.extend(expand_div(res));
-    tokens.extend(expand_div_assign(res));
-    tokens.extend(expand_mul(res));
-    tokens.extend(expand_mul_assign(res));
+    tokens.extend(expand_bin_op(add.0, add.1, res, &res.add));
+    tokens.extend(expand_assign_op(add.2, add.3, res, &res.add_assign));
+    tokens.extend(expand_bin_op(band.0, band.1, res, &res.bitand));
+    tokens.extend(expand_assign_op(band.2, band.3, res, &res.bitand_assign));
+    tokens.extend(expand_bin_op(bor.0, bor.1, res, &res.bitor));
+    tokens.extend(expand_assign_op(bor.2, bor.3, res, &res.bitor_assign));
+    tokens.extend(expand_bin_op(bxor.0, bxor.1, res, &res.bitxor));
+    tokens.extend(expand_assign_op(bxor.2, bxor.3, res, &res.bitxor_assign));
+    tokens.extend(expand_bin_op(div.0, div.1, res, &res.div));
+    tokens.extend(expand_assign_op(div.2, div.3, res, &res.div_assign));
+    tokens.extend(expand_bin_op(mul.0, mul.1, res, &res.mul));
+    tokens.extend(expand_assign_op(mul.2, mul.3, res, &res.mul_assign));
     tokens.extend(expand_partial_eq(res));
-    tokens.extend(expand_sub(res));
-    tokens.extend(expand_sub_assign(res));
+    tokens.extend(expand_bin_op(sub.0, sub.1, res, &res.sub));
+    tokens.extend(expand_assign_op(sub.2, sub.3, res, &res.sub_assign));
     Ok(tokens.into())
 }
 
@@ -137,66 +186,6 @@ fn expand_try_into(res: &ParseResult) -> proc_macro2::TokenStream {
         .collect()
 }
 
-/// Expands all `add` derives into a token stream.
-fn expand_add(res: &ParseResult) -> proc_macro2::TokenStream {
-    expand_bin_op(
-        syn::parse_quote!(std::ops::Add),
-        syn::parse_quote!(add),
-        res,
-        &res.add,
-    )
-}
-
-/// Expands all `add_assign` derives into a token stream.
-fn expand_add_assign(res: &ParseResult) -> proc_macro2::TokenStream {
-    expand_assign_op(
-        syn::parse_quote!(std::ops::AddAssign),
-        syn::parse_quote!(add_assign),
-        res,
-        &res.add_assign,
-    )
-}
-
-/// Expands all `div` derives into a token stream.
-fn expand_div(res: &ParseResult) -> proc_macro2::TokenStream {
-    expand_bin_op(
-        syn::parse_quote!(std::ops::Div),
-        syn::parse_quote!(div),
-        res,
-        &res.div,
-    )
-}
-
-/// Expands all `div_assign` derives into a token stream.
-fn expand_div_assign(res: &ParseResult) -> proc_macro2::TokenStream {
-    expand_assign_op(
-        syn::parse_quote!(std::ops::DivAssign),
-        syn::parse_quote!(div_assign),
-        res,
-        &res.div_assign,
-    )
-}
-
-/// Expands all `mul` derives into a token stream.
-fn expand_mul(res: &ParseResult) -> proc_macro2::TokenStream {
-    expand_bin_op(
-        syn::parse_quote!(std::ops::Mul),
-        syn::parse_quote!(mul),
-        res,
-        &res.mul,
-    )
-}
-
-/// Expands all `mul_assign` derives into a token stream.
-fn expand_mul_assign(res: &ParseResult) -> proc_macro2::TokenStream {
-    expand_assign_op(
-        syn::parse_quote!(std::ops::MulAssign),
-        syn::parse_quote!(mul_assign),
-        res,
-        &res.mul_assign,
-    )
-}
-
 /// Expands all `partial_eq` derives into a token stream.
 fn expand_partial_eq(res: &ParseResult) -> proc_macro2::TokenStream {
     let newtype = &res.newtype;
@@ -217,26 +206,6 @@ fn expand_partial_eq(res: &ParseResult) -> proc_macro2::TokenStream {
             }
         })
         .collect()
-}
-
-/// Expands all `sub` derives into a token stream.
-fn expand_sub(res: &ParseResult) -> proc_macro2::TokenStream {
-    expand_bin_op(
-        syn::parse_quote!(std::ops::Sub),
-        syn::parse_quote!(sub),
-        res,
-        &res.sub,
-    )
-}
-
-/// Expands all `sub_assign` derives into a token stream.
-fn expand_sub_assign(res: &ParseResult) -> proc_macro2::TokenStream {
-    expand_assign_op(
-        syn::parse_quote!(std::ops::SubAssign),
-        syn::parse_quote!(sub_assign),
-        res,
-        &res.sub_assign,
-    )
 }
 
 /// Expands a binary operation into a token stream.

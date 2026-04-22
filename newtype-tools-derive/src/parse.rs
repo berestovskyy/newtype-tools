@@ -122,6 +122,12 @@ fn parse_nested_path(
         | AttrType::TryInto
         | AttrType::Add
         | AttrType::AddAssign
+        | AttrType::BitAnd
+        | AttrType::BitAndAssign
+        | AttrType::BitOr
+        | AttrType::BitOrAssign
+        | AttrType::BitXor
+        | AttrType::BitXorAssign
         | AttrType::Div
         | AttrType::DivAssign
         | AttrType::Mul
@@ -149,6 +155,12 @@ fn parse_nested_list(
         AttrType::TryInto => parse_type_error_with(list, &mut res.try_into),
         AttrType::Add => parse_type_output_with(list, &mut res.add),
         AttrType::AddAssign => parse_type_with(list, &mut res.add_assign),
+        AttrType::BitAnd => parse_type_output_with(list, &mut res.bitand),
+        AttrType::BitAndAssign => parse_type_with(list, &mut res.bitand_assign),
+        AttrType::BitOr => parse_type_output_with(list, &mut res.bitor),
+        AttrType::BitOrAssign => parse_type_with(list, &mut res.bitor_assign),
+        AttrType::BitXor => parse_type_output_with(list, &mut res.bitxor),
+        AttrType::BitXorAssign => parse_type_with(list, &mut res.bitxor_assign),
         AttrType::Div => parse_type_output_with(list, &mut res.div),
         AttrType::DivAssign => parse_type_with(list, &mut res.div_assign),
         AttrType::Mul => parse_type_output_with(list, &mut res.mul),
@@ -258,6 +270,12 @@ enum AttrType {
     TryInto,
     Add,
     AddAssign,
+    BitAnd,
+    BitAndAssign,
+    BitOr,
+    BitOrAssign,
+    BitXor,
+    BitXorAssign,
     Div,
     DivAssign,
     Mul,
@@ -276,6 +294,12 @@ impl std::fmt::Display for AttrType {
             Self::TryInto => f.write_str("try_into"),
             Self::Add => f.write_str("add"),
             Self::AddAssign => f.write_str("add_assign"),
+            Self::BitAnd => f.write_str("bitand"),
+            Self::BitAndAssign => f.write_str("bitand_assign"),
+            Self::BitOr => f.write_str("bitor"),
+            Self::BitOrAssign => f.write_str("bitor_assign"),
+            Self::BitXor => f.write_str("bitxor"),
+            Self::BitXorAssign => f.write_str("bitxor_assign"),
             Self::Div => f.write_str("div"),
             Self::DivAssign => f.write_str("div_assign"),
             Self::Mul => f.write_str("mul"),
@@ -298,6 +322,12 @@ impl TryFrom<Option<&syn::Ident>> for AttrType {
             Some(i) if i == "try_into" => Ok(Self::TryInto),
             Some(i) if i == "add" => Ok(Self::Add),
             Some(i) if i == "add_assign" => Ok(Self::AddAssign),
+            Some(i) if i == "bitand" => Ok(Self::BitAnd),
+            Some(i) if i == "bitand_assign" => Ok(Self::BitAndAssign),
+            Some(i) if i == "bitor" => Ok(Self::BitOr),
+            Some(i) if i == "bitor_assign" => Ok(Self::BitOrAssign),
+            Some(i) if i == "bitxor" => Ok(Self::BitXor),
+            Some(i) if i == "bitxor_assign" => Ok(Self::BitXorAssign),
             Some(i) if i == "div" => Ok(Self::Div),
             Some(i) if i == "div_assign" => Ok(Self::DivAssign),
             Some(i) if i == "mul" => Ok(Self::Mul),
@@ -307,8 +337,9 @@ impl TryFrom<Option<&syn::Ident>> for AttrType {
             Some(i) if i == "sub_assign" => Ok(Self::SubAssign),
             _ => Err(syn::Error::new_spanned(
                 value,
-                "expected `(try_)from`, `(try_)into`, `add(_assign)`, `mul(_assign)`, \
-                `partial_eq`, `sub(_assign)`, `iter`",
+                "expected `(try_)from`, `(try_)into`, `add(_assign)`, `bitand(_assign)`, \
+                `bitor(_assign)`, `bitxor(_assign)`, `mul(_assign)`, `partial_eq`, `sub(_assign)`, \
+                `iter`",
             )),
         }
     }

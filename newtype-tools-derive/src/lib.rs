@@ -40,6 +40,18 @@ struct ParseResult {
     /// Tuples of `(rhs type, add-assign expression)`.
     add_assign: Vec<(syn::Type, syn::Expr)>,
     /// Tuples of `(rhs type, output type, add expression)`.
+    bitand: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    bitand_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
+    bitor: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    bitor_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
+    bitxor: Vec<(syn::Type, syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, add-assign expression)`.
+    bitxor_assign: Vec<(syn::Type, syn::Expr)>,
+    /// Tuples of `(rhs type, output type, add expression)`.
     div: Vec<(syn::Type, syn::Type, syn::Expr)>,
     /// Tuples of `(rhs type, add-assign expression)`.
     div_assign: Vec<(syn::Type, syn::Expr)>,
@@ -68,6 +80,12 @@ impl ParseResult {
             try_into: Vec::default(),
             add: Vec::default(),
             add_assign: Vec::default(),
+            bitand: Vec::default(),
+            bitand_assign: Vec::default(),
+            bitor: Vec::default(),
+            bitor_assign: Vec::default(),
+            bitxor: Vec::default(),
+            bitxor_assign: Vec::default(),
             div: Vec::default(),
             div_assign: Vec::default(),
             mul: Vec::default(),

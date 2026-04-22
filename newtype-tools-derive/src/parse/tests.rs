@@ -7,6 +7,12 @@ fn attr_type_display_roundtrip() {
     assert_eq!(format!("{}", AttrType::TryInto), "try_into");
     assert_eq!(format!("{}", AttrType::Add), "add");
     assert_eq!(format!("{}", AttrType::AddAssign), "add_assign");
+    assert_eq!(format!("{}", AttrType::BitAnd), "bitand");
+    assert_eq!(format!("{}", AttrType::BitAndAssign), "bitand_assign");
+    assert_eq!(format!("{}", AttrType::BitOr), "bitor");
+    assert_eq!(format!("{}", AttrType::BitOrAssign), "bitor_assign");
+    assert_eq!(format!("{}", AttrType::BitXor), "bitxor");
+    assert_eq!(format!("{}", AttrType::BitXorAssign), "bitxor_assign");
     assert_eq!(format!("{}", AttrType::Div), "div");
     assert_eq!(format!("{}", AttrType::DivAssign), "div_assign");
     assert_eq!(format!("{}", AttrType::Mul), "mul");

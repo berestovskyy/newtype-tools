@@ -17,14 +17,14 @@ fn add() {
     #[derive(Debug, PartialEq)]
     struct Weight(u64);
 
-    let sum = Apples(42) + Oranges(21);
-    assert_eq!(sum, Weight(EXPECTED_WEIGHT));
-    let sum = &Apples(42) + Oranges(21);
-    assert_eq!(sum, Weight(EXPECTED_WEIGHT));
-    let sum = Apples(42) + &Oranges(21);
-    assert_eq!(sum, Weight(EXPECTED_WEIGHT));
-    let sum = &Apples(42) + &Oranges(21);
-    assert_eq!(sum, Weight(EXPECTED_WEIGHT));
+    let res = Apples(42) + Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = &Apples(42) + Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = Apples(42) + &Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = &Apples(42) + &Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
 }
 
 #[test]
@@ -43,12 +43,12 @@ fn generic_add() {
     #[derive(Debug, PartialEq)]
     struct Weight(u64);
 
-    let sum = Apples(42) + Oranges(21);
-    assert_eq!(sum, Weight(EXPECTED_WEIGHT));
-    let sum = &Apples(42) + Oranges(21);
-    assert_eq!(sum, Weight(EXPECTED_WEIGHT));
-    let sum = Apples(42) + &Oranges(21);
-    assert_eq!(sum, Weight(EXPECTED_WEIGHT));
-    let sum = &Apples(42) + &Oranges(21);
-    assert_eq!(sum, Weight(EXPECTED_WEIGHT));
+    let res = Apples(42) + Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = &Apples(42) + Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = Apples(42) + &Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
+    let res = &Apples(42) + &Oranges(21);
+    assert_eq!(res, Weight(EXPECTED_WEIGHT));
 }
