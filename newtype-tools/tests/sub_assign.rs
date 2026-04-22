@@ -1,5 +1,7 @@
 #![cfg(feature = "derive")]
 
+const EXPECTED_WEIGHT: u64 = 0;
+
 #[test]
 fn sub_assign() {
     #[derive(Debug, newtype_tools::Newtype, PartialEq)]
@@ -11,10 +13,10 @@ fn sub_assign() {
 
     let mut apples = Apples(42);
     apples -= Oranges(21);
-    assert_eq!(apples, Apples(0));
+    assert_eq!(apples, Apples(EXPECTED_WEIGHT));
     let mut apples = Apples(42);
     apples -= &Oranges(21);
-    assert_eq!(apples, Apples(0));
+    assert_eq!(apples, Apples(EXPECTED_WEIGHT));
 }
 
 #[test]
@@ -30,10 +32,10 @@ fn generic_sub_assign() {
     let mut apples = Apples(42);
     let oranges = Oranges(21);
     apples -= oranges;
-    assert_eq!(apples, Apples(0));
+    assert_eq!(apples, Apples(EXPECTED_WEIGHT));
     let mut apples = Apples(42);
     let oranges = Oranges(21);
     apples -= &oranges;
-    assert_eq!(apples, Apples(0));
+    assert_eq!(apples, Apples(EXPECTED_WEIGHT));
     assert_eq!(oranges, Oranges(21));
 }

@@ -122,6 +122,8 @@ fn parse_nested_path(
         | AttrType::TryInto
         | AttrType::Add
         | AttrType::AddAssign
+        | AttrType::Mul
+        | AttrType::MulAssign
         | AttrType::PartialEq
         | AttrType::Sub
         | AttrType::SubAssign => Err(syn::Error::new_spanned(
@@ -145,6 +147,8 @@ fn parse_nested_list(
         AttrType::TryInto => parse_try_into(list, res),
         AttrType::Add => parse_add(list, res),
         AttrType::AddAssign => parse_add_assign(list, res),
+        AttrType::Mul => parse_mul(list, res),
+        AttrType::MulAssign => parse_mul_assign(list, res),
         AttrType::PartialEq => parse_partial_eq(list, res),
         AttrType::Sub => parse_sub(list, res),
         AttrType::SubAssign => parse_sub_assign(list, res),
@@ -203,6 +207,20 @@ fn parse_add(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
 /// `#[newtype(add_assign(type, with = expr))]`
 fn parse_add_assign(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
     res.add_assign.push(parse_type_with(list)?);
+    Ok(())
+}
+
+/// Parses newtype `mul` attribute from a list:
+/// `#[newtype(mul(type, output = type, with = expr))]`
+fn parse_mul(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
+    res.mul.push(parse_type_output_with(list)?);
+    Ok(())
+}
+
+/// Parses newtype `mul_assign` attribute from a list:
+/// `#[newtype(mul_assign(type, with = expr))]`
+fn parse_mul_assign(list: &syn::MetaList, res: &mut ParseResult) -> syn::Result<()> {
+    res.mul_assign.push(parse_type_with(list)?);
     Ok(())
 }
 
@@ -301,6 +319,8 @@ enum AttrType {
     TryInto,
     Add,
     AddAssign,
+    Mul,
+    MulAssign,
     PartialEq,
     Sub,
     SubAssign,
@@ -315,6 +335,8 @@ impl std::fmt::Display for AttrType {
             Self::TryInto => f.write_str("try_into"),
             Self::Add => f.write_str("add"),
             Self::AddAssign => f.write_str("add_assign"),
+            Self::Mul => f.write_str("mul"),
+            Self::MulAssign => f.write_str("mul_assign"),
             Self::PartialEq => f.write_str("partial_eq"),
             Self::Sub => f.write_str("sub"),
             Self::SubAssign => f.write_str("sub_assign"),
@@ -333,13 +355,15 @@ impl TryFrom<Option<&syn::Ident>> for AttrType {
             Some(i) if i == "try_into" => Ok(Self::TryInto),
             Some(i) if i == "add" => Ok(Self::Add),
             Some(i) if i == "add_assign" => Ok(Self::AddAssign),
+            Some(i) if i == "mul" => Ok(Self::Mul),
+            Some(i) if i == "mul_assign" => Ok(Self::MulAssign),
             Some(i) if i == "partial_eq" => Ok(Self::PartialEq),
             Some(i) if i == "sub" => Ok(Self::Sub),
             Some(i) if i == "sub_assign" => Ok(Self::SubAssign),
             _ => Err(syn::Error::new_spanned(
                 value,
-                "expected `(try_)from`, `(try_)into`, `add(_assign)`, `partial_eq`, \
-                `sub(_assign)`, `iter`",
+                "expected `(try_)from`, `(try_)into`, `add(_assign)`, `mul(_assign)`, \
+                `partial_eq`, `sub(_assign)`, `iter`",
             )),
         }
     }

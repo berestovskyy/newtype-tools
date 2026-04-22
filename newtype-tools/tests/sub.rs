@@ -1,5 +1,7 @@
 #![cfg(feature = "derive")]
 
+const EXPECTED_WEIGHT: u64 = 0;
+
 #[test]
 fn sub() {
     #[derive(Debug, newtype_tools::Newtype)]
@@ -15,14 +17,14 @@ fn sub() {
     #[derive(Debug, PartialEq)]
     struct Weight(u64);
 
-    let sum = Apples(42) - Oranges(21);
-    assert_eq!(sum, Weight(0));
-    let sum = &Apples(42) - Oranges(21);
-    assert_eq!(sum, Weight(0));
-    let sum = Apples(42) - &Oranges(21);
-    assert_eq!(sum, Weight(0));
-    let sum = &Apples(42) - &Oranges(21);
-    assert_eq!(sum, Weight(0));
+    let diff = Apples(42) - Oranges(21);
+    assert_eq!(diff, Weight(EXPECTED_WEIGHT));
+    let diff = &Apples(42) - Oranges(21);
+    assert_eq!(diff, Weight(EXPECTED_WEIGHT));
+    let diff = Apples(42) - &Oranges(21);
+    assert_eq!(diff, Weight(EXPECTED_WEIGHT));
+    let diff = &Apples(42) - &Oranges(21);
+    assert_eq!(diff, Weight(EXPECTED_WEIGHT));
 }
 
 #[test]
@@ -41,12 +43,12 @@ fn generic_sub() {
     #[derive(Debug, PartialEq)]
     struct Weight(u64);
 
-    let sum = Apples(42) - Oranges(21);
-    assert_eq!(sum, Weight(0));
-    let sum = &Apples(42) - Oranges(21);
-    assert_eq!(sum, Weight(0));
-    let sum = Apples(42) - &Oranges(21);
-    assert_eq!(sum, Weight(0));
-    let sum = &Apples(42) - &Oranges(21);
-    assert_eq!(sum, Weight(0));
+    let diff = Apples(42) - Oranges(21);
+    assert_eq!(diff, Weight(EXPECTED_WEIGHT));
+    let diff = &Apples(42) - Oranges(21);
+    assert_eq!(diff, Weight(EXPECTED_WEIGHT));
+    let diff = Apples(42) - &Oranges(21);
+    assert_eq!(diff, Weight(EXPECTED_WEIGHT));
+    let diff = &Apples(42) - &Oranges(21);
+    assert_eq!(diff, Weight(EXPECTED_WEIGHT));
 }
