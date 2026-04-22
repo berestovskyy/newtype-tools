@@ -7,6 +7,8 @@ fn attr_type_display_roundtrip() {
     assert_eq!(format!("{}", AttrType::TryInto), "try_into");
     assert_eq!(format!("{}", AttrType::Add), "add");
     assert_eq!(format!("{}", AttrType::AddAssign), "add_assign");
+    assert_eq!(format!("{}", AttrType::Div), "div");
+    assert_eq!(format!("{}", AttrType::DivAssign), "div_assign");
     assert_eq!(format!("{}", AttrType::Mul), "mul");
     assert_eq!(format!("{}", AttrType::MulAssign), "mul_assign");
     assert_eq!(format!("{}", AttrType::PartialEq), "partial_eq");

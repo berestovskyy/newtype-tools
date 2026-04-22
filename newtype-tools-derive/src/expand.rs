@@ -10,6 +10,8 @@ pub(crate) fn expand_derive(res: &ParseResult) -> syn::Result<proc_macro::TokenS
     tokens.extend(expand_try_into(res));
     tokens.extend(expand_add(res));
     tokens.extend(expand_add_assign(res));
+    tokens.extend(expand_div(res));
+    tokens.extend(expand_div_assign(res));
     tokens.extend(expand_mul(res));
     tokens.extend(expand_mul_assign(res));
     tokens.extend(expand_partial_eq(res));
@@ -152,6 +154,26 @@ fn expand_add_assign(res: &ParseResult) -> proc_macro2::TokenStream {
         syn::parse_quote!(add_assign),
         res,
         &res.add_assign,
+    )
+}
+
+/// Expands all `div` derives into a token stream.
+fn expand_div(res: &ParseResult) -> proc_macro2::TokenStream {
+    expand_bin_op(
+        syn::parse_quote!(std::ops::Div),
+        syn::parse_quote!(div),
+        res,
+        &res.div,
+    )
+}
+
+/// Expands all `div_assign` derives into a token stream.
+fn expand_div_assign(res: &ParseResult) -> proc_macro2::TokenStream {
+    expand_assign_op(
+        syn::parse_quote!(std::ops::DivAssign),
+        syn::parse_quote!(div_assign),
+        res,
+        &res.div_assign,
     )
 }
 
