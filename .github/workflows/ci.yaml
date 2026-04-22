@@ -23,8 +23,8 @@ jobs:
 
   ci:
     needs: config
-    name: Rust ${{ matrix.toolchain }}
-    runs-on: ubuntu-latest
+    name: Rust ${{ matrix.toolchain }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 5
     strategy:
       fail-fast: false
@@ -33,6 +33,7 @@ jobs:
           - ${{ needs.config.outputs.msrv }}
           - ${{ needs.config.outputs.stable }}
           - ${{ needs.config.outputs.nightly }}
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
     steps:
       - uses: actions/checkout@v6
       - uses: dtolnay/rust-toolchain@master
