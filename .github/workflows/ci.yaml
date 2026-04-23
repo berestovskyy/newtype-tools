@@ -10,6 +10,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+# Allow just one concurrent job per branch.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -36,6 +37,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
+          # Run on macOS and Windows if requested.
           - ${{ contains(github.event.pull_request.labels.*.name,
             'CI-run-on-macos-latest') && 'macos-latest' || '' }}
           - ${{ contains(github.event.pull_request.labels.*.name,
