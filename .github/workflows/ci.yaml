@@ -5,9 +5,14 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+    types: [ opened, synchronize, reopened, labeled ]
 
 env:
   CARGO_TERM_COLOR: always
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   config:
@@ -23,12 +28,20 @@ jobs:
 
   ci:
     needs: config
-    name: Rust ${{ matrix.toolchain }}
-    runs-on: ubuntu-latest
+    name: Rust ${{ matrix.toolchain }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 5
     strategy:
       fail-fast: false
       matrix:
+        os:
+          - ubuntu-latest
+          - ${{ contains(github.event.pull_request.labels.*.name,
+            'CI-run-on-macos-latest') && 'macos-latest' || '' }}
+          - ${{ contains(github.event.pull_request.labels.*.name,
+            'CI-run-on-windows-latest') && 'windows-latest' || '' }}
+        exclude:
+          - os: ""
         toolchain:
           - ${{ needs.config.outputs.msrv }}
           - ${{ needs.config.outputs.stable }}
