@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.10](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-v0.1.0-beta.9...newtype-tools-v0.1.0-beta.10) - 2026-04-24
+
+### Added
+
+- implement newtype Amount attribute + refactoring ([#47](https://github.com/berestovskyy/newtype-tools/pull/47))
+- derive the rest of binary ops ([#44](https://github.com/berestovskyy/newtype-tools/pull/44))
+
 ## [0.1.0-beta.9](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-v0.1.0-beta.8...newtype-tools-v0.1.0-beta.9) - 2026-04-21
 
 ### Added
