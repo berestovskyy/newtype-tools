@@ -1,5 +1,7 @@
 #![doc = include_str!("../README.md")]
-
+#![cfg_attr(not(test), no_std)]
+extern crate alloc;
+use alloc::vec::Vec;
 use proc_macro::TokenStream;
 
 mod expand;

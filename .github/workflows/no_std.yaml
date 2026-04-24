@@ -1,0 +1,54 @@
+name: no_std
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+# Allow just one concurrent job per branch.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Rust ${{ matrix.toolchain }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+        toolchain:
+          - stable
+        target:
+          # Tier 2 Bare Armv7E-M
+          - thumbv7em-none-eabi
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@master
+        id: rust-toolchain
+        with:
+          targets: ${{ matrix.target }}
+          toolchain: ${{ matrix.toolchain }}
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: OS:${{runner.os}} Target:${{matrix.target}}
+            Rust:${{matrix.toolchain}}-${{steps.rust-toolchain.outputs.cachekey}}
+            Lock:${{hashFiles('**/Cargo.lock')}}
+
+      - name: Check (Default Features)
+        run: cargo check --target ${{ matrix.target }}
+      - name: Check (Minimal Features)
+        run: cargo check --target ${{ matrix.target }} --no-default-features
