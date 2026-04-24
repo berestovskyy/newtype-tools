@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.11](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-v0.1.0-beta.10...newtype-tools-v0.1.0-beta.11) - 2026-04-24
+
+### Added
+
+- support no_std environments ([#50](https://github.com/berestovskyy/newtype-tools/pull/50))
+- implement newtype Id attribute ([#48](https://github.com/berestovskyy/newtype-tools/pull/48))
+
 ## [0.1.0-beta.10](https://github.com/berestovskyy/newtype-tools/compare/newtype-tools-v0.1.0-beta.9...newtype-tools-v0.1.0-beta.10) - 2026-04-24
 
 ### Added
