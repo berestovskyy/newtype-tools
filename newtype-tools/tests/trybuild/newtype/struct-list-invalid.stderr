@@ -1,5 +1,0 @@
-error: expected identifier
- --> tests/trybuild/newtype/struct-list-invalid.rs:2:11
-  |
-2 | #[newtype(;)]
-  |           ^

@@ -1,0 +1,39 @@
+error: expected `#[newtype(NewtypeKind)]`
+ --> tests/trybuild/newtype_attribute.rs:9:5
+  |
+9 |     #[newtype_tools::newtype]
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: this error originates in the attribute macro `newtype_tools::newtype` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: expected `#[newtype(NewtypeKind)]`
+  --> tests/trybuild/newtype_attribute.rs:14:5
+   |
+14 |     #[newtype_tools::newtype()]
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the attribute macro `newtype_tools::newtype` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: expected 'Amount'
+  --> tests/trybuild/newtype_attribute.rs:19:30
+   |
+19 |     #[newtype_tools::newtype(InvalidKind)]
+   |                              ^^^^^^^^^^^
+
+error: expected `struct Newtype(inner_type)`
+  --> tests/trybuild/newtype_attribute.rs:25:19
+   |
+25 |     struct Oranges();
+   |                   ^^
+
+error: expected one of: `struct`, `enum`, `union`
+  --> tests/trybuild/newtype_attribute.rs:30:5
+   |
+30 |     fn not_a_struct() {}
+   |     ^^
+
+error: expected `#[newtype(NewtypeKind)]`
+  --> tests/trybuild/newtype_attribute.rs:34:30
+   |
+34 |     #[newtype_tools::newtype(Amount, Amount)]
+   |                              ^^^^^^

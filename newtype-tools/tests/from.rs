@@ -39,7 +39,7 @@ fn generic_from() {
 
 #[test]
 fn try_from() {
-    use std::num::TryFromIntError;
+    use core::num::TryFromIntError;
     #[derive(newtype_tools::Newtype)]
     #[newtype(try_from(
         u64,
@@ -55,7 +55,7 @@ fn try_from() {
 
 #[test]
 fn generic_try_from() {
-    use std::num::TryFromIntError;
+    use core::num::TryFromIntError;
     #[derive(newtype_tools::Newtype)]
     #[newtype(try_from(
         Oranges,

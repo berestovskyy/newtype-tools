@@ -35,7 +35,7 @@ fn generic_into() {
 
 #[test]
 fn try_into() {
-    use std::num::TryFromIntError;
+    use core::num::TryFromIntError;
     #[derive(newtype_tools::Newtype)]
     #[newtype(try_into(
         Oranges,
@@ -55,7 +55,7 @@ fn try_into() {
 
 #[test]
 fn generic_try_into() {
-    use std::num::TryFromIntError;
+    use core::num::TryFromIntError;
     #[derive(newtype_tools::Newtype)]
     #[newtype(try_into(
         Oranges,

@@ -1,0 +1,74 @@
+error: expected `struct Newtype(inner_type)`
+ --> tests/trybuild/newtype_derive.rs:5:5
+  |
+5 |     enum Enum {}
+  |     ^^^^
+
+error: expected `struct Newtype(inner_type)`
+  --> tests/trybuild/newtype_derive.rs:10:20
+   |
+10 |       struct Oranges {
+   |  ____________________^
+11 | |         inner: u32,
+12 | |     }
+   | |_____^
+
+error: expected identifier
+  --> tests/trybuild/newtype_derive.rs:17:15
+   |
+17 |     #[newtype(;)]
+   |               ^
+
+error: expected `#[newtype(from(...))]`
+  --> tests/trybuild/newtype_derive.rs:23:15
+   |
+23 |     #[newtype(from = Oranges)]
+   |               ^^^^^^^^^^^^^^
+
+error: expected `#[newtype(from(...))]`
+  --> tests/trybuild/newtype_derive.rs:29:15
+   |
+29 |     #[newtype(from)]
+   |               ^^^^
+
+error: expected `(try_)from`, `(try_)into`, `add(_assign)`, `bitand(_assign)`, `bitor(_assign)`, `bitxor(_assign)`, `div(_assign)`, `mul(_assign)`, `rem(_assign)`, `shl(_assign)`, `shr(_assign)`, `partial_eq`, or `sub(_assign)`
+  --> tests/trybuild/newtype_derive.rs:35:15
+   |
+35 |     #[newtype(invalid_path)]
+   |               ^^^^^^^^^^^^
+
+error: expected `#[newtype(attr1, attr2)]`
+  --> tests/trybuild/newtype_derive.rs:41:7
+   |
+41 |     #[newtype = value]
+   |       ^^^^^^^^^^^^^^^
+
+error: expected `#[newtype(attr1, attr2)]`
+  --> tests/trybuild/newtype_derive.rs:47:7
+   |
+47 |     #[newtype]
+   |       ^^^^^^^
+
+error: expected `struct Newtype(inner_type)`
+  --> tests/trybuild/newtype_derive.rs:53:13
+   |
+53 |     struct N(u64, u64);
+   |             ^^^^^^^^^^
+
+error: expected `struct Newtype(inner_type)`
+  --> tests/trybuild/newtype_derive.rs:58:5
+   |
+58 |     union U {
+   |     ^^^^^
+
+error: expected `struct Newtype(inner_type)`
+  --> tests/trybuild/newtype_derive.rs:65:5
+   |
+65 |     struct Oranges;
+   |     ^^^^^^
+
+error: attribute value must be a literal
+  --> tests/trybuild/newtype_derive.rs:41:17
+   |
+41 |     #[newtype = value]
+   |                 ^^^^^

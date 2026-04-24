@@ -37,7 +37,7 @@ fn generic_shr() {
     ))]
     struct Apples<T>(T)
     where
-        T: std::ops::Shr<u64, Output = u64> + Clone;
+        T: core::ops::Shr<u64, Output = u64> + Clone;
     #[derive(Debug)]
     struct Oranges(u32);
     #[derive(Debug, PartialEq)]
@@ -51,4 +51,42 @@ fn generic_shr() {
     assert_eq!(res, Weight(EXPECTED_WEIGHT));
     let res = &Apples(42_u64) >> &Oranges(21);
     assert_eq!(res, Weight(EXPECTED_WEIGHT));
+}
+
+#[test]
+fn shr_assign() {
+    #[derive(Debug, newtype_tools::Newtype, PartialEq)]
+    /// Doc comment.
+    #[newtype(shr_assign(Oranges, with = "|apples, oranges| apples.0 >>= oranges.0 as u64 * 2"))]
+    struct Apples(u64);
+    #[derive(Debug, PartialEq)]
+    struct Oranges(u32);
+
+    let mut apples = Apples(42);
+    apples >>= Oranges(21);
+    assert_eq!(apples, Apples(EXPECTED_WEIGHT));
+    let mut apples = Apples(42);
+    apples >>= &Oranges(21);
+    assert_eq!(apples, Apples(EXPECTED_WEIGHT));
+}
+
+#[test]
+fn generic_shr_assign() {
+    #[derive(Debug, newtype_tools::Newtype, PartialEq)]
+    #[newtype(shr_assign(Oranges, with = "|apples, oranges| apples.0 >>= oranges.0 as u64 * 2"))]
+    struct Apples<T>(T)
+    where
+        T: core::ops::ShrAssign<u64> + Clone;
+    #[derive(Debug, PartialEq)]
+    struct Oranges(u32);
+
+    let mut apples = Apples(42);
+    let oranges = Oranges(21);
+    apples >>= oranges;
+    assert_eq!(apples, Apples(EXPECTED_WEIGHT));
+    let mut apples = Apples(42);
+    let oranges = Oranges(21);
+    apples >>= &oranges;
+    assert_eq!(apples, Apples(EXPECTED_WEIGHT));
+    assert_eq!(oranges, Oranges(21));
 }

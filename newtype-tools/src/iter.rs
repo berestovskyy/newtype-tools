@@ -1,4 +1,4 @@
-/// Blanket `Step` implementation for all `Newtype`s.
+/// Blanket `Step` implementation for all `newtypes`.
 impl<T> Step for T
 where
     T: crate::Newtype + Clone + PartialOrd + MinMax,
@@ -25,7 +25,7 @@ pub trait Iter<N, R>
 where
     N: crate::Newtype,
     N::Inner: crate::iter::Step,
-    R: std::ops::RangeBounds<N>,
+    R: core::ops::RangeBounds<N>,
 {
     /// Converts a range bounds into a `newtype` `Iterator` instance.
     fn iter(&self) -> crate::Iterator<N>;
@@ -36,7 +36,7 @@ impl<N, R> Iter<N, R> for R
 where
     N: crate::Newtype,
     N::Inner: crate::iter::Step,
-    R: std::ops::RangeBounds<N>,
+    R: core::ops::RangeBounds<N>,
 {
     fn iter(&self) -> crate::Iterator<N> {
         crate::Iterator::from(self)
@@ -48,7 +48,7 @@ pub trait IntoIter<N, R>
 where
     N: crate::Newtype,
     N::Inner: crate::iter::Step,
-    R: std::ops::RangeBounds<N>,
+    R: core::ops::RangeBounds<N>,
 {
     /// Converts a range bounds into a `newtype` `Iterator` instance.
     fn into_iter(self) -> crate::Iterator<N>;
@@ -59,14 +59,14 @@ impl<N, R> IntoIter<N, R> for R
 where
     N: crate::Newtype,
     N::Inner: crate::iter::Step,
-    R: std::ops::RangeBounds<N>,
+    R: core::ops::RangeBounds<N>,
 {
     fn into_iter(self) -> crate::Iterator<N> {
         crate::Iterator::from(&self)
     }
 }
 
-/// Blanket `Iterator` implementation for all `Newtype`s.
+/// Blanket `Iterator` implementation for all `newtypes`.
 #[derive(Clone)]
 pub struct Iterator<T>
 where
@@ -88,7 +88,7 @@ where
     }
 
     /// Creates a new `Iterator` instance based on the given range.
-    /// The internal `Newtype` representation must implement `Step` trait.
+    /// The internal `newtype` representation must implement `Step` trait.
     ///
     /// # Example
     /// ```
@@ -105,9 +105,9 @@ where
     /// # }
     /// ```
     #[inline]
-    pub fn from<R: std::ops::RangeBounds<T>>(range: &R) -> Self {
+    pub fn from<R: core::ops::RangeBounds<T>>(range: &R) -> Self {
         use crate::iter::Step;
-        use std::ops::Bound;
+        use core::ops::Bound;
         let start = match range.start_bound() {
             Bound::Included(s) => s.as_ref().clone(),
             Bound::Excluded(s) => Step::forward(s.as_ref().clone(), 1),
@@ -122,7 +122,7 @@ where
     }
 }
 
-impl<T> std::iter::Iterator for Iterator<T>
+impl<T> core::iter::Iterator for Iterator<T>
 where
     T: crate::Newtype,
     T::Inner: Step,
@@ -191,7 +191,7 @@ where
 {
 }
 
-impl<T> std::iter::FusedIterator for Iterator<T>
+impl<T> core::iter::FusedIterator for Iterator<T>
 where
     T: crate::Newtype,
     T::Inner: Step,
@@ -200,7 +200,7 @@ where
 
 ////////////////////////////////////////////////////////////////////////
 // The following complexity should go away once the `Step` trait is stable.
-// Mostly it's a copy-paste from the unstable `std::iter::Step` trait.
+// Mostly it's a copy-paste from the unstable `core::iter::Step` trait.
 
 /// A helper trait to support inner values ranges.
 pub trait MinMax {
@@ -223,7 +223,7 @@ impl_min_max!(
     u8, u16, u32, u64, u128, i8, i16, i32, i64, i128, usize, isize
 );
 
-/// A copy of the unstable `std::iter::Step` trait required for the `iter`
+/// A copy of the unstable `core::iter::Step` trait required for the `iter`
 /// derive.
 pub trait Step: Clone + PartialOrd + MinMax + Sized {
     /// Returns the bounds on the number of *successor* steps required to get from `start` to `end`

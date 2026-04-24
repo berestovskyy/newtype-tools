@@ -7,8 +7,10 @@ pub use iter::Iter;
 pub use iter::Iterator;
 #[cfg(feature = "derive")]
 pub use newtype_tools_derive::Newtype;
+#[cfg(feature = "derive")]
+pub use newtype_tools_derive::newtype;
 
-/// `Newtype` trait defines the internal representation of the `newtype`.
+/// `Newtype` trait defines the internal representation of a `newtype`.
 ///
 /// This trait is automatically derived for all types annotated with `#[derive(Newtype)]`
 /// along with the `From<Self::Inner>` and `AsRef<Self::Inner>` traits to convert

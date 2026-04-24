@@ -1,7 +1,7 @@
 #![cfg(feature = "derive")]
 
 #[test]
-fn newtype() {
+fn newtype_derive() {
     #[derive(newtype_tools::Newtype)]
     #[repr(transparent)]
     struct Apples(u64);
@@ -18,7 +18,7 @@ fn newtype() {
 }
 
 #[test]
-fn generic_newtype() {
+fn generic_newtype_derive() {
     #[derive(newtype_tools::Newtype)]
     #[repr(transparent)]
     struct Apples<T>(T)

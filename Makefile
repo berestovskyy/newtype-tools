@@ -21,6 +21,7 @@ help::
 	@echo "    test        Run cargo test."
 	@echo "    trybuild    Overwrite trybuild test results."
 	@echo "  Misc targets:"
+	@echo "    expand      Show macro expansion for a specified test: TEST=from make expand"
 	@echo "    fmt         Run cargo fmt."
 	@echo "    keepsorted  Sort Rust derives alphabetically (cargo install keepsorted)."
 	@echo "    publish     Run the cargo publish dry run."
@@ -61,6 +62,9 @@ trybuild::
 
 ########################################################################
 ## Misc Targets
+
+expand::
+	cargo expand -p newtype-tools --test ${TEST}
 
 fmt::
 	cargo +nightly fmt -- --config reorder_impl_items=true,error_on_unformatted=true,error_on_line_overflow=true

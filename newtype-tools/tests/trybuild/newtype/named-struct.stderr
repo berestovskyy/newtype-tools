@@ -1,8 +1,0 @@
-error: expected `struct Newtype(inner_type)`
- --> tests/trybuild/newtype/named-struct.rs:2:16
-  |
-2 |   struct Oranges {
-  |  ________________^
-3 | |     inner: u32,
-4 | | }
-  | |_^

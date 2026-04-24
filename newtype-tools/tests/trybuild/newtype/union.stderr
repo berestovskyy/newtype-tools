@@ -1,5 +1,0 @@
-error: expected `struct Newtype(inner_type)`
- --> tests/trybuild/newtype/union.rs:2:1
-  |
-2 | union U {
-  | ^^^^^
