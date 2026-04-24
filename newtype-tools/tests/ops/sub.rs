@@ -37,7 +37,7 @@ fn generic_sub() {
     ))]
     struct Apples<T>(T)
     where
-        T: std::ops::Sub<u64, Output = u64> + Clone;
+        T: core::ops::Sub<u64, Output = u64> + Clone;
     #[derive(Debug)]
     struct Oranges(u32);
     #[derive(Debug, PartialEq)]
@@ -75,7 +75,7 @@ fn generic_sub_assign() {
     #[newtype(sub_assign(Oranges, with = "|apples, oranges| apples.0 -= oranges.0 as u64 * 2"))]
     struct Apples<T>(T)
     where
-        T: std::ops::SubAssign<u64> + Clone;
+        T: core::ops::SubAssign<u64> + Clone;
     #[derive(Debug, PartialEq)]
     struct Oranges(u32);
 

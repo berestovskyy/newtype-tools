@@ -1,7 +1,7 @@
 #![cfg(feature = "derive")]
 
 #[rstest::rstest]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn iter_trait() {
     fn test(mut iter: newtype_tools::Iterator<Apples>) {
         assert_eq!(iter.len(), 3);
@@ -33,7 +33,7 @@ fn iter_trait() {
 }
 
 #[rstest::rstest]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn infinite_iter_trait() {
     fn test(mut iter: newtype_tools::Iterator<Apples>) {
         assert_eq!(iter.len(), usize::MAX);
@@ -54,22 +54,22 @@ fn infinite_iter_trait() {
     test((Apples(1)..).into_iter());
     test(
         (
-            std::ops::Bound::Excluded(Apples(0)),
-            std::ops::Bound::Unbounded,
+            core::ops::Bound::Excluded(Apples(0)),
+            core::ops::Bound::Unbounded,
         )
             .iter(),
     );
     test(
         (
-            std::ops::Bound::Excluded(Apples(0)),
-            std::ops::Bound::Unbounded,
+            core::ops::Bound::Excluded(Apples(0)),
+            core::ops::Bound::Unbounded,
         )
             .into_iter(),
     );
 }
 
 #[rstest::rstest]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn empty_iter_trait() {
     fn test(mut iter: newtype_tools::Iterator<Apples>) {
         assert_eq!(iter.len(), 0);
@@ -90,7 +90,7 @@ fn empty_iter_trait() {
 }
 
 #[rstest::rstest]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn custom_inner_type_trait() {
     #[derive(Clone, Debug, Default, PartialEq, PartialOrd)]
     struct CustomInner(u64);
@@ -121,7 +121,7 @@ fn custom_inner_type_trait() {
     where
         N: newtype_tools::Newtype,
         N::Inner: newtype_tools::iter::Step,
-        R: std::ops::RangeBounds<N>,
+        R: core::ops::RangeBounds<N>,
     {
         fn iter(&self) -> newtype_tools::Iterator<N>;
     }
@@ -130,7 +130,7 @@ fn custom_inner_type_trait() {
     where
         N: newtype_tools::Newtype,
         N::Inner: newtype_tools::iter::Step,
-        R: std::ops::RangeBounds<N>,
+        R: core::ops::RangeBounds<N>,
     {
         fn iter(&self) -> newtype_tools::Iterator<N> {
             newtype_tools::Iterator::from(self)
@@ -155,11 +155,11 @@ fn custom_inner_type_trait() {
 }
 
 #[rstest::rstest]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn generic_iter_trait() {
     fn test<N>(mut iter: newtype_tools::Iterator<N>)
     where
-        N: newtype_tools::Newtype + Clone + From<u64> + PartialEq + PartialOrd + std::fmt::Debug,
+        N: newtype_tools::Newtype + Clone + From<u64> + PartialEq + PartialOrd + core::fmt::Debug,
         N::Inner: newtype_tools::iter::Step,
     {
         assert_eq!(iter.len(), 3);
@@ -193,11 +193,11 @@ fn generic_iter_trait() {
 }
 
 #[rstest::rstest]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn generic_infinite_iter_trait() {
     fn test<N>(mut iter: newtype_tools::Iterator<N>)
     where
-        N: newtype_tools::Newtype + Clone + From<u64> + PartialEq + PartialOrd + std::fmt::Debug,
+        N: newtype_tools::Newtype + Clone + From<u64> + PartialEq + PartialOrd + core::fmt::Debug,
         N::Inner: newtype_tools::iter::Step,
     {
         assert_eq!(iter.len(), usize::MAX);

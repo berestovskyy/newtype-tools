@@ -37,7 +37,7 @@ fn generic_bitxor() {
     ))]
     struct Apples<T>(T)
     where
-        T: std::ops::BitXor<u64, Output = u64> + Clone;
+        T: core::ops::BitXor<u64, Output = u64> + Clone;
     #[derive(Debug)]
     struct Oranges(u32);
     #[derive(Debug, PartialEq)]
@@ -76,7 +76,7 @@ fn generic_bitxor_assign() {
     #[newtype(bitxor_assign(Oranges, with = "|apples, oranges| apples.0 ^= oranges.0 as u64 * 2"))]
     struct Apples<T>(T)
     where
-        T: std::ops::BitXorAssign<u64> + Clone;
+        T: core::ops::BitXorAssign<u64> + Clone;
     #[derive(Debug, PartialEq)]
     struct Oranges(u32);
 

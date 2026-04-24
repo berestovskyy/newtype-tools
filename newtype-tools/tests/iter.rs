@@ -8,7 +8,7 @@ impl newtype_tools::iter::MinMax for Gold {
 }
 
 impl TryFrom<Gold> for usize {
-    type Error = std::num::TryFromIntError;
+    type Error = core::num::TryFromIntError;
 
     fn try_from(value: Gold) -> Result<Self, Self::Error> {
         usize::try_from(value.0)
@@ -51,7 +51,7 @@ impl TryFrom<Gold> for usize {
 #[case::gold_a_max2_b1_n1(Gold(i8::MAX - 2), Gold(1), 1)]
 #[case::gold_a1_b_max2_n1(Gold(1), Gold(i8::MAX - 2), 0)]
 #[case::gold_a1_b1_n_max2(Gold(1), Gold(1), i8::MAX as usize - 2)]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn steps_between_invariants<T>(#[case] a: T, #[case] b: T, #[case] n: usize)
 where
     T: newtype_tools::iter::Step + Copy,
@@ -83,7 +83,7 @@ where
 /// Cover `Step::steps_between` subtraction overflow.
 #[rstest::rstest]
 #[case::i128_a_min_b_max(i128::MIN, i128::MAX)]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn steps_between_overflow<T>(#[case] a: T, #[case] b: T)
 where
     T: newtype_tools::iter::Step,
@@ -119,7 +119,7 @@ where
 #[case::i64_a_max_n_max_m_max(i64::MAX, usize::MAX, usize::MAX)]
 #[case::i128_a_max_n1_m1(i128::MAX, 1, 1)]
 #[case::u128_a_max_n1_m1(u128::MAX, 1, 1)]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn forward_checked_invariants<T: newtype_tools::iter::Step + Copy + core::fmt::Debug>(
     #[case] a: T,
     #[case] n: usize,
@@ -161,7 +161,7 @@ fn forward_checked_invariants<T: newtype_tools::iter::Step + Copy + core::fmt::D
 #[case::gold_a_max2_n1_m1(Gold(i8::MAX - 2), 1, 1)]
 #[case::gold_a1_n_max2_m1(Gold(1), i8::MAX as usize - 2, 1)]
 #[case::gold_a1_n1_m_max2(Gold(1), 1, i8::MAX as usize - 2)]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn default_impl_forward_invariants<T: newtype_tools::iter::Step + Copy + core::fmt::Debug>(
     #[case] a: T,
     #[case] n: usize,
@@ -233,7 +233,7 @@ fn step_integer_impls_forward_backward_checked() {
 #[case::i64_a_max_n_max_m_max(i64::MAX, usize::MAX, usize::MAX)]
 #[case::i128_a_max_n1_m1(i128::MAX, 1, 1)]
 #[case::u128_a_max_n1_m1(u128::MAX, 1, 1)]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn backward_checked_invariants<T: newtype_tools::iter::Step + Copy + core::fmt::Debug>(
     #[case] a: T,
     #[case] n: usize,
@@ -259,9 +259,9 @@ fn backward_checked_invariants<T: newtype_tools::iter::Step + Copy + core::fmt::
 }
 
 #[rstest::rstest]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn iter() {
-    fn test<R: std::ops::RangeBounds<Apples>>(range: R) {
+    fn test<R: core::ops::RangeBounds<Apples>>(range: R) {
         let mut iter = newtype_tools::Iterator::from(&range);
         assert_eq!(iter.len(), 3);
         assert_eq!(iter.size_hint(), (3, Some(3)));
@@ -286,9 +286,9 @@ fn iter() {
 }
 
 #[rstest::rstest]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn infinite_iter() {
-    fn test<R: std::ops::RangeBounds<Apples>>(range: R) {
+    fn test<R: core::ops::RangeBounds<Apples>>(range: R) {
         let mut iter = newtype_tools::Iterator::from(&range);
         assert_eq!(iter.len(), usize::MAX);
         assert_eq!(iter.size_hint(), (usize::MAX, Some(usize::MAX)));
@@ -304,15 +304,15 @@ fn infinite_iter() {
 
     test(Apples(1)..);
     test((
-        std::ops::Bound::Excluded(Apples(0)),
-        std::ops::Bound::Unbounded,
+        core::ops::Bound::Excluded(Apples(0)),
+        core::ops::Bound::Unbounded,
     ));
 }
 
 #[rstest::rstest]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn empty_iter() {
-    fn test<R: std::ops::RangeBounds<Apples>>(range: R) {
+    fn test<R: core::ops::RangeBounds<Apples>>(range: R) {
         let mut iter = newtype_tools::Iterator::from(&range);
         assert_eq!(iter.len(), 0);
         assert_eq!(iter.size_hint(), (0, Some(0)));
@@ -329,7 +329,7 @@ fn empty_iter() {
 }
 
 #[rstest::rstest]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn custom_inner_type() {
     #[derive(Clone, Debug, Default, PartialEq, PartialOrd)]
     struct CustomInner(u64);
@@ -374,11 +374,11 @@ fn custom_inner_type() {
 }
 
 #[rstest::rstest]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn generic_iter() {
-    fn test<T, R: std::ops::RangeBounds<Apples<T>>>(range: R)
+    fn test<T, R: core::ops::RangeBounds<Apples<T>>>(range: R)
     where
-        T: std::fmt::Debug + Into<u64> + From<u64> + newtype_tools::iter::Step,
+        T: core::fmt::Debug + Into<u64> + From<u64> + newtype_tools::iter::Step,
     {
         let mut iter = newtype_tools::Iterator::from(&range);
         assert_eq!(iter.len(), 3);
@@ -406,11 +406,11 @@ fn generic_iter() {
 }
 
 #[rstest::rstest]
-#[timeout(std::time::Duration::from_secs(1))]
+#[timeout(core::time::Duration::from_secs(1))]
 fn generic_infinite_iter() {
-    fn test<T, R: std::ops::RangeBounds<Apples<T>>>(range: R)
+    fn test<T, R: core::ops::RangeBounds<Apples<T>>>(range: R)
     where
-        T: std::fmt::Debug + Into<u64> + From<u64> + newtype_tools::iter::Step,
+        T: core::fmt::Debug + Into<u64> + From<u64> + newtype_tools::iter::Step,
     {
         let mut iter = newtype_tools::Iterator::from(&range);
         assert_eq!(iter.len(), usize::MAX);

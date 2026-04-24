@@ -1,5 +1,0 @@
-error: expected `#[newtype(attr1, attr2)]`
- --> tests/trybuild/newtype/struct-path.rs:2:3
-  |
-2 | #[newtype]
-  |   ^^^^^^^

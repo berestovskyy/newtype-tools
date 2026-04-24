@@ -1,5 +1,0 @@
-error: expected `struct Newtype(inner_type)`
- --> tests/trybuild/newtype/tuple-struct.rs:2:9
-  |
-2 | struct N(u64, u64);
-  |         ^^^^^^^^^^

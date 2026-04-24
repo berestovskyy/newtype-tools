@@ -37,7 +37,7 @@ fn generic_bitand() {
     ))]
     struct Apples<T>(T)
     where
-        T: std::ops::BitAnd<u64, Output = u64> + Clone;
+        T: core::ops::BitAnd<u64, Output = u64> + Clone;
     #[derive(Debug)]
     struct Oranges(u32);
     #[derive(Debug, PartialEq)]
@@ -76,7 +76,7 @@ fn generic_bitand_assign() {
     #[newtype(bitand_assign(Oranges, with = "|apples, oranges| apples.0 &= oranges.0 as u64 * 2"))]
     struct Apples<T>(T)
     where
-        T: std::ops::BitAndAssign<u64> + Clone;
+        T: core::ops::BitAndAssign<u64> + Clone;
     #[derive(Debug, PartialEq)]
     struct Oranges(u32);
 

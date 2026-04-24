@@ -44,7 +44,7 @@ use newtype_tools::Newtype;
 
 #[derive(Newtype)]
 #[newtype(
-    into(Oranges, with = "|apples| Oranges((apples.0 / 2) as u32)")
+    into(Oranges, with = |apples| Oranges((apples.0 / 2) as u32))
 )]
 struct Apples(u64);
 struct Oranges(u32);
@@ -65,7 +65,7 @@ use newtype_tools::Newtype;
 
 #[derive(Debug, Newtype)]
 #[newtype(
-    partial_eq(Oranges, with = "|apples, oranges| apples.0 == oranges.0 as u64 * 2")
+    partial_eq(Oranges, with = |apples, oranges| apples.0 == oranges.0 as u64 * 2)
 )]
 struct Apples(u64);
 struct Oranges(u32);

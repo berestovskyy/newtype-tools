@@ -37,7 +37,7 @@ fn generic_mul() {
     ))]
     struct Apples<T>(T)
     where
-        T: std::ops::Mul<u64, Output = u64> + Clone;
+        T: core::ops::Mul<u64, Output = u64> + Clone;
     #[derive(Debug)]
     struct Oranges(u32);
     #[derive(Debug, PartialEq)]
@@ -76,7 +76,7 @@ fn generic_mul_assign() {
     #[newtype(mul_assign(Oranges, with = "|apples, oranges| apples.0 *= oranges.0 as u64 * 2"))]
     struct Apples<T>(T)
     where
-        T: std::ops::MulAssign<u64> + Clone;
+        T: core::ops::MulAssign<u64> + Clone;
     #[derive(Debug, PartialEq)]
     struct Oranges(u32);
 

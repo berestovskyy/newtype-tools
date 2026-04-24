@@ -37,7 +37,7 @@ fn generic_shr() {
     ))]
     struct Apples<T>(T)
     where
-        T: std::ops::Shr<u64, Output = u64> + Clone;
+        T: core::ops::Shr<u64, Output = u64> + Clone;
     #[derive(Debug)]
     struct Oranges(u32);
     #[derive(Debug, PartialEq)]
@@ -76,7 +76,7 @@ fn generic_shr_assign() {
     #[newtype(shr_assign(Oranges, with = "|apples, oranges| apples.0 >>= oranges.0 as u64 * 2"))]
     struct Apples<T>(T)
     where
-        T: std::ops::ShrAssign<u64> + Clone;
+        T: core::ops::ShrAssign<u64> + Clone;
     #[derive(Debug, PartialEq)]
     struct Oranges(u32);
 

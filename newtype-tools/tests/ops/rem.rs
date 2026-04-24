@@ -37,7 +37,7 @@ fn generic_rem() {
     ))]
     struct Apples<T>(T)
     where
-        T: std::ops::Rem<u64, Output = u64> + Clone;
+        T: core::ops::Rem<u64, Output = u64> + Clone;
     #[derive(Debug)]
     struct Oranges(u32);
     #[derive(Debug, PartialEq)]
@@ -76,7 +76,7 @@ fn generic_rem_assign() {
     #[newtype(rem_assign(Oranges, with = "|apples, oranges| apples.0 %= oranges.0 as u64 * 2"))]
     struct Apples<T>(T)
     where
-        T: std::ops::RemAssign<u64> + Clone;
+        T: core::ops::RemAssign<u64> + Clone;
     #[derive(Debug, PartialEq)]
     struct Oranges(u32);
 
