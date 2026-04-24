@@ -3,6 +3,7 @@
 ##
 
 MSRV := $(shell grep ^rust-version Cargo.toml | cut -d '"' -f 2)
+NO_STD_TARGET := "thumbv7em-none-eabi"
 
 check:: clippy fmt
 	cargo test
@@ -14,10 +15,11 @@ help::
 	@echo "Newtype-tools targets:"
 	@echo "    check       Run quick checks: clippy, fmt, cargo test, cargo check."
 	@echo "    help        This help message."
-	@echo "    ci          Run CI pipeline locally: clippy, build, test, fmt, publish."
+	@echo "    ci          Run CI pipeline locally: clippy, build, no_std, test, fmt, publish."
 	@echo "  Test targets:"
 	@echo "    clippy      Run cargo clippy."
 	@echo "    build       Run cargo build."
+	@echo "    no_std      Run no_std check."
 	@echo "    test        Run cargo test."
 	@echo "    trybuild    Overwrite trybuild test results."
 	@echo "  Misc targets:"
@@ -30,7 +32,7 @@ help::
 	@echo "    html        Generate HTML code coverage report."
 	@echo "    open        Open HTML code coverage report."
 
-ci:: clippy build test fmt publish
+ci:: clippy build no_std test fmt publish
 	@echo "All OK."
 
 ########################################################################
@@ -47,6 +49,11 @@ build::
 	cargo +nightly build --no-default-features
 	cargo +${MSRV} build --no-default-features
 	cargo +nightly build --all-features
+
+no_std::
+	rustup target add ${NO_STD_TARGET}
+	cargo check --target ${NO_STD_TARGET}
+	cargo check --target ${NO_STD_TARGET} --no-default-features
 
 test::
 	cargo +stable test

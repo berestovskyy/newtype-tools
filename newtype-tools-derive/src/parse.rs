@@ -1,4 +1,5 @@
 use crate::{DeriveType, Newtype, NewtypeDerives, NewtypeKind};
+use alloc::vec::Vec;
 
 mod kw {
     syn::custom_keyword!(error);
@@ -178,7 +179,7 @@ fn parse_nested_path(
         | DeriveType::Sub
         | DeriveType::SubAssign => Err(syn::Error::new_spanned(
             path,
-            format!("expected `#[newtype({derive_type}(...))]`"),
+            alloc::format!("expected `#[newtype({derive_type}(...))]`"),
         )),
     }
 }
@@ -228,7 +229,7 @@ fn parse_nested_name_value(
 ) -> syn::Result<()> {
     Err(syn::Error::new_spanned(
         name_value,
-        format!("expected `#[newtype({derive_type}(...))]`"),
+        alloc::format!("expected `#[newtype({derive_type}(...))]`"),
     ))
 }
 
