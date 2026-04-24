@@ -1,6 +1,8 @@
 /// `#[newtype(Amount)]`
 
 mod ok {
+    #[newtype_tools::newtype(Id)]
+    struct Apples(u64);
     #[newtype_tools::newtype(Amount)]
     struct Oranges(u32);
 }

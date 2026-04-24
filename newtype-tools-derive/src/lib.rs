@@ -6,30 +6,18 @@ mod expand;
 mod parse;
 
 /// Parses and expands a `newtype` attribute kind into a token stream.
-/// The idea is similar to the `phantom_newtype` crate, but has no its limitations,
-/// as the `newtype` is a real new Rust type. New traits could be easily implemented
-/// for such a `newtype`, and the set of derived traits could be easily extended:
+///
+/// The crate supports predefined sets of newtype properties. The concept is similar
+/// to the `phantom_newtype` crate but avoids its limitations, as the newtype
+/// generated here is a distinct Rust type. This allows new traits
+/// to be implemented easily for the type and makes the set of derived traits
+/// simple to extend.
 ///
 /// ```ignore
 /// #[newtype(Amount)]
 /// #[derive(Default)]
 /// struct Apples(u64);
 /// ```
-///
-/// The supported `newtype` kinds are:
-///
-/// | Trait             | `#[newtype(Amount)]` | `#[newtype(Id)]` |
-/// |-------------------|:--------------------:|:----------------:|
-/// | `PartialEq`       | ✔                    | ✔                |
-/// | `PartialOrd`      | ✔                    | ✔                |
-/// | `From<Repr>`      | ✔                    | ✔                |
-/// | `Add<Self>`       | ✔                    | ✘                |
-/// | `AddAssign<Self>` | ✔                    | ✘                |
-/// | `Sub<Self>`       | ✔                    | ✘                |
-/// | `SubAssign<Self>` | ✔                    | ✘                |
-/// | `Mul<Repr>`       | ✔                    | ✘                |
-/// | `MulAssign<Repr>` | ✔                    | ✘                |
-/// | `Div<Self>`       | ✔                    | ✘                |
 #[proc_macro_attribute]
 pub fn newtype(attr: TokenStream, item: TokenStream) -> TokenStream {
     let kind = match parse::parse_newtype_kind(attr.into()) {
@@ -156,12 +144,14 @@ struct NewtypeDerives {
 #[derive(Debug, PartialEq)]
 enum NewtypeKind {
     Amount,
+    Id,
 }
 
 impl core::fmt::Display for NewtypeKind {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Self::Amount => f.write_str("Amount"),
+            Self::Id => f.write_str("Id"),
         }
     }
 }
@@ -172,7 +162,8 @@ impl TryFrom<&syn::Ident> for NewtypeKind {
     fn try_from(value: &syn::Ident) -> Result<Self, Self::Error> {
         match value {
             ident if ident == "Amount" => Ok(Self::Amount),
-            _ => Err(syn::Error::new_spanned(value, "expected 'Amount'")),
+            ident if ident == "Id" => Ok(Self::Id),
+            _ => Err(syn::Error::new_spanned(value, "expected 'Amount' or 'Id'")),
         }
     }
 }
@@ -291,6 +282,7 @@ mod tests {
     fn newtype_kind_display_roundtrip() {
         use super::NewtypeKind;
         assert_eq!(format!("{}", NewtypeKind::Amount), "Amount");
+        assert_eq!(format!("{}", NewtypeKind::Id), "Id");
     }
 
     #[test]

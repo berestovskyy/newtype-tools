@@ -162,36 +162,49 @@ where
 // Manual generic newtype trait definition.
 #[derive(Clone, Copy, Debug, newtype_tools::Newtype, PartialEq, PartialOrd)]
 #[newtype(
-    add(ManGeneric<T, R>, output = "ManGeneric<T, R>", with = "|a1, a2| ManGeneric(a1.0 + a2.0)"),
-    add_assign(ManGeneric<T, R>, with = "|this, other| this.0 += other.0"),
-    sub(ManGeneric<T, R>, output = "ManGeneric<T, R>", with = "|a1, a2| ManGeneric(a1.0 - a2.0)"),
-    sub_assign(ManGeneric<T, R>, with = "|this, other| this.0 -= other.0"),
-    mul(R, output = "ManGeneric<T, R>", with = "|a, r| ManGeneric(a.0 * *r)"),
-    mul_assign(R, with = "|this, r| this.0 *= *r"),
-    div(ManGeneric<T, R>, output = "R", with = "|a1, a2| a1.0 / a2.0")
+    add(ManGeneric<T>, output = "ManGeneric<T>", with = "|a1, a2| ManGeneric(a1.0 + a2.0)"),
+    add_assign(ManGeneric<T>, with = "|this, other| this.0 += other.0"),
+    sub(ManGeneric<T>, output = "ManGeneric<T>", with = "|a1, a2| ManGeneric(a1.0 - a2.0)"),
+    sub_assign(ManGeneric<T>, with = "|this, other| this.0 -= other.0"),
+    mul(T, output = "ManGeneric<T>", with = "|a, r| ManGeneric(a.0 * *r)"),
+    mul_assign(T, with = "|this, r| this.0 *= *r"),
+    div(ManGeneric<T>, output = "T", with = "|a1, a2| a1.0 / a2.0")
 )]
 #[repr(transparent)]
-struct ManGeneric<T, R>(T)
+struct ManGeneric<T>(T)
 where
     T: Clone
         + Copy
         + PartialEq
         + PartialOrd
         + core::fmt::Debug
-        + From<R>
+        + From<T>
         + core::ops::Add<T, Output = T>
         + core::ops::AddAssign<T>
         + core::ops::Sub<T, Output = T>
         + core::ops::SubAssign<T>
-        + core::ops::Mul<R, Output = T>
-        + core::ops::MulAssign<R>
-        + core::ops::Div<T, Output = R>,
-    R: Copy + PartialOrd;
+        + core::ops::Mul<T, Output = T>
+        + core::ops::MulAssign<T>
+        + core::ops::Div<T, Output = T>;
 
 // Attribute generic newtype trait definition.
 #[newtype_tools::newtype(Amount)]
 /// Doc comment.
-struct AttrGeneric(f64);
+struct AttrGeneric<T>(T)
+where
+    T: Clone
+        + Copy
+        + PartialEq
+        + PartialOrd
+        + core::fmt::Debug
+        + From<T>
+        + core::ops::Add<T, Output = T>
+        + core::ops::AddAssign<T>
+        + core::ops::Sub<T, Output = T>
+        + core::ops::SubAssign<T>
+        + core::ops::Mul<T, Output = T>
+        + core::ops::MulAssign<T>
+        + core::ops::Div<T, Output = T>;
 
 #[rstest::rstest]
 #[case::generic(2.0_f64, 3.0_f64, 2.0_f64)]

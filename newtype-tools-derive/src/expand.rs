@@ -13,10 +13,13 @@ pub(crate) fn expand_newtype(
 ) -> proc_macro::TokenStream {
     let newtype = &attr.newtype;
     let inner_ty = &attr.inner_ty;
+    let (_impl_generics, newtype_generics, r#_where) = &attr.generics.split_for_impl();
+    let full_newtype = quote::quote! { #newtype #newtype_generics };
+
     let standard_derives = quote::quote!(Clone, Copy, Debug, Default, PartialEq, PartialOrd);
     let standard_derives = if is_int_type(inner_ty) {
         quote::quote!(
-            #standard_derives, Eq, Ord, Hash
+            #standard_derives, Eq, Hash, Ord
         )
     } else {
         standard_derives
@@ -26,15 +29,21 @@ pub(crate) fn expand_newtype(
             #[automatically_derived]
             #[derive(newtype_tools::Newtype, #standard_derives)]
             #[newtype(
-                add(#newtype, output = #newtype, with = |l, r| #newtype(l.0 + r.0)),
-                add_assign(#newtype, with = |this, other| this.0 += other.0),
-                sub(#newtype, output = #newtype, with = |l, r| #newtype(l.0 - r.0)),
-                sub_assign(#newtype, with = |this, other| this.0 -= other.0),
-                mul(#inner_ty, output = #newtype, with = |l, inner| #newtype(l.0 * inner)),
-                mul_assign(#inner_ty, with = |this, inner| this.0 *= inner),
-                div(#newtype, output = #inner_ty, with = |l, r| l.0 / r.0)
+                add(#full_newtype, output = #full_newtype, with = |l, r| #newtype(l.0 + r.0)),
+                add_assign(#full_newtype, with = |this, other| this.0 += other.0),
+                sub(#full_newtype, output = #full_newtype, with = |l, r| #newtype(l.0 - r.0)),
+                sub_assign(#full_newtype, with = |this, other| this.0 -= other.0),
+                mul(#inner_ty, output = #full_newtype, with = |l, inner| #newtype(l.0 * *inner)),
+                mul_assign(#inner_ty, with = |this, inner| this.0 *= *inner),
+                div(#full_newtype, output = #inner_ty, with = |l, r| l.0 / r.0)
             )]
             // Guarantees the memory layout is identical to the inner type.
+            #[repr(transparent)]
+        }
+        .into(),
+        NewtypeKind::Id => quote::quote! {
+            #[automatically_derived]
+            #[derive(newtype_tools::Newtype, #standard_derives)]
             #[repr(transparent)]
         }
         .into(),

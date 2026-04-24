@@ -15,7 +15,7 @@ Motivation
 ----------
 
 Instead of trying to be everything or deriving dozens of unused trait implementations,
-this crate provides unique, simple, yet powerful tools for your `newtypes`.
+this crate provides unique, simple, yet powerful tools for the `newtypes`.
 
 The crate focuses on three main areas to make `newtype` usage more enjoyable:
 
@@ -26,8 +26,6 @@ The crate focuses on three main areas to make `newtype` usage more enjoyable:
 Usage
 -----
 
-Adding the crate to your project:
-
 ```bash
 cargo add newtype-tools
 ```
@@ -35,7 +33,37 @@ cargo add newtype-tools
 Examples
 --------
 
-Conversion between types:
+The simplest way to use the crate is to declare a tuple struct as a `newtype` kind:
+
+```rust
+# #[cfg(feature = "derive")]
+# {
+#[newtype_tools::newtype(Amount)]
+struct Apples(u64);
+
+// Now the `Apples`behave pretty much as their inner type `u64`:
+let apple1 = Apples(2);
+// `Apples` can be converted from the inner type:
+let apple2 = Apples::from(3);
+// `Apples` can be added, subtracted and compared:
+assert_eq!(apple1 + apple2, Apples(5));
+// `Apples` can be multiplied by the inner factor:
+assert_eq!(apple1 * 2_u64, Apples(4));
+// `Apples` can be divided, returning a inner ratio:
+assert_eq!(apple2 / apple1 , 1);
+// `Apples` can be easily extended:
+impl core::fmt::Display for Apples {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        core::fmt::Display::fmt(&self.0, f)
+    }
+}
+# }
+```
+
+The crate supports two kinds of `newtypes`: `Amount` and `Id`. See below for more details.
+
+Rather than using the predefined sets of derives, the implementation allows
+for the derivation of only the necessary traits. Conversion between types:
 
 ```rust
 # #[cfg(feature = "derive")]
@@ -50,6 +78,7 @@ struct Apples(u64);
 struct Oranges(u32);
 
 let apples = Apples(42);
+// `Oranges` can now be created from `Apples`:
 let oranges = Oranges::from(apples);
 
 assert_eq!(oranges.0, 21);
@@ -73,6 +102,7 @@ struct Oranges(u32);
 let apples = Apples(42);
 let oranges = Oranges(21);
 
+// `Apples` and `Oranges` can now be compared:
 assert!(apples == oranges);
 # }
 ```
@@ -88,6 +118,7 @@ use newtype_tools::{Newtype, Iter};
 struct Apples(u64);
 
 let range = Apples(0)..Apples(42);
+// The range of `Apples` can now be iterated:
 for apple in range.iter() {
     println!("{apple:?}");
 }
@@ -95,6 +126,39 @@ for apple in range.iter() {
 ```
 
 This will become even more ergonomic once the [Step][step] trait is stabilized.
+
+Newtype Kinds
+-------------
+
+The crate supports predefined sets of newtype properties. The concept is similar
+to the `phantom_newtype` crate but avoids its limitations, as the newtype
+generated here is a distinct Rust type. This allows new traits
+to be implemented easily for the type and makes the set of derived traits
+simple to extend.
+
+The supported `newtype` kinds are:
+
+| Trait             | `#[newtype(Amount)]` | `#[newtype(Id)]` |
+| ----------------- | :------------------: | :--------------: |
+| `Clone`           |          ✔           |        ✔         |
+| `Copy`            |          ✔           |        ✔         |
+| `Debug`           |          ✔           |        ✔         |
+| `Default`         |          ✔           |        ✔         |
+| `Eq`¹             |          ✔           |        ✔         |
+| `Hash`¹           |          ✔           |        ✔         |
+| `Ord`¹            |          ✔           |        ✔         |
+| `PartialEq`       |          ✔           |        ✔         |
+| `PartialOrd`      |          ✔           |        ✔         |
+| `From<Repr>`      |          ✔           |        ✔         |
+| `Add<Self>`       |          ✔           |        ✘         |
+| `AddAssign<Self>` |          ✔           |        ✘         |
+| `Sub<Self>`       |          ✔           |        ✘         |
+| `SubAssign<Self>` |          ✔           |        ✘         |
+| `Mul<Repr>`       |          ✔           |        ✘         |
+| `MulAssign<Repr>` |          ✔           |        ✘         |
+| `Div<Self>`       |          ✔           |        ✘         |
+
+1. `Eq`, `Ord` and `Hash` are only implemented for integer inner types.
 
 Alternatives
 ------------
