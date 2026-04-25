@@ -9,6 +9,11 @@ on:
 permissions:
   pull-requests: write
 
+# Allow just one concurrent job per branch.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   main:
     name: Validate PR title
