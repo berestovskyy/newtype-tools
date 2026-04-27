@@ -19,10 +19,11 @@ version.workspace = true
 newtype-tools-derive = { workspace = true, optional = true }
 
 [dev-dependencies]
-newtype-tools-derive = { workspace = true }
-rstest = { workspace = true }
-trybuild = { workspace = true }
-rustversion = { workspace = true }
+newtype-tools-derive.workspace = true
+rstest.workspace = true
+rustversion.workspace = true
+serde.workspace = true
+trybuild.workspace = true
 
 [features]
 default = ["derive"]

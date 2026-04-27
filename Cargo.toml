@@ -26,6 +26,7 @@ proc-macro2 = "1.0.106"
 quote = "1.0.45"
 rstest = "0.26.1"
 rustversion = "1.0.22"
+serde = { version = "1.0.228", features = ["derive"] }
 # To debug macro parsing:
 #syn = { version = "2.0.117", features = ["extra-traits", "full"] }
 syn = "2.0.117"

@@ -39,8 +39,18 @@ The simplest way to use the crate is to declare a tuple struct as a `newtype` ki
 ```rust
 # #[cfg(feature = "derive")]
 # {
+// Derive `newtype` with `Amount` properties (see below for more details).
 #[newtype_tools::newtype(Amount)]
+// More traits can be easily derived:
+#[derive(serde::Serialize)]
 struct Apples(u64);
+
+// The `newtype` can also be easily extended:
+impl core::fmt::Display for Apples {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        core::fmt::Display::fmt(&self.0, f)
+    }
+}
 
 // Now the `Apples`behave pretty much as their inner type `u64`:
 let apple1 = Apples(2);
@@ -52,12 +62,6 @@ assert_eq!(apple1 + apple2, Apples(5));
 assert_eq!(apple1 * 2_u64, Apples(4));
 // `Apples` can be divided, returning a inner ratio:
 assert_eq!(apple2 / apple1 , 1);
-// `Apples` can be easily extended:
-impl core::fmt::Display for Apples {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        core::fmt::Display::fmt(&self.0, f)
-    }
-}
 # }
 ```
 
