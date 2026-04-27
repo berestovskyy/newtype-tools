@@ -8,6 +8,7 @@ Newtype Tools
 [![Coverage Status]][Coverage Link]
 [![Docs.rs]][Docs.rs Link]
 [![Crates.io]][Crates.io Link]
+[![ChangeLog]][ChangeLog Link]
 
 A lightweight library (~1K lines of code with minimum dependencies) designed to make
 the [newtype idiom][newtype] more ergonomic to use.
@@ -198,3 +199,5 @@ References
 [Docs.rs Link]: https://docs.rs/newtype-tools
 [Crates.io]: https://img.shields.io/crates/v/newtype-tools.svg
 [Crates.io Link]: https://crates.io/crates/newtype-tools
+[ChangeLog]: https://img.shields.io/badge/changelog-latest-blue.svg
+[ChangeLog Link]: https://github.com/berestovskyy/newtype-tools/releases
