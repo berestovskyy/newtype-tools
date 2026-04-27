@@ -13,7 +13,7 @@ categories = [
 ]
 description = "A lightweight library designed to make the newtype idiom more ergonomic to use."
 edition = "2024"
-homepage = "https://github.com/berestovskyy/newtype-tools"
+homepage = "https://github.com/berestovskyy/newtype-tools/releases"
 keywords = ["conversion", "derive", "idiom", "iterator", "newtype"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/berestovskyy/newtype-tools"
