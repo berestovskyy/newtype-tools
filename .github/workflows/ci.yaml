@@ -63,8 +63,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: OS:${{runner.os}}
-            Rust:${{matrix.toolchain}}-fmt-clippy-${{steps.rust-toolchain.outputs.cachekey}}
+          key: ci OS:${{runner.os}} Rust:${{steps.rust-toolchain.outputs.cachekey}}
             Lock:${{hashFiles('**/Cargo.lock')}}
 
       - name: Clippy (Default Features)
@@ -102,8 +101,7 @@ jobs:
       - uses: crate-ci/typos@v1.45.1
 
   # Make sure the library builds with all dependencies downgraded to their
-  # oldest versions allowed by the semver spec. This ensures we have not
-  # under-specified any dependency.
+  # oldest versions allowed by the semver spec.
   minimal-versions:
     needs: config
     name: Check Minimal Version
@@ -127,13 +125,42 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: OS:${{runner.os}}
-            Rust:${{needs.config.outputs.msrv}}-${{steps.msrv-toolchain.outputs.cachekey}}
-            Rust:${{needs.config.outputs.nightly}}-${{steps.nightly-toolchain.outputs.cachekey}}
+          key: minimal-versions OS:${{runner.os}}
+            Rust:${{steps.msrv-toolchain.outputs.cachekey}}
+            Rust:${{steps.nightly-toolchain.outputs.cachekey}}
             Lock:${{hashFiles('**/Cargo.lock')}}
 
-      - name: Downgrade dependencies to minimal versions
+      - name: Downgrade dependencies
         run: cargo "+${{ needs.config.outputs.nightly }}" update -Z minimal-versions
 
-      - name: Compile with minimal versions
+      - name: Build (minimal versions)
         run: cargo "+${{ needs.config.outputs.msrv }}" build --all-targets --locked
+
+  # Make sure the library builds with all dependencies upgraded to their
+  # latest versions allowed by the semver spec.
+  latest-versions:
+    needs: config
+    name: Check Latest Version
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+        id: rust-toolchain
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: latest-versions OS:${{runner.os}}
+            Rust:${{steps.rust-toolchain.outputs.cachekey}}
+            Lock:${{hashFiles('**/Cargo.lock')}}
+
+      - name: Upgrade dependencies
+        run: cargo update
+
+      - name: Build (upgraded versions)
+        run: cargo build --all-targets --locked

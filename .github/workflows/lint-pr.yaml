@@ -9,8 +9,13 @@ on:
 permissions:
   pull-requests: write
 
+# Allow just one concurrent job per branch.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  main:
+  lint-pr:
     name: Validate PR title
     runs-on: ubuntu-slim
     timeout-minutes: 5

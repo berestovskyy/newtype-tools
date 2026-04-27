@@ -37,7 +37,8 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: OS:${{runner.os}} Rust:stable-${{steps.rust-toolchain.outputs.cachekey}}
+          key: cd OS:${{runner.os}}
+            Rust:${{steps.rust-toolchain.outputs.cachekey}}
             Lock:${{hashFiles('**/Cargo.lock')}}
       - name: Run release-plz
         uses: release-plz/action@v0.5
