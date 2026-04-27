@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci:
+  no_std:
     name: Rust ${{ matrix.toolchain }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
@@ -44,8 +44,8 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: OS:${{runner.os}} Target:${{matrix.target}}
-            Rust:${{matrix.toolchain}}-${{steps.rust-toolchain.outputs.cachekey}}
+          key: no_std OS:${{runner.os}} Target:${{matrix.target}}
+            Rust:${{steps.rust-toolchain.outputs.cachekey}}
             Lock:${{hashFiles('**/Cargo.lock')}}
 
       - name: Check (Default Features)
