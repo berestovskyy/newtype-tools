@@ -18,10 +18,10 @@ keywords = ["conversion", "derive", "idiom", "iterator", "newtype"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/berestovskyy/newtype-tools"
 rust-version = "1.86.0"
-version = "1.0.12"
+version = "1.0.13"
 
 [workspace.dependencies]
-newtype-tools-derive = { version = "1.0.12", path = "newtype-tools-derive" }
+newtype-tools-derive = { version = "1.0.13", path = "newtype-tools-derive" }
 proc-macro2 = "1.0.106"
 quote = "1.0.45"
 rstest = "0.26.1"
