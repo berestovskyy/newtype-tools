@@ -16,6 +16,7 @@ help::
 	@echo "    check       Run quick checks: clippy, fmt, cargo test, cargo check."
 	@echo "    help        This help message."
 	@echo "    ci          Run CI pipeline locally: clippy, build, no_std, test, fmt, publish."
+	@echo "    clean       Remove generated artifacts."
 	@echo "  Test targets:"
 	@echo "    clippy      Run cargo clippy."
 	@echo "    build       Run cargo build."
@@ -34,6 +35,12 @@ help::
 
 ci:: clippy build no_std test fmt publish
 	@echo "All OK."
+
+clean::
+	cargo clean
+	rm -rdf target
+	rm -f lcov.info
+	find . -name "*.profraw" -delete
 
 ########################################################################
 ## Test Targets

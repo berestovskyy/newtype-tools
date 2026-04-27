@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  coverage:
+  code-coverage:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -36,8 +36,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: OS:${{runner.os}}
-            Rust:stable-llvm-tools-${{steps.rust-toolchain.outputs.cachekey}}
+          key: code-coverage OS:${{runner.os}} Rust:${{steps.rust-toolchain.outputs.cachekey}}
             Lock:${{hashFiles('**/Cargo.lock')}}
 
       - name: Generate Code Coverage Report
