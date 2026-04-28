@@ -170,11 +170,22 @@ Alternatives
 ------------
 
 1. `nutype` -- An impressive 12.5k lines of code, with 7.5k lines in proc-macros alone.
-   After trying to extend it, I realized it would be faster to simply write a new crate.
+   After trying to extend it, I realized it would be faster to simply write a new crate:
+   [crate](https://crates.io/crates/nutype)
+   and [repo](https://github.com/greyblake/nutype).
 2. `phantom_newtype` -- Provides 19 trait implementations out of the box,
-   but lacks a mechanism for providing custom trait implementations.
-3. `newtype_derive` -- Outdated and relies on the legacy `custom_derive!` declarative macro.
-4. `newtype-derive-2018` -- Less outdated, but it's 2026.
+   but lacks a mechanism for providing custom trait implementations:
+   [crate](https://crates.io/crates/phantom_newtype)
+   and [repo](https://github.com/roman-kashitsyn/phantom-newtype).
+3. `newtype_derive` -- Outdated and relies on the legacy `custom_derive!` declarative macro:
+   [crate](https://crates.io/crates/newtype_derive)
+   and [repo](https://github.com/DanielKeep/rust-custom-derive).
+4. `newtype-derive-2018` -- Less outdated, but it's 2026:
+   [crate](https://crates.io/crates/newtype-derive-2018)
+   and [repo](https://github.com/A1-Triard/newtype-derive-2018).
+5. `newtype` -- yet another outdated crate with a similar approach:
+   [crate](https://crates.io/crates/newtype)
+   and [repo](https://gitlab.com/jrobsonchase/newtype).
 
 References
 ----------
