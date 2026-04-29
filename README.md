@@ -10,20 +10,19 @@ Newtype Tools
 [![Crates.io]][Crates.io Link]
 [![ChangeLog]][ChangeLog Link]
 
-A lightweight library (~1K lines of code with minimum dependencies) designed to make
-the [newtype idiom][newtype] more ergonomic to use.
+Ergonomic utilities for the Rust [newtype idiom][newtype].
 
 Motivation
 ----------
 
-Instead of trying to be everything or deriving dozens of unused trait implementations,
-this crate provides unique, simple, yet powerful tools for the `newtypes`.
+This crate avoids the bloat of general-purpose "derive-all" libraries, offering instead
+a minimalist set of powerful tools specifically for the [newtype idiom][newtype].
 
-The crate focuses on three main areas to make `newtype` usage more enjoyable:
+Development is focused on three core pillars:
 
-1. Conversions between types.
-2. Operations on `newtypes`.
-3. Iteration over `newtype` ranges.
+1. Conversions between `newtypes` and between `newtypes` and their inner types.
+2. Operations directly on `newtype` values.
+3. Iteration over ranges of `newtypes`.
 
 Usage
 -----
@@ -35,7 +34,7 @@ cargo add newtype-tools
 Examples
 --------
 
-The simplest way to use the crate is to declare a tuple struct as a `newtype` kind:
+The simplest way to use the crate is to define a tuple struct using the `newtype` attribute:
 
 ```rust
 # #[cfg(feature = "derive")]
@@ -66,10 +65,12 @@ assert_eq!(apple2 / apple1 , 1);
 # }
 ```
 
-The crate supports two kinds of `newtypes`: `Amount` and `Id`. See below for more details.
+The crate supports two main "presets": `Amount` and `Id`. See below for more details.
 
-Rather than using the predefined sets of derives, the implementation allows
-for the derivation of only the necessary traits. Conversion between types:
+Instead of using predefined sets, the implementation allows for the derivation
+of only the specific traits required for a given use case.
+
+**`newtype` conversions:**
 
 ```rust
 # #[cfg(feature = "derive")]
@@ -91,7 +92,7 @@ assert_eq!(oranges.0, 21);
 # }
 ```
 
-Operations on `newtypes`:
+**`newtype` operations:**
 
 ```rust
 # #[cfg(feature = "derive")]
@@ -113,7 +114,7 @@ assert!(apples == oranges);
 # }
 ```
 
-Iterations over `newtype` ranges:
+**`newtype` range iteration:**
 
 ```rust
 # #[cfg(feature = "derive")]
@@ -131,16 +132,15 @@ for apple in range.iter() {
 # }
 ```
 
-This will become even more ergonomic once the [Step][step] trait is stabilized.
+Note: This will become even more ergonomic once the Rust [Step trait][step] is stabilized.
 
 Newtype Kinds
 -------------
 
-The crate supports predefined sets of newtype properties. The concept is similar
-to the `phantom_newtype` crate but avoids its limitations, as the newtype
-generated here is a distinct Rust type. This allows new traits
-to be implemented easily for the type and makes the set of derived traits
-simple to extend.
+The crate supports predefined sets of `newtype` properties. The concept is similar
+to the `phantom_newtype` crate but avoids Rust orphan rule limitations by defining
+the `newtype` locally. This allows additional traits to be implemented easily
+and makes the set of derived traits simple to extend.
 
 The supported `newtype` kinds are:
 
@@ -169,23 +169,35 @@ The supported `newtype` kinds are:
 Alternatives
 ------------
 
-1. `nutype` -- An impressive 12.5k lines of code, with 7.5k lines in proc-macros alone.
-   After trying to extend it, I realized it would be faster to simply write a new crate:
+1. `derive_more` -- A large library (~10K SLoC) focused on supporting a wide range of traits
+   for any data type. It can be used alongside `newtype-tools` to derive additional traits as needed:
+   [crate](https://crates.io/crates/derive_more)
+   | [repo](https://github.com/JelteF/derive_more).
+
+   The unique value of this `newtype-tools` crate lies in its lightweight design,
+   support for property sets like `#[newtype(Amount)]`, and built-in range iteration
+   via `(Newtype(0)..Newtype(42)).iter()`.
+
+2. `nutype` -- A comprehensive library (7.5K SLoC) primarily focused on `newtype` validation:
    [crate](https://crates.io/crates/nutype)
-   and [repo](https://github.com/greyblake/nutype).
-2. `phantom_newtype` -- Provides 19 trait implementations out of the box,
-   but lacks a mechanism for providing custom trait implementations:
+   | [repo](https://github.com/greyblake/nutype).
+
+3. `phantom_newtype` -- Provides 19 trait implementations out of the box, but lacks a mechanism
+   for custom trait implementations due to the Rust orphan rule:
    [crate](https://crates.io/crates/phantom_newtype)
-   and [repo](https://github.com/roman-kashitsyn/phantom-newtype).
-3. `newtype_derive` -- Outdated and relies on the legacy `custom_derive!` declarative macro:
+   | [repo](https://github.com/roman-kashitsyn/phantom-newtype).
+
+4. `newtype_derive` -- Legacy crate that relies on the `custom_derive!` declarative macro:
    [crate](https://crates.io/crates/newtype_derive)
-   and [repo](https://github.com/DanielKeep/rust-custom-derive).
-4. `newtype-derive-2018` -- Less outdated, but it's 2026:
+   | [repo](https://github.com/DanielKeep/rust-custom-derive).
+
+5. `newtype-derive-2018` -- Less outdated, but still based on the declarative macro:
    [crate](https://crates.io/crates/newtype-derive-2018)
-   and [repo](https://github.com/A1-Triard/newtype-derive-2018).
-5. `newtype` -- yet another outdated crate with a similar approach:
+   | [repo](https://github.com/A1-Triard/newtype-derive-2018).
+
+6. `newtype` -- An older crate following a similar approach but no longer actively maintained:
    [crate](https://crates.io/crates/newtype)
-   and [repo](https://gitlab.com/jrobsonchase/newtype).
+   | [repo](https://gitlab.com/jrobsonchase/newtype).
 
 References
 ----------

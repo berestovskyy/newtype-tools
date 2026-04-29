@@ -17,7 +17,7 @@ mod parse;
 ///
 /// ```ignore
 /// #[newtype(Amount)]
-/// #[derive(Default)]
+/// #[derive(serde::Serialize)]
 /// struct Apples(u64);
 /// ```
 #[proc_macro_attribute]
