@@ -49,7 +49,7 @@ jobs:
           - ${{ needs.config.outputs.stable }}
           - ${{ needs.config.outputs.nightly }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@master
         id: rust-toolchain
         with:
@@ -97,8 +97,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v6
-      - uses: crate-ci/typos@v1.45.1
+      - uses: actions/checkout@v7
+      - uses: crate-ci/typos@v1.47.2
 
   # Make sure the library builds with all dependencies downgraded to their
   # oldest versions allowed by the semver spec.
@@ -108,7 +108,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@master
         id: msrv-toolchain
         with:
@@ -144,7 +144,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         id: rust-toolchain
       - uses: actions/cache@v5
