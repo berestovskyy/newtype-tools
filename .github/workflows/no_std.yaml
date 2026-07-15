@@ -30,13 +30,13 @@ jobs:
           # Tier 2 Bare Armv7E-M
           - thumbv7em-none-eabi
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@master
         id: rust-toolchain
         with:
           targets: ${{ matrix.target }}
           toolchain: ${{ matrix.toolchain }}
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/bin/

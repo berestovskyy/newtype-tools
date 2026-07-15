@@ -49,13 +49,13 @@ jobs:
           - ${{ needs.config.outputs.stable }}
           - ${{ needs.config.outputs.nightly }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@master
         id: rust-toolchain
         with:
           toolchain: ${{ matrix.toolchain }}
           components: rustfmt, clippy
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/bin/
@@ -97,8 +97,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v6
-      - uses: crate-ci/typos@v1.45.1
+      - uses: actions/checkout@v7
+      - uses: crate-ci/typos@v1.47.2
 
   # Make sure the library builds with all dependencies downgraded to their
   # oldest versions allowed by the semver spec.
@@ -108,7 +108,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@master
         id: msrv-toolchain
         with:
@@ -117,7 +117,7 @@ jobs:
         id: nightly-toolchain
         with:
           toolchain: ${{ needs.config.outputs.msrv }}
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/bin/
@@ -144,10 +144,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         id: rust-toolchain
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/bin/
